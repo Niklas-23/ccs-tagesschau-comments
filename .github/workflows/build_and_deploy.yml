@@ -1,0 +1,41 @@
+name: build-and-deploy-book
+
+on:
+  push:
+    branches:
+    - main
+
+# This job installs dependencies, builds the book, and pushes it to `github-pages`
+jobs:
+  deploy-book:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+
+      # Build docker image
+    - name: Build docker image
+      run: |
+        docker build .
+
+    # Install dependencies
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install -r requirements.txt
+
+    # Build the book
+    - name: Build the book
+      run: |
+        jupyter-book build ccs-project --builder html
+
+    # Push the book's HTML to github-pages
+    - name: Push book to github-pages
+      uses: peaceiris/actions-gh-pages@v3.9.2
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./_build/html

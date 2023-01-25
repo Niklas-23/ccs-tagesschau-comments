@@ -1,0 +1,517 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Introduction &#8212; Analysis of German YouTube comments: How right-wing people dominate the comments section under videos of the “tagesschau” channel</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Dataset" href="scrape_comments.html" />
+    <link rel="prev" title="About this project" href="intro.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+      
+      
+      <h1 class="site-logo" id="site-title">Analysis of German YouTube comments: How right-wing people dominate the comments section under videos of the “tagesschau” channel</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    About this project
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Introduction
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="scrape_comments.html">
+   Dataset
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="topic_model.html">
+   Topic modelling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="dictionary_analysis.html">
+   Dictionary Analysis
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="transformers.html">
+   Transformers
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="results.html">
+   Results
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="conclusion.html">
+   Conclusion
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="bibliography.html">
+   Bibliography
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/executablebooks/jupyter-book"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fintroduction.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="_sources/introduction.md"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.md</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#youtube">
+   YouTube
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#lateral-thinking-movement-on-youtube">
+   Lateral thinking movement on YouTube
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Introduction</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#youtube">
+   YouTube
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#lateral-thinking-movement-on-youtube">
+   Lateral thinking movement on YouTube
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">#</a></h1>
+<p>With the advent of Covid 19, the right-wing populist conspiracy discourse gained further momentum and social media
+attention
+to these topics increased. This new movement is usually referred to as the lateral thinking movement
+(Querdenker-Bewegung) and unites
+anti-vaccinationists, esotericists, conspiracy theorists and right-wingers in one group <span id="id1">[<a class="reference internal" href="bibliography.html#id7" title="Pia Müller. Extrem rechte Influencer*innen auf Telegram: Normalisierungsstrategien in der Corona-Pandemie. Zeitschrift für Rechtsextremismusforschung, 2(1):13–14, March 2022. Publisher: Verlag Barbara Budrich. URL: https://doi.org/10.3224/zrex.v2i1.06 (visited on 2023-01-22).">Müller, 2022</a>]</span>.
+But also people who have had little political involvement are part of this new movement <span id="id2">[<a class="reference internal" href="bibliography.html#id7" title="Pia Müller. Extrem rechte Influencer*innen auf Telegram: Normalisierungsstrategien in der Corona-Pandemie. Zeitschrift für Rechtsextremismusforschung, 2(1):13–14, March 2022. Publisher: Verlag Barbara Budrich. URL: https://doi.org/10.3224/zrex.v2i1.06 (visited on 2023-01-22).">Müller, 2022</a>]</span>.
+One reason why this movement has grown so much in recent years are social networks. These make it possible for the
+different groups to connect with each other, which makes the continuous and widespread
+dissemination of false information and fake news. They use social media platforms to share and spread their worldview
+<span id="id3">[<a class="reference internal" href="bibliography.html#id7" title="Pia Müller. Extrem rechte Influencer*innen auf Telegram: Normalisierungsstrategien in der Corona-Pandemie. Zeitschrift für Rechtsextremismusforschung, 2(1):13–14, March 2022. Publisher: Verlag Barbara Budrich. URL: https://doi.org/10.3224/zrex.v2i1.06 (visited on 2023-01-22).">Müller, 2022</a>]</span>.
+The main social media platform for communication of this movement is Telegram and there
+has also been a lot of coverage in the media about how this movement is using the platform for themselves
+<span id="id4">[<a class="reference internal" href="bibliography.html#id7" title="Pia Müller. Extrem rechte Influencer*innen auf Telegram: Normalisierungsstrategien in der Corona-Pandemie. Zeitschrift für Rechtsextremismusforschung, 2(1):13–14, March 2022. Publisher: Verlag Barbara Budrich. URL: https://doi.org/10.3224/zrex.v2i1.06 (visited on 2023-01-22).">Müller, 2022</a>]</span>. The main reason for this is
+the lack of content moderation on Telegram, which allows the sharing of such content without restrictions, and the
+privacy-friendly encryption of chats <span id="id5">[<a class="reference internal" href="bibliography.html#id7" title="Pia Müller. Extrem rechte Influencer*innen auf Telegram: Normalisierungsstrategien in der Corona-Pandemie. Zeitschrift für Rechtsextremismusforschung, 2(1):13–14, March 2022. Publisher: Verlag Barbara Budrich. URL: https://doi.org/10.3224/zrex.v2i1.06 (visited on 2023-01-22).">Müller, 2022</a>]</span>. But Telegram is not the only social media platform
+that is widely used by the lateral thinking movement. The comments and opinions of this group have also become more and
+more present on other social media platforms.</p>
+<p>One of the social media platforms which is also frequently used is YouTube <span id="id6">[<a class="reference internal" href="bibliography.html#id6" title="Adrian Rauchfleisch and Jonas Kaiser. The German Far-right on YouTube: An Analysis of User Overlap and User Comments. Journal of Broadcasting &amp; Electronic Media, 64(3):373–396, July 2020. Publisher: Routledge. URL: https://doi.org/10.1080/08838151.2020.1799690, doi:10.1080/08838151.2020.1799690.">Rauchfleisch and Kaiser, 2020</a>]</span>. If one
+looks at the comments under the videos of the “tagesschau” channel, one can get the impression that these
+comments often belong to this discourse and do not necessarily always fit the content of the video. The aim of this
+project report is therefore to find out to what extent this assumption is correct and whether the comments section
+under the videos of the “tagesschau” channel is really dominated by the lateral thinking movement. In order to achieve
+this, we will try to find answers to the following questions:</p>
+<ul class="simple">
+<li><p>Which topics are dominant in the comments section below the videos?</p></li>
+<li><p>How many comments can be attributed to the lateral thinking movement?</p></li>
+<li><p>Do the comments of lateral thinkers make up the majority of all comments?</p></li>
+<li><p>How dominant are right-wing comments?</p></li>
+<li><p>What is the general sentiment in the comments section?</p></li>
+</ul>
+<p>The “tagesschau” channel was chosen because the comments were striking on the one hand and on the other hand because it
+is a channel from one of the public broadcasters. For the lateral thinking movement, the public broadcasters are a kind
+of symbol of the mainstream media and are often criticised for this reason <span id="id7">[<a class="reference internal" href="bibliography.html#id9" title="Boris Holzer. Zwischen protest und parodie: strukturen der »querdenken«-kommunikation auf telegram (und anderswo). Apr 2021. URL: osf.io/preprints/socarxiv/9rgtk, doi:10.31235/osf.io/9rgtk.">Holzer, 2021</a>]</span>. As politics is often the focus of
+criticism by
+the lateral thinkers, the public broadcasters are particularly polarising. In some cases, the mainstream media are even
+accused of deliberately spreading false information <span id="id8">[<a class="reference internal" href="bibliography.html#id9" title="Boris Holzer. Zwischen protest und parodie: strukturen der »querdenken«-kommunikation auf telegram (und anderswo). Apr 2021. URL: osf.io/preprints/socarxiv/9rgtk, doi:10.31235/osf.io/9rgtk.">Holzer, 2021</a>]</span>.</p>
+<section id="youtube">
+<h2>YouTube<a class="headerlink" href="#youtube" title="Permalink to this headline">#</a></h2>
+<p>YouTube is a widely-used social media platform that was launched in 2005 <span id="id9">[<a class="reference internal" href="bibliography.html#id8" title="Daniel Ruby. YouTube Statistics (2023) — Updated Data, Facts &amp; Figures Shared! January 2023. URL: https://www.demandsage.com/youtube-stats/ (visited on 2023-01-23).">Ruby, 2023</a>]</span>. It quickly became
+one of
+the most popular websites in the world with over 2 billion active users <span id="id10">[<a class="reference internal" href="bibliography.html#id8" title="Daniel Ruby. YouTube Statistics (2023) — Updated Data, Facts &amp; Figures Shared! January 2023. URL: https://www.demandsage.com/youtube-stats/ (visited on 2023-01-23).">Ruby, 2023</a>]</span>. The
+platform allows anyone to upload videos and share them with a global audience, making it an important tool for
+communication and self-expression <span id="id11">[<a class="reference internal" href="bibliography.html#id6" title="Adrian Rauchfleisch and Jonas Kaiser. The German Far-right on YouTube: An Analysis of User Overlap and User Comments. Journal of Broadcasting &amp; Electronic Media, 64(3):373–396, July 2020. Publisher: Routledge. URL: https://doi.org/10.1080/08838151.2020.1799690, doi:10.1080/08838151.2020.1799690.">Rauchfleisch and Kaiser, 2020</a>]</span>. It is also a powerful tool for entertainment, with
+users able to access music, movie trailers, and other forms of content.</p>
+<p>YouTube has become a major source of information for many people, with users turning to the platform for news,
+education, and political content. It is especially powerful in its ability to reach younger generations and those who
+are not reached by traditional forms of media <span id="id12">[<a class="reference internal" href="bibliography.html#id6" title="Adrian Rauchfleisch and Jonas Kaiser. The German Far-right on YouTube: An Analysis of User Overlap and User Comments. Journal of Broadcasting &amp; Electronic Media, 64(3):373–396, July 2020. Publisher: Routledge. URL: https://doi.org/10.1080/08838151.2020.1799690, doi:10.1080/08838151.2020.1799690.">Rauchfleisch and Kaiser, 2020</a>]</span>. However, despite its significance,
+YouTube has been understudied in
+political studies <span id="id13">[<a class="reference internal" href="bibliography.html#id6" title="Adrian Rauchfleisch and Jonas Kaiser. The German Far-right on YouTube: An Analysis of User Overlap and User Comments. Journal of Broadcasting &amp; Electronic Media, 64(3):373–396, July 2020. Publisher: Routledge. URL: https://doi.org/10.1080/08838151.2020.1799690, doi:10.1080/08838151.2020.1799690.">Rauchfleisch and Kaiser, 2020</a>]</span>. The platform’s role in shaping public opinion, spreading political
+information and how it influences political campaigns is an area of ongoing research.</p>
+<p>Additionally, YouTube is also a powerful tool for political campaigns and organizing. Many political figures and parties
+have their own YouTube channels, and use the platform to disseminate information and engage with their supporters.
+YouTube’s ability to target specific audiences and measure the success of campaigns make it an important tool for
+political organizations.</p>
+<p>In summary, YouTube is an influential social media platform with a wide-ranging impact on society, culture, and
+politics. For these reasons, it is also used by the lateral thinking movement to disseminate their content and many
+supporters of the movement are active on the platform <span id="id14">[<a class="reference internal" href="bibliography.html#id6" title="Adrian Rauchfleisch and Jonas Kaiser. The German Far-right on YouTube: An Analysis of User Overlap and User Comments. Journal of Broadcasting &amp; Electronic Media, 64(3):373–396, July 2020. Publisher: Routledge. URL: https://doi.org/10.1080/08838151.2020.1799690, doi:10.1080/08838151.2020.1799690.">Rauchfleisch and Kaiser, 2020</a>]</span>.</p>
+</section>
+<section id="lateral-thinking-movement-on-youtube">
+<h2>Lateral thinking movement on YouTube<a class="headerlink" href="#lateral-thinking-movement-on-youtube" title="Permalink to this headline">#</a></h2>
+<p>YouTube is an important platform for the Querdenker movement, if not the second most important after Telegram, as Holzer
+has shown in a study of the communication of the lateral thinking movement <span id="id15">[<a class="reference internal" href="bibliography.html#id9" title="Boris Holzer. Zwischen protest und parodie: strukturen der »querdenken«-kommunikation auf telegram (und anderswo). Apr 2021. URL: osf.io/preprints/socarxiv/9rgtk, doi:10.31235/osf.io/9rgtk.">Holzer, 2021</a>]</span>. This observation is
+particularly interesting because many channels that can be attributed to this movement have already been blocked by
+YouTube.
+Nevertheless, the Telegram channels often link to YouTube videos <span id="id16">[<a class="reference internal" href="bibliography.html#id9" title="Boris Holzer. Zwischen protest und parodie: strukturen der »querdenken«-kommunikation auf telegram (und anderswo). Apr 2021. URL: osf.io/preprints/socarxiv/9rgtk, doi:10.31235/osf.io/9rgtk.">Holzer, 2021</a>]</span>. One possible reason for this
+could be that
+YouTube, in contrast to other social media platforms, offers the possibility of distributing video content that is
+similar in format to classic media.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="intro.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">About this project</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="scrape_comments.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Dataset</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Niklas Kemper<br/>
+  
+      &copy; Copyright 2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

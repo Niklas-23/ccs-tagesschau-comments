@@ -1,0 +1,639 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Dataset &#8212; Analysis of German YouTube comments: How right-wing people dominate the comments section under videos of the “tagesschau” channel</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Topic modelling" href="topic_model.html" />
+    <link rel="prev" title="Introduction" href="introduction.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+      
+      
+      <h1 class="site-logo" id="site-title">Analysis of German YouTube comments: How right-wing people dominate the comments section under videos of the “tagesschau” channel</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    About this project
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="introduction.html">
+   Introduction
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Dataset
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="topic_model.html">
+   Topic modelling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="dictionary_analysis.html">
+   Dictionary Analysis
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="transformers.html">
+   Transformers
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="results.html">
+   Results
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="conclusion.html">
+   Conclusion
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="bibliography.html">
+   Bibliography
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/docs/scrape_comments.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/executablebooks/jupyter-book"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fscrape_comments.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="_sources/scrape_comments.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Dataset</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="dataset">
+<h1>Dataset<a class="headerlink" href="#dataset" title="Permalink to this headline">#</a></h1>
+<p>The dataset used was created using the YouTube API V3, which allows efficient and fast downloading of comments. To use the YouTube API you must first create a google account and enable the YouTube API in the Google developer console.The API key required to send requests to the API is also provided on this developer console. A major limitation of the API is that it is has a quota allocation 10,000 units per day, which limits the use of the API. The API works in a paged fashion, returning a limited number of results. The response always contains a <code class="docutils literal notranslate"><span class="pre">nextPageToken</span></code> which can be used to obtain the next results. This means that multiple requests need to be made to get all the comments for a video. However, one can live with this limitation, since a read operation costs only one unit and delivers a hundred comments plus replies.</p>
+<p>To get started, the api key and the playlist ID are inserted first. The “tagesschau” channel provides a playlist that lists the 8 p.m. videos in almost chronological order. The order is only almost chronological, because some videos have been deleted and re-uploaded. These videos often contain only fewer comments, as many have been lost when the video was deleted. However, deleted and re-uploaded videos only occur very rarely and therefore this limitation could be neglected. Then the YouTube API is initialized and ready for use.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>from googleapiclient.discovery import build
+import pandas as pd
+
+api_key = &#39;&#39;
+playlist_id = &quot;PL4A2F331EE86DCC22&quot;
+max_results_comments = 100
+max_results_playlist = 50
+
+youtube_api = build(&#39;youtube&#39;, &#39;v3&#39;, developerKey=api_key)
+</pre></div>
+</div>
+</div>
+</div>
+<p>To avoid problems with the quota limit, it was decided to download the comments of the 500 most recent videos. Assuming that the videos were uploaded in chronological order, we know that the videos cover the period from the 8th of September 2022 to the 21st of January 2023. Since a maximum of 50 videos are returned when playlist items are queried, 10 queries are sent to obtain the most recent 500 videos. Once all video IDs have been extracted, they are stored in a .csv file to make the results reproducible.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>video_ids = []
+playlist_response = youtube_api.playlistItems().list(part=&quot;snippet&quot;, playlistId=playlist_id, maxResults=max_results_playlist).execute()
+
+for i in range(10):
+    for item in playlist_response[&quot;items&quot;]:
+        video_ids.append(item[&quot;snippet&quot;][&quot;resourceId&quot;][&quot;videoId&quot;])
+        if &quot;nextPageToken&quot; in playlist_response:
+            next_page_token = playlist_response[&quot;nextPageToken&quot;]
+        else:
+            break
+    playlist_response = youtube_api.playlistItems().list(part=&quot;snippet&quot;, playlistId=playlist_id, maxResults=max_results_playlist).execute()
+
+len(video_ids)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>500
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>df = pd.DataFrame(data=video_ids, columns=[&quot;video_ids&quot;])
+df.to_csv(&quot;data/youtube_video_ids_500.csv&quot;)
+</pre></div>
+</div>
+</div>
+</div>
+<p>To download the comments three functions are implemented. The first function extracts the comments from a comment thread. The second function sends a request to the YouTube API to load a comment thread. The third function iterates over a list of video IDs and uses the first two functions to download all comment threads and to extract all comment. Once all comments have been extracted, they are stored in a .csv file, just like the video IDs before. It is important to note that for performance reasons and quota limitation, only the comment thread function of the YouTube API was used. This function has the limitation that for each comment, only part of the reply comments are included and not all. To get all the replies would require sending requests to another API endpoint. Since this would massively slow down the speed of collecting the comments, it was decided not to do this and thus not to download a part of the reply comments. Downloading all comments took about 20 minutes.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>def load_comments(comment_thread):
+    comment_list = []
+    for item in comment_thread[&quot;items&quot;]:
+        comment = item[&quot;snippet&quot;][&quot;topLevelComment&quot;]
+        comment_text = comment[&quot;snippet&quot;][&quot;textDisplay&quot;]
+        comment_list.append(comment_text)
+        if &#39;replies&#39; in item.keys():
+            for reply in item[&#39;replies&#39;][&#39;comments&#39;]:
+                reply_text = reply[&quot;snippet&quot;][&quot;textDisplay&quot;]
+                comment_list.append(reply_text)
+    return comment_list
+
+
+def get_comment_thread(video_id, page_token=None):
+    comment_thread = youtube_api.commentThreads().list(part=&quot;snippet, replies&quot;, maxResults=max_results_comments, videoId=video_id, textFormat=&quot;plainText&quot;, pageToken=page_token).execute()
+    return comment_thread
+
+
+def scrape_comments(video_ids: list):
+    progress_counter = 0
+    comment_data = []
+    for video_id in video_ids:
+        comment_thread = get_comment_thread(video_id)
+        if &quot;nextPageToken&quot; in comment_thread:
+            next_page_token = comment_thread[&quot;nextPageToken&quot;]
+        else:
+            next_page_token = None
+
+        comment_data.extend(load_comments(comment_thread))
+
+        while next_page_token:
+            comment_thread = get_comment_thread(video_id, next_page_token)
+            if &quot;nextPageToken&quot; not in comment_thread:
+                break
+            else:
+                next_page_token = comment_thread[&quot;nextPageToken&quot;]
+
+            comment_data.extend(load_comments(comment_thread))
+
+        if progress_counter%100 == 0:
+            print(f&quot;Progress: {progress_counter/len(video_ids)}&quot;)
+        progress_counter+=1
+
+    print(&quot;Finished&quot;)
+    return comment_data
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>comment_data = scrape_comments(video_ids)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Progress: 0.0
+Progress: 0.2
+Progress: 0.4
+Progress: 0.6
+Progress: 0.8
+Finished
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>df = pd.DataFrame(data=comment_data, columns=[&quot;Comments&quot;], index=None)
+df.to_csv(&quot;data/youtube_comments_500.csv&quot;)
+</pre></div>
+</div>
+</div>
+</div>
+<p>To see if everything worked out, we can take a look at the data collected. We can see that everything worked and that we collected 406,242 comments.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>from IPython.display import display
+comments = pd.read_csv (&quot;data/youtube_comments_500.csv&quot;)
+comments = comments.drop(columns=comments.columns[0], axis=1) # Drop the index stored in the .csv file to improve readability.
+display(comments)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Comments</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>wollt ihr jetzt jeden tag einen großen bericht...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Wenn Scholz alles besser weiss, wieso braucht ...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Die Grünen hatten Früher das Peace Zeichen als...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Der Westen ist ein Kriegstreiber bis es zu ein...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Frieden schaffen ohne Waffen.</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>406237</th>
+      <td>Kann jeder deutscher werden ,kein Problem sola...</td>
+    </tr>
+    <tr>
+      <th>406238</th>
+      <td>Dann nimm die Leute bei dir auf und verpflege ...</td>
+    </tr>
+    <tr>
+      <th>406239</th>
+      <td>🙄🤔als Staatenloser hatt mans aber auch nicht l...</td>
+    </tr>
+    <tr>
+      <th>406240</th>
+      <td>Wann kommt der Blackout? Kinder könnt ihr ja e...</td>
+    </tr>
+    <tr>
+      <th>406241</th>
+      <td>Den Blackout auf den du wartest, wird es nur g...</td>
+    </tr>
+  </tbody>
+</table>
+<p>406242 rows × 1 columns</p>
+</div></div></div>
+</div>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="introduction.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Introduction</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="topic_model.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Topic modelling</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Niklas Kemper<br/>
+  
+      &copy; Copyright 2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

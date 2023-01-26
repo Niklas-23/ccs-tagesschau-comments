@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Dataset &#8212; Analysis of German YouTube comments: How people from the lateral thinking movement dominate the comments section under videos of the &#34;tagesschau&#34; channel</title>
+    <title>Dataset &#8212; Analysis of German YouTube comments: How right-wing people dominate the comments section under videos of the “tagesschau” channel</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -92,7 +92,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <h1 class="site-logo" id="site-title">Analysis of German YouTube comments: How people from the lateral thinking movement dominate the comments section under videos of the "tagesschau" channel</h1>
+      <h1 class="site-logo" id="site-title">Analysis of German YouTube comments: How right-wing people dominate the comments section under videos of the “tagesschau” channel</h1>
       
     </a>
 </div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
@@ -208,7 +208,7 @@ title="Toggle navigation"
   <div class="menu-dropdown__content">
     <ul>
       <li>
-        <a href="https://mybinder.org/v2/gh/Niklas-23/ccs-tagesschau-comments/master?urlpath=tree/scrape_comments.ipynb"
+        <a href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/docs/scrape_comments.ipynb"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -251,7 +251,7 @@ title="Fullscreen mode"
   <div class="menu-dropdown__content">
     <ul>
       <li>
-        <a href="https://github.com/Niklas-23/ccs-tagesschau-comments"
+        <a href="https://github.com/executablebooks/jupyter-book"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -268,7 +268,7 @@ title="Source repository"
       </li>
       
       <li>
-        <a href="https://github.com/Niklas-23/ccs-tagesschau-comments/issues/new?title=Issue%20on%20page%20%2Fscrape_comments.html&body=Your%20issue%20content%20here."
+        <a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fscrape_comments.html&body=Your%20issue%20content%20here."
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -376,7 +376,7 @@ youtube_api = build(&#39;youtube&#39;, &#39;v3&#39;, developerKey=api_key)
 </div>
 </div>
 </div>
-<p>To avoid problems with the quota limit, it was decided to download the comments of the 500 most recent videos. Assuming that the videos were uploaded in chronological order, we know that the videos cover the period from the 8th of September 2021 to the 21st of January 2023. Since a maximum of 50 videos are returned when playlist items are queried, 10 queries are sent to obtain the most recent 500 videos. Once all video IDs have been extracted, they are stored in a .csv file to make the results reproducible.</p>
+<p>To avoid problems with the quota limit, it was decided to download the comments of the 500 most recent videos. Assuming that the videos were uploaded in chronological order, we know that the videos cover the period from the 8th of September 2022 to the 21st of January 2023. Since a maximum of 50 videos are returned when playlist items are queried, 10 queries are sent to obtain the most recent 500 videos. Once all video IDs have been extracted, they are stored in a .csv file to make the results reproducible.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>video_ids = []

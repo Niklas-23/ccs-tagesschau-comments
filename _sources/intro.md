@@ -9,6 +9,11 @@ the research question.
 ```{tableofcontents}
 ```
 
+hHow the comments section under the videos of the "tagesschau" channel is dominated by right-wing populist and
+conspiracy-theory statements.
+
+How people from the lateral thinking movement dominate the comments sections under videos of the "tagesschau" channel
+
 ## Docker 
 
 ```

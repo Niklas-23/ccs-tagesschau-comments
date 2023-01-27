@@ -9,9 +9,32 @@ the research question.
 ```{tableofcontents}
 ```
 
-## Docker 
+## Docker
+
+To reproduce the results, the required dependencies can either be installed locally or the provided docker image can be
+used.
+
+To install the dependencies locally, create a virtual environment and activate it. You can then install the
+dependencies from the `requirements.txt` file using the following command:
 
 ```
-$(ccs-german-youtube-comments) docker build -t ccs .
-$(ccs-german-youtube-comments) docker run -p 10000:8888 ccs-project
+(your-venv)$ cd <ccs-tagesschau-comments-project-root>
+(your-venv)$ pip install -r requirements.txt
+```
+
+To use the docker container you first have to build the docker image. Since images are built platform-specifically,
+you need to create the image yourself to suit the platform on which you want to run the container. Using an image built
+for a different platform does not make sense because the performance would be too poor to execute the machine learning
+algorithms and models.
+
+To build the image and run the container execute the commands below. The image is based on the `jupyter/minimal-notebook`
+image which provides a ready-to-use python environment together with a jupyter lab server. The Dockerfile install 
+all required dependencies and copies the project code into the container. If you use the code below to run the image 
+you can access the jupyter lab server on `localhost:10000`.
+
+```
+$ cd <ccs-tagesschau-comments-project-root>
+$ docker build -t ccs . # build the image and name it ccs
+$ docker run -p 10000:8888 ccs-project # run the container and expose jupyter lab on 
+port 10000
 ```

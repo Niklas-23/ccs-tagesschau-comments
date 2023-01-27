@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Topic modelling &#8212; Analysis of German YouTube comments: How people from the lateral thinking movement dominate the comments section under videos of the &#34;tagesschau&#34; channel</title>
+    <title>Topic modeling &#8212; Analysis of German YouTube comments: How people from the lateral thinking movement dominate the comments section under videos of the &#34;tagesschau&#34; channel</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -121,7 +121,7 @@ const thebe_selector_output = ".output, .cell_output"
  </li>
  <li class="toctree-l1 current active">
   <a class="current reference internal" href="#">
-   Topic modelling
+   Topic modeling
   </a>
  </li>
  <li class="toctree-l1">
@@ -345,7 +345,7 @@ title="Print to PDF"
         <div class="col pl-md-3 pl-lg-5 content-container">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
-                <h1>Topic modelling</h1>
+                <h1>Topic modeling</h1>
                 <!-- Table of contents -->
                 <div id="print-main-content">
                     <div id="jb-print-toc">
@@ -357,8 +357,10 @@ title="Print to PDF"
                 
               <div>
                 
-  <section class="tex2jax_ignore mathjax_ignore" id="topic-modelling">
-<h1>Topic modelling<a class="headerlink" href="#topic-modelling" title="Permalink to this headline">#</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="topic-modeling">
+<h1>Topic modeling<a class="headerlink" href="#topic-modeling" title="Permalink to this headline">#</a></h1>
+<p>Topic modeling is an unsupervised approach to identify topics from a corpus. Identifying topics among the comments helps to answer the question of which topics are dominant in the comments section and whether they are dominated by right-wing comments. To identify topics the Latent Dirichlet Allocation (LDA) will be used. The LDA is the most widely used model for topic modeling and learns the topic-word mappings from the corpus over several iterations.</p>
+<p>First, the libraries for the preprocessing of the dataset are imported. To remove stopwords the stopword list from the Natural Language Toolkit (NLTK) is used. In addition, the spacy library is used for lemmatization. Lemmatization is an important and often used pre-processing step for topic modelling, because it has been shown that lemmatization can lead to better results <span id="id1">[<a class="reference internal" href="bibliography.html#id11" title="Chandler May, Ryan Cotterell, and Benjamin Van Durme. An Analysis of Lemmatization on Topic Models of Morphologically Rich Language. May 2019. arXiv:1608.03995 [cs]. URL: http://arxiv.org/abs/1608.03995 (visited on 2023-01-27), doi:10.48550/arXiv.1608.03995.">May <em>et al.</em>, 2019</a>]</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>import pandas as pd
@@ -368,19 +370,21 @@ from pathlib import Path
 import string
 
 import warnings
-warnings.filterwarnings(&#39;ignore&#39;)
+warnings.filterwarnings(&#39;ignore&#39;) # Disable warnings to improve output formation
 
 import nltk
 nltk.download(&quot;stopwords&quot;)
 from nltk.corpus import stopwords
 
 import spacy
-# model has to be installed via the following command: $(env) python -m spacy download de_core_news_md
+# The model has to be installed via the following command: $(env) python -m spacy download de_core_news_md
+# The docker image already contains the model
 spacy_model_german = spacy.load(&quot;de_core_news_md&quot;, disable=[&quot;parser&quot;, &quot;ner&quot;])
 </pre></div>
 </div>
 </div>
 </div>
+<p>For pre-processing the text, we first create a stop word list and a punctuation list. Then we define methods for lemmatizing the text and removing punctuation marks. Both methods expect the text as input, perform the corresponding processing and return the processed text. The method <code class="docutils literal notranslate"><span class="pre">tokenize_and_lemmatize_text</span></code> performs the complete preprocessing. First the linebreaks and the emojis are removed. To remove the emojis the <code class="docutils literal notranslate"><span class="pre">cleantext</span></code> library is used. Then the two methods to remove punctuation and to perform lemmatization are applied. Since spacy returns a double bar <code class="docutils literal notranslate"><span class="pre">--</span></code> as a token for punctuation marks or unknown characters, these tokens are removed to ensure that only meaningful tokens are included. Then the stopwords are removed. At the end empty tokens are removed because these tokens can occur, for example, if the comment consists only of emojis.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>stop_words = set(stopwords.words(&#39;german&#39;))
@@ -412,6 +416,7 @@ def tokenize_and_lemmatize_text(text: str):
 </div>
 </div>
 </div>
+<p>To preprocess all comments, they are first loaded from the csv file and then it is ensured that all comments are in string format. This step is necessary because otherwise the error occurs later that the comment would not be a string. This problem is probably caused by the fact that special characters are interpreted incorrectly when the comments are saved or read in. At the end we get a list that contains for each comment a list of tokens, as we can see in the output.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>comments = pd.read_csv(&quot;data/youtube_comments_500.csv&quot;)
@@ -472,6 +477,7 @@ for index, row in comments.iterrows():
 </div>
 </div>
 </div>
+<p>The preprocessing is quite time-consuming and takes a few minutes, which is why the processed comments are saved as a pickle file. Saving the list as a pickle file makes it possible to save the list directly and load it again. Saving the comments here as a csv makes little sense, as the list of tokens for each comment has a different length.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>file = Path(&quot;data/youtube_comments_500_preprocessed.pkl&quot;)
@@ -490,6 +496,7 @@ if not file.exists():
 </div>
 </div>
 </div>
+<p>To implement the LDA model, the gensim library is used. For the visualisation of the topics and results at the end, the pyLDAvis library is used. This library allows interactive exploration of the results, as we will see later.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>import gensim
@@ -689,7 +696,7 @@ plt.show()
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/topic_model_14_0.png" src="_images/topic_model_14_0.png" />
+<img alt="_images/topic_model_17_0.png" src="_images/topic_model_17_0.png" />
 </div>
 </div>
 <div class="cell docutils container">

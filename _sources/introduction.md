@@ -18,8 +18,8 @@ privacy-friendly encryption of chats {cite:p}`muller_extrem_2022`. But Telegram 
 that is widely used by the lateral thinking movement. The comments and opinions of this group have also become more and
 more present on other social media platforms.
 
-One of the social media platforms which is also frequently used is YouTube {cite:p}`rauchfleisch_german_2020`. If one
-looks at the comments under the videos of the "tagesschau" channel, one can get the impression that these
+One of the social media platforms which is also frequently used is YouTube {cite:p}`rauchfleisch_german_2020,reichardt2021corona`. 
+If one looks at the comments under the videos of the "tagesschau" channel, one can get the impression that these
 comments often belong to this discourse and do not necessarily always fit the content of the video. The aim of this
 project report is therefore to find out to what extent this assumption is correct and whether the comments section
 under the videos of the "tagesschau" channel is really dominated by the lateral thinking movement. In order to achieve
@@ -32,11 +32,13 @@ this, we will try to find answers to the following questions:
 - What is the general sentiment in the comments section?
 
 The "tagesschau" channel was chosen because the comments were striking on the one hand and on the other hand because it
-is a channel from one of the public broadcasters. For the lateral thinking movement, the public broadcasters are a kind 
-of symbol of the mainstream media and are often criticised for this reason {cite:p}`holzer_2021`. As politics is often the focus of 
-criticism by
-the lateral thinkers, the public broadcasters are particularly polarising. In some cases, the mainstream media are even
-accused of deliberately spreading false information {cite:p}`holzer_2021`.
+is a channel from one of the public broadcasters. For the lateral thinking movement, the public broadcasters are a kind
+of symbol of the mainstream media and are often criticised for this reason {cite:p}`holzer_zwischen_2021,reichardt2021corona`. 
+As politics is often the focus of
+criticism by the lateral thinkers, the public broadcasters are particularly polarising. Another example of
+polarisation are the so-called defectors, i.e. people who previously worked for the mainstream media, because they get a
+lot of attention and support from the movement {cite:p}`reichardt2021corona`. In some cases, the mainstream
+media are even accused of deliberately spreading false information {cite:p}`holzer_zwischen_2021,reichardt2021corona`.
 
 ## YouTube
 
@@ -65,11 +67,14 @@ supporters of the movement are active on the platform {cite:p}`rauchfleisch_germ
 
 ## Lateral thinking movement on YouTube
 
-YouTube is an important platform for the Querdenker movement, if not the second most important after Telegram, as Holzer
-has shown in a study of the communication of the lateral thinking movement {cite:p}`holzer_2021`. This observation is
+YouTube is an important platform for the lateral thinking movement, if not the second most important after Telegram, as
+Holzer
+has shown in a study of the communication of the lateral thinking movement {cite:p}`holzer_zwischen_2021`. This
+observation is
 particularly interesting because many channels that can be attributed to this movement have already been blocked by
-YouTube.
-Nevertheless, the Telegram channels often link to YouTube videos {cite:p}`holzer_2021`. One possible reason for this
+YouTube {cite:p}`holzer_zwischen_2021`.
+Nevertheless, the Telegram channels often link to YouTube videos {cite:p}`holzer_zwischen_2021`. One possible reason for
+this
 could be that
 YouTube, in contrast to other social media platforms, offers the possibility of distributing video content that is
 similar in format to classic media.

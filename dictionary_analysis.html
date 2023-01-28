@@ -52,7 +52,7 @@ const thebe_selector_output = ".output, .cell_output"
     <script async="async" src="_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Transformers" href="sentiment_analysis.html" />
+    <link rel="next" title="Sentiment anlysis" href="sentiment_analysis.html" />
     <link rel="prev" title="Topic modeling" href="topic_model.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
@@ -131,7 +131,7 @@ const thebe_selector_output = ".output, .cell_output"
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="sentiment_analysis.html">
-   Transformers
+   Sentiment anlysis
   </a>
  </li>
  <li class="toctree-l1">
@@ -364,9 +364,13 @@ title="Print to PDF"
                 
   <section class="tex2jax_ignore mathjax_ignore" id="dictionary-analysis">
 <h1>Dictionary Analysis<a class="headerlink" href="#dictionary-analysis" title="Permalink to this headline">#</a></h1>
+<p>The second method uses dictionary analysis to identify and count comments from lateral thinkers. The dictionary analysis is a very simple method and is derived from sentiment analysis. Due to the simplicity of the model, the results must be critically examined and questioned at the end. For example, due to the bag-of-words representation in the model, we cannot take negations into account, which can lead to misleading results.</p>
+<p>The dictionary used is the RPX-Lex dictionary, which was developed to measure german right-wing populist conspiracy discourse <span id="id1">[<a class="reference internal" href="bibliography.html#id12" title="Cornelius Puschmann, Hevin Karakurt, Carolin Amlinger, Nicola Gess, and Oliver Nachtwey. Rpc-lex: a dictionary to measure german right-wing populist conspiracy discourse online. Convergence, 28(4):1144-1171, 2022. URL: https://doi.org/10.1177/13548565221109440, arXiv:https://doi.org/10.1177/13548565221109440, doi:10.1177/13548565221109440.">Puschmann <em>et al.</em>, 2022</a>]</span>. The dictionary contains 14,105 terms which are divided into 13 categories, such as Suspicion, Antisemitism or Esotericism <span id="id2">[<a class="reference internal" href="bibliography.html#id12" title="Cornelius Puschmann, Hevin Karakurt, Carolin Amlinger, Nicola Gess, and Oliver Nachtwey. Rpc-lex: a dictionary to measure german right-wing populist conspiracy discourse online. Convergence, 28(4):1144-1171, 2022. URL: https://doi.org/10.1177/13548565221109440, arXiv:https://doi.org/10.1177/13548565221109440, doi:10.1177/13548565221109440.">Puschmann <em>et al.</em>, 2022</a>]</span>. It should be noted, that some terms appear in more than one category, as they are assigned to several categories. This circumstance will be taken into account later in the analysis so that hits are not counted twice.</p>
+<p>First, we load the dictionary and as we can see, it contains 14,105 terms as stated in the paper.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>import pandas as pd
+from cleantext import clean
 from tqdm import tqdm
 </pre></div>
 </div>
@@ -501,13 +505,24 @@ rpx_dict
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>def get_dictionary_analysis_term_occurence(text: list):
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>def get_dictionary_analysis_term_occurence(text: str):
     term_occurrence = 0
     identified_terms = []
+    text_tokens = set(text.split(&quot; &quot;))
     for term in rpx_dict.term.to_list():
-        if term in text:
-            term_occurrence+=1
-            identified_terms.append(term)
+        if term in identified_terms:
+            continue # Skip terms that have already been identified but occur in multiple categories
+
+        if &quot; &quot; in term:
+            print(&quot;Space in term&quot;)
+            if term in text: # Dictionary term consists of several words
+                term_occurrence+=1
+                identified_terms.append(term)
+        else:
+            print(&quot;Standard&quot;)
+            if term in text_tokens: # Dictionary term is a single word
+                term_occurrence+=1
+                identified_terms.append(term)
     return term_occurrence, identified_terms
 </pre></div>
 </div>
@@ -515,15 +530,30 @@ rpx_dict
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>comments = pd.read_csv(&quot;data/youtube_comments_500.csv&quot;)
-comments[&quot;Comments&quot;] = comments[&quot;Comments&quot;].astype(str)
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>comments_df = pd.read_csv(&quot;data/youtube_comments_500.csv&quot;)
+comments_df[&quot;Comments&quot;] = comments_df[&quot;Comments&quot;].astype(str)
+
+def clean_text(text:str):
+    text = clean(text, no_emoji=True, lang=&quot;de&quot;)
+    new_text = []
+    for token in text.split(&quot; &quot;):
+        if not token.startswith(&#39;@&#39;) and not token.startswith(&#39;http&#39;):
+            new_text.append(token)
+    return &quot; &quot;.join(new_text)
+
+comments_df[&quot;Comments&quot;] = comments_df[&quot;Comments&quot;].apply(lambda text: clean_text(text))
+comments_df =comments_df[comments_df.Comments != &quot;&quot;]
+
 dict_term_occurrence_list = []
 dict_identified_terms_list = []
 
-for text in tqdm(comments.Comments.to_list()):
+for text in tqdm(comments_df.Comments.to_list()):
     occurrence_counter, identified_terms_list = get_dictionary_analysis_term_occurence(text)
     dict_term_occurrence_list.append(occurrence_counter)
     dict_identified_terms_list.append(identified_terms_list)
+
+comments_df[&quot;dict_term_occurrence&quot;] = dict_term_occurrence_list
+comments_df[&quot;dict_identified_terms_list&quot;] = dict_identified_terms_list
 </pre></div>
 </div>
 </div>
@@ -535,9 +565,7 @@ for text in tqdm(comments.Comments.to_list()):
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>comments[&quot;dict_term_occurrence&quot;] = dict_term_occurrence_list
-comments[&quot;dict_identified_terms_list&quot;] = dict_identified_terms_list
-comments.loc[comments[&#39;dict_term_occurrence&#39;] &gt; 0]
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>comments_df.loc[comments_df[&#39;dict_term_occurrence&#39;] &gt; 0]
 </pre></div>
 </div>
 </div>
@@ -651,7 +679,7 @@ comments.loc[comments[&#39;dict_term_occurrence&#39;] &gt; 0]
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>comments.hist(column=&quot;dict_term_occurrence&quot;, legend=True, bins=50, range=[0,100])
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>comments_df.hist(column=&quot;dict_term_occurrence&quot;, legend=True, bins=50, range=[0,100])
 </pre></div>
 </div>
 </div>
@@ -702,7 +730,7 @@ comments.loc[comments[&#39;dict_term_occurrence&#39;] &gt; 0]
     <a class='right-next' id="next-link" href="sentiment_analysis.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Transformers</p>
+        <p class="prev-next-title">Sentiment anlysis</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>

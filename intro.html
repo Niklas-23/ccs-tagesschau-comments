@@ -130,7 +130,7 @@ const thebe_selector_output = ".output, .cell_output"
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="sentiment_analysis.html">
-   Transformers
+   Sentiment anlysis
   </a>
  </li>
  <li class="toctree-l1">
@@ -382,7 +382,7 @@ the research question.</p>
 <li class="toctree-l1"><a class="reference internal" href="dataset.html">Dataset</a></li>
 <li class="toctree-l1"><a class="reference internal" href="topic_model.html">Topic modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dictionary_analysis.html">Dictionary Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sentiment_analysis.html">Transformers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sentiment_analysis.html">Sentiment anlysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="political_parties.html">Political parties</a></li>
 <li class="toctree-l1"><a class="reference internal" href="results.html">Results</a></li>
 <li class="toctree-l1"><a class="reference internal" href="conclusion.html">Conclusion</a></li>
@@ -399,18 +399,21 @@ dependencies from the <code class="docutils literal notranslate"><span class="pr
 (your-venv)$ pip install -r requirements.txt
 </pre></div>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you are using an M1 Mac you have to replace the <code class="docutils literal notranslate"><span class="pre">tensorflow</span></code> dependency with the <code class="docutils literal notranslate"><span class="pre">tensorflow-macos</span></code> dependency.</p>
+</div>
 <p>To use the docker container you first have to build the docker image. Since images are built platform-specifically,
 you need to create the image yourself to suit the platform on which you want to run the container. Using an image built
 for a different platform does not make sense because the performance would be too poor to execute the machine learning
 algorithms and models.</p>
 <p>To build the image and run the container execute the commands below. The image is based on the <code class="docutils literal notranslate"><span class="pre">jupyter/minimal-notebook</span></code>
-image which provides a ready-to-use python environment together with a jupyter lab server. The Dockerfile install
+image which provides a ready-to-use python environment together with a jupyter lab server. The Dockerfile installs
 all required dependencies and copies the project code into the container. If you use the code below to run the image
 you can access the jupyter lab server on <code class="docutils literal notranslate"><span class="pre">localhost:10000</span></code>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd &lt;ccs-tagesschau-comments-project-root&gt;
 $ docker build -t ccs . # build the image and name it ccs
-$ docker run -p 10000:8888 ccs-project # run the container and expose jupyter lab on 
-port 10000
+$ docker run -p 10000:8888 ccs # run the container and expose jupyter lab on port 10000
 </pre></div>
 </div>
 </section>

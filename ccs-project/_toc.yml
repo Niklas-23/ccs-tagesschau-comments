@@ -8,10 +8,11 @@ options:
 parts:
 - chapters:
   - file: introduction
-  - file: scrape_comments
+  - file: dataset
   - file: topic_model
   - file: dictionary_analysis
-  - file: transformers
+  - file: sentiment_analysis
+  - file: political_parties
   - file: results
   - file: conclusion
   - file: bibliography

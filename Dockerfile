@@ -6,7 +6,6 @@ USER $NB_UID
 
 COPY ./requirements.txt ./requirements.txt
 RUN pip install --upgrade pip \
-    && pip install sip \
     && pip install -r requirements.txt
 
 RUN python -m spacy download de_core_news_md

@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Dataset &#8212; Analysis of German YouTube comments: How people from the lateral thinking movement dominate the comments section under videos of the &#34;tagesschau&#34; channel</title>
+    <title>Transformers &#8212; Analysis of German YouTube comments: How people from the lateral thinking movement dominate the comments section under videos of the &#34;tagesschau&#34; channel</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -52,8 +52,8 @@ const thebe_selector_output = ".output, .cell_output"
     <script async="async" src="_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Topic modeling" href="topic_model.html" />
-    <link rel="prev" title="Introduction" href="introduction.html" />
+    <link rel="next" title="Political parties" href="political_parties.html" />
+    <link rel="prev" title="Dictionary Analysis" href="dictionary_analysis.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -114,8 +114,8 @@ const thebe_selector_output = ".output, .cell_output"
    Introduction
   </a>
  </li>
- <li class="toctree-l1 current active">
-  <a class="current reference internal" href="#">
+ <li class="toctree-l1">
+  <a class="reference internal" href="dataset.html">
    Dataset
   </a>
  </li>
@@ -129,9 +129,14 @@ const thebe_selector_output = ".output, .cell_output"
    Dictionary Analysis
   </a>
  </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="transformers.html">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
    Transformers
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="political_parties.html">
+   Political parties
   </a>
  </li>
  <li class="toctree-l1">
@@ -208,7 +213,7 @@ title="Toggle navigation"
   <div class="menu-dropdown__content">
     <ul>
       <li>
-        <a href="https://mybinder.org/v2/gh/Niklas-23/ccs-tagesschau-comments/master?urlpath=tree/scrape_comments.ipynb"
+        <a href="https://mybinder.org/v2/gh/Niklas-23/ccs-tagesschau-comments/master?urlpath=tree/sentiment_analysis.ipynb"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -268,7 +273,7 @@ title="Source repository"
       </li>
       
       <li>
-        <a href="https://github.com/Niklas-23/ccs-tagesschau-comments/issues/new?title=Issue%20on%20page%20%2Fscrape_comments.html&body=Your%20issue%20content%20here."
+        <a href="https://github.com/Niklas-23/ccs-tagesschau-comments/issues/new?title=Issue%20on%20page%20%2Fsentiment_analysis.html&body=Your%20issue%20content%20here."
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -296,7 +301,7 @@ title="Open an issue"
   <div class="menu-dropdown__content">
     <ul>
       <li>
-        <a href="_sources/scrape_comments.ipynb"
+        <a href="_sources/sentiment_analysis.ipynb"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -345,7 +350,7 @@ title="Print to PDF"
         <div class="col pl-md-3 pl-lg-5 content-container">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
-                <h1>Dataset</h1>
+                <h1>Transformers</h1>
                 <!-- Table of contents -->
                 <div id="print-main-content">
                     <div id="jb-print-toc">
@@ -357,142 +362,36 @@ title="Print to PDF"
                 
               <div>
                 
-  <section class="tex2jax_ignore mathjax_ignore" id="dataset">
-<h1>Dataset<a class="headerlink" href="#dataset" title="Permalink to this headline">#</a></h1>
-<p>The dataset used was created using the YouTube API V3, which allows efficient and fast downloading of comments. To use the YouTube API you must first create a google account and enable the YouTube API in the Google developer console.The API key required to send requests to the API is also provided on this developer console. A major limitation of the API is that it is has a quota allocation 10,000 units per day, which limits the use of the API. The API works in a paged fashion, returning a limited number of results. The response always contains a <code class="docutils literal notranslate"><span class="pre">nextPageToken</span></code> which can be used to obtain the next results. This means that multiple requests need to be made to get all the comments for a video. However, one can live with this limitation, since a read operation costs only one unit and delivers a hundred comments plus replies.</p>
-<p>To get started, the api key and the playlist ID are inserted first. The “tagesschau” channel provides a playlist that lists the 8 p.m. videos in almost chronological order. The order is only almost chronological, because some videos have been deleted and re-uploaded. These videos often contain only fewer comments, as many have been lost when the video was deleted. However, deleted and re-uploaded videos only occur very rarely and therefore this limitation could be neglected. Then the YouTube API is initialized and ready for use.</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="transformers">
+<h1>Transformers<a class="headerlink" href="#transformers" title="Permalink to this headline">#</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>from googleapiclient.discovery import build
-import pandas as pd
-
-api_key = &#39;&#39;
-playlist_id = &quot;PL4A2F331EE86DCC22&quot;
-max_results_comments = 100
-max_results_playlist = 50
-
-youtube_api = build(&#39;youtube&#39;, &#39;v3&#39;, developerKey=api_key)
-</pre></div>
-</div>
-</div>
-</div>
-<p>To avoid problems with the quota limit, it was decided to download the comments of the 500 most recent videos. Assuming that the videos were uploaded in chronological order, we know that the videos cover the period from the 8th of September 2021 to the 21st of January 2023. Since a maximum of 50 videos are returned when playlist items are queried, 10 queries are sent to obtain the most recent 500 videos. Once all video IDs have been extracted, they are stored in a .csv file to make the results reproducible.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>video_ids = []
-playlist_response = youtube_api.playlistItems().list(part=&quot;snippet&quot;, playlistId=playlist_id, maxResults=max_results_playlist).execute()
-
-for i in range(10):
-    for item in playlist_response[&quot;items&quot;]:
-        video_ids.append(item[&quot;snippet&quot;][&quot;resourceId&quot;][&quot;videoId&quot;])
-        if &quot;nextPageToken&quot; in playlist_response:
-            next_page_token = playlist_response[&quot;nextPageToken&quot;]
-        else:
-            break
-    playlist_response = youtube_api.playlistItems().list(part=&quot;snippet&quot;, playlistId=playlist_id, maxResults=max_results_playlist).execute()
-
-len(video_ids)
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>500
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>import pandas as pd
+from tqdm import tqdm
+from transformers import AutoConfig, AutoTokenizer, AutoModelForSequenceClassification
+import torch
+import numpy as np
+from cleantext import clean
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>df = pd.DataFrame(data=video_ids, columns=[&quot;video_ids&quot;])
-df.to_csv(&quot;data/youtube_video_ids_500.csv&quot;)
-</pre></div>
-</div>
-</div>
-</div>
-<p>To download the comments three functions are implemented. The first function extracts the comments from a comment thread. The second function sends a request to the YouTube API to load a comment thread. The third function iterates over a list of video IDs and uses the first two functions to download all comment threads and to extract all comment. Once all comments have been extracted, they are stored in a .csv file, just like the video IDs before. It is important to note that for performance reasons and quota limitation, only the comment thread function of the YouTube API was used. This function has the limitation that for each comment, only part of the reply comments are included and not all. To get all the replies would require sending requests to another API endpoint. Since this would massively slow down the speed of collecting the comments, it was decided not to do this and thus not to download a part of the reply comments. Downloading all comments took about 20 minutes.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>def load_comments(comment_thread):
-    comment_list = []
-    for item in comment_thread[&quot;items&quot;]:
-        comment = item[&quot;snippet&quot;][&quot;topLevelComment&quot;]
-        comment_text = comment[&quot;snippet&quot;][&quot;textDisplay&quot;]
-        comment_list.append(comment_text)
-        if &#39;replies&#39; in item.keys():
-            for reply in item[&#39;replies&#39;][&#39;comments&#39;]:
-                reply_text = reply[&quot;snippet&quot;][&quot;textDisplay&quot;]
-                comment_list.append(reply_text)
-    return comment_list
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>comments_df = pd.read_csv(&quot;data/youtube_comments_500.csv&quot;)
+comments_df[&quot;Comments&quot;] = comments_df[&quot;Comments&quot;].astype(str)
 
+def clean_text(text:str):
+    text = clean(text, no_emoji=True, lang=&quot;de&quot;)
+    new_text = []
+    for token in text.split(&quot; &quot;):
+        if not token.startswith(&#39;@&#39;) and not token.startswith(&#39;http&#39;):
+            new_text.append(token)
+    return &quot; &quot;.join(new_text)
 
-def get_comment_thread(video_id, page_token=None):
-    comment_thread = youtube_api.commentThreads().list(part=&quot;snippet, replies&quot;, maxResults=max_results_comments, videoId=video_id, textFormat=&quot;plainText&quot;, pageToken=page_token).execute()
-    return comment_thread
-
-
-def scrape_comments(video_ids: list):
-    progress_counter = 0
-    comment_data = []
-    for video_id in video_ids:
-        comment_thread = get_comment_thread(video_id)
-        if &quot;nextPageToken&quot; in comment_thread:
-            next_page_token = comment_thread[&quot;nextPageToken&quot;]
-        else:
-            next_page_token = None
-
-        comment_data.extend(load_comments(comment_thread))
-
-        while next_page_token:
-            comment_thread = get_comment_thread(video_id, next_page_token)
-            if &quot;nextPageToken&quot; not in comment_thread:
-                break
-            else:
-                next_page_token = comment_thread[&quot;nextPageToken&quot;]
-
-            comment_data.extend(load_comments(comment_thread))
-
-        if progress_counter%100 == 0:
-            print(f&quot;Progress: {progress_counter/len(video_ids)}&quot;)
-        progress_counter+=1
-
-    print(&quot;Finished&quot;)
-    return comment_data
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>comment_data = scrape_comments(video_ids)
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Progress: 0.0
-Progress: 0.2
-Progress: 0.4
-Progress: 0.6
-Progress: 0.8
-Finished
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>df = pd.DataFrame(data=comment_data, columns=[&quot;Comments&quot;], index=None)
-df.to_csv(&quot;data/youtube_comments_500.csv&quot;)
-</pre></div>
-</div>
-</div>
-</div>
-<p>To see if everything worked out, we can take a look at the data collected. We can see that everything worked and that we collected 406,242 comments.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>from IPython.display import display
-comments = pd.read_csv (&quot;data/youtube_comments_500.csv&quot;)
-comments = comments.drop(columns=comments.columns[0], axis=1) # Drop the index stored in the .csv file to improve readability.
-display(comments)
+comments_df[&quot;Comments&quot;] = comments_df[&quot;Comments&quot;].apply(lambda text: clean_text(text))
+comments_df =comments_df[comments_df.Comments != &quot;&quot;]
+comments_df
 </pre></div>
 </div>
 </div>
@@ -515,58 +414,228 @@ display(comments)
   <thead>
     <tr style="text-align: right;">
       <th></th>
+      <th>Unnamed: 0</th>
       <th>Comments</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
+      <td>0</td>
       <td>wollt ihr jetzt jeden tag einen großen bericht...</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>Wenn Scholz alles besser weiss, wieso braucht ...</td>
+      <td>1</td>
+      <td>wenn scholz alles besser weiss, wieso braucht ...</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>Die Grünen hatten Früher das Peace Zeichen als...</td>
+      <td>2</td>
+      <td>die grünen hatten früher das peace zeichen als...</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>Der Westen ist ein Kriegstreiber bis es zu ein...</td>
+      <td>3</td>
+      <td>der westen ist ein kriegstreiber bis es zu ein...</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>Frieden schaffen ohne Waffen.</td>
+      <td>4</td>
+      <td>frieden schaffen ohne waffen.</td>
     </tr>
     <tr>
       <th>...</th>
       <td>...</td>
+      <td>...</td>
     </tr>
     <tr>
       <th>406237</th>
-      <td>Kann jeder deutscher werden ,kein Problem sola...</td>
+      <td>406237</td>
+      <td>kann jeder deutscher werden ,kein problem sola...</td>
     </tr>
     <tr>
       <th>406238</th>
-      <td>Dann nimm die Leute bei dir auf und verpflege ...</td>
+      <td>406238</td>
+      <td>dann nimm die leute bei dir auf und verpflege ...</td>
     </tr>
     <tr>
       <th>406239</th>
-      <td>🙄🤔als Staatenloser hatt mans aber auch nicht l...</td>
+      <td>406239</td>
+      <td>als staatenloser hatt mans aber auch nicht lei...</td>
     </tr>
     <tr>
       <th>406240</th>
-      <td>Wann kommt der Blackout? Kinder könnt ihr ja e...</td>
+      <td>406240</td>
+      <td>wann kommt der blackout? kinder könnt ihr ja e...</td>
     </tr>
     <tr>
       <th>406241</th>
-      <td>Den Blackout auf den du wartest, wird es nur g...</td>
+      <td>406241</td>
+      <td>den blackout auf den du wartest, wird es nur g...</td>
     </tr>
   </tbody>
 </table>
-<p>406242 rows × 1 columns</p>
+<p>401282 rows × 2 columns</p>
 </div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>model_name = &quot;oliverguhr/german-sentiment-bert&quot;
+sentiment_tokenizer = AutoTokenizer.from_pretrained(model_name)
+sentiment_model_config = AutoConfig.from_pretrained(model_name)
+sentiment_model = AutoModelForSequenceClassification.from_pretrained(model_name)
+
+label_list = []
+score_list = []
+
+for text in tqdm(comments_df.Comments.to_list()):
+    tokenized_input = sentiment_tokenizer(text, padding=True, truncation=True, return_tensors=&#39;pt&#39;, max_length=512)
+    output = sentiment_model(**tokenized_input)
+    predictions = torch.nn.functional.softmax(output.logits, dim=-1)
+    predictions = predictions.detach().numpy()[0]
+    label_list.append(sentiment_model_config.id2label[np.argsort(predictions)[::-1][0]])
+    score_list.append(max(predictions))
+
+comments_df[&quot;sentiment&quot;] = label_list
+comments_df[&quot;sentiment_score&quot;] = score_list
+comments_df.to_csv(&quot;data/sentiments.csv&quot;)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>comments = pd.read_csv(&quot;data/sentiments.csv&quot;)
+comments.head(10)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Unnamed: 0.1</th>
+      <th>Unnamed: 0</th>
+      <th>Comments</th>
+      <th>sentiment</th>
+      <th>sentiment_score</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>0</td>
+      <td>wollt ihr jetzt jeden tag einen großen bericht...</td>
+      <td>negative</td>
+      <td>0.997865</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>1</td>
+      <td>Wenn Scholz alles besser weiss, wieso braucht ...</td>
+      <td>negative</td>
+      <td>0.922022</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>2</td>
+      <td>Die Grünen hatten Früher das Peace Zeichen als...</td>
+      <td>neutral</td>
+      <td>0.682787</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>3</td>
+      <td>Der Westen ist ein Kriegstreiber bis es zu ein...</td>
+      <td>neutral</td>
+      <td>0.994764</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4</td>
+      <td>4</td>
+      <td>Frieden schaffen ohne Waffen.</td>
+      <td>neutral</td>
+      <td>0.957964</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>5</td>
+      <td>5</td>
+      <td>Donnor, dann sag Putin, er soll aus der Ukrain...</td>
+      <td>neutral</td>
+      <td>0.998527</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>6</td>
+      <td>6</td>
+      <td>Kanal Sahra Wagenknecht: Erst Panzer, dann Kam...</td>
+      <td>neutral</td>
+      <td>0.524188</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>7</td>
+      <td>7</td>
+      <td>Donnor, beweis deine Behauptung, die Ukraine w...</td>
+      <td>neutral</td>
+      <td>0.779697</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>8</td>
+      <td>8</td>
+      <td>Deutschland wird mit der Lieferung nichts gute...</td>
+      <td>neutral</td>
+      <td>0.997424</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>9</td>
+      <td>9</td>
+      <td>Warum? Frieden schaffen mit Waffen. Denk mal a...</td>
+      <td>negative</td>
+      <td>0.891107</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>ax = comments[&quot;sentiment&quot;].value_counts(normalize=True).plot(kind=&quot;barh&quot;, title=&quot;Sentiment model&quot;)
+ax.bar_label(ax.containers[0])
+ax.set_xlim(0,0.65)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(0.0, 0.65)
+</pre></div>
+</div>
+<img alt="_images/sentiment_analysis_5_1.png" src="_images/sentiment_analysis_5_1.png" />
+</div>
 </div>
 </section>
 
@@ -597,17 +666,17 @@ display(comments)
                 
     <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="introduction.html" title="previous page">
+    <a class='left-prev' id="prev-link" href="dictionary_analysis.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">Introduction</p>
+            <p class="prev-next-title">Dictionary Analysis</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="topic_model.html" title="next page">
+    <a class='right-next' id="next-link" href="political_parties.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Topic modeling</p>
+        <p class="prev-next-title">Political parties</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>

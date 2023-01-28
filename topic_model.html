@@ -53,7 +53,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Dictionary Analysis" href="dictionary_analysis.html" />
-    <link rel="prev" title="Dataset" href="scrape_comments.html" />
+    <link rel="prev" title="Dataset" href="dataset.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -115,7 +115,7 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="scrape_comments.html">
+  <a class="reference internal" href="dataset.html">
    Dataset
   </a>
  </li>
@@ -130,8 +130,13 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="transformers.html">
+  <a class="reference internal" href="sentiment_analysis.html">
    Transformers
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="political_parties.html">
+   Political parties
   </a>
  </li>
  <li class="toctree-l1">
@@ -518,7 +523,7 @@ corpus = [dictionary.doc2bow(text) for text in preprocessed_comments]
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>lda_model = gensim.models.ldamodel.LdaModel(corpus, num_topics = 20, id2word=dictionary, passes=15, alpha=&quot;auto&quot;, eta=&quot;auto&quot;)
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>lda_model = gensim.models.ldamodel.LdaModel(corpus, num_topics = 6, id2word=dictionary, passes=15, alpha=&quot;auto&quot;, eta=&quot;auto&quot;)
 lda_model.save(&#39;lda_model_20.gensim&#39;)
 </pre></div>
 </div>
@@ -527,7 +532,7 @@ lda_model.save(&#39;lda_model_20.gensim&#39;)
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>lda_model = gensim.models.ldamodel.LdaModel.load(&quot;lda_model_10.gensim&quot;)
-for index, topic in lda_model.show_topics(num_topics=10, num_words=10, formatted=False):
+for index, topic in lda_model.show_topics(num_topics=6, num_words=10, formatted=False):
     print(f&quot;Topic {index}: \n{[word[0] for word in topic]}&quot;)
 </pre></div>
 </div>
@@ -560,8 +565,7 @@ Topic 9:
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>lda_model = gensim.models.ldamodel.LdaModel.load(&quot;lda_model_20.gensim&quot;)
-for index, topic in lda_model.show_topics(num_topics=20, num_words=10, formatted=False):
-    if index &lt; 20:
+for index, topic in lda_model.show_topics(num_topics=10, num_words=10, formatted=False):
         print(f&quot;Topic {index}: \n{[word[0] for word in topic]}&quot;)
 </pre></div>
 </div>
@@ -614,8 +618,7 @@ Topic 19:
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>lda_model = gensim.models.ldamodel.LdaModel.load(&quot;lda_model_50.gensim&quot;)
-for index, topic in lda_model.show_topics(num_topics=50, num_words=10, formatted=False):
-    if index &lt; 20:
+for index, topic in lda_model.show_topics(num_topics=20, num_words=10, formatted=False):
         print(f&quot;Topic {index}: \n{[word[0] for word in topic]}&quot;)
 </pre></div>
 </div>
@@ -783,7 +786,7 @@ if(typeof(LDAvis) !== "undefined"){
                 
     <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="scrape_comments.html" title="previous page">
+    <a class='left-prev' id="prev-link" href="dataset.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>

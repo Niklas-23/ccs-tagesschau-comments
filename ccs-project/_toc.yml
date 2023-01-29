@@ -10,6 +10,7 @@ parts:
   - file: introduction
   - file: dataset
   - file: topic_model
+  - file: topic_model_visualization
   - file: dictionary_analysis
   - file: sentiment_analysis
   - file: political_parties

@@ -373,11 +373,12 @@ title="Print to PDF"
 <p>First, the libraries for the preprocessing of the dataset are imported. To remove stopwords the stopword list from the Natural Language Toolkit (NLTK) is used. In addition, the spacy library is used for lemmatization. Lemmatization is an important and often used pre-processing step for topic modelling, because it has been shown that lemmatization can lead to better results <span id="id2">[<a class="reference internal" href="bibliography.html#id11" title="Chandler May, Ryan Cotterell, and Benjamin Van Durme. An Analysis of Lemmatization on Topic Models of Morphologically Rich Language. May 2019. arXiv:1608.03995 [cs]. URL: http://arxiv.org/abs/1608.03995 (visited on 2023-01-27), doi:10.48550/arXiv.1608.03995.">May <em>et al.</em>, 2019</a>]</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>import pandas as pd
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import pandas as pd
 from cleantext import clean
 import pickle
 from pathlib import Path
 import string
+from tqdm import tqdm
 
 import warnings
 warnings.filterwarnings(&#39;ignore&#39;) # Disable warnings to improve output formation
@@ -394,10 +395,10 @@ spacy_model_german = spacy.load(&quot;de_core_news_md&quot;, disable=[&quot;pars
 </div>
 </div>
 </div>
-<p>For pre-processing the text, we first create a stop word list and a punctuation list. Then we define methods for lemmatizing the text and removing punctuation marks. Both methods expect the text as input, perform the corresponding processing and return the processed text. The method <code class="docutils literal notranslate"><span class="pre">tokenize_and_lemmatize_text</span></code> performs the complete preprocessing. First the linebreaks and the emojis are removed. To remove the emojis the <code class="docutils literal notranslate"><span class="pre">cleantext</span></code> library is used. Then the two methods to remove punctuation and to perform lemmatization are applied. Since spacy returns a double bar <code class="docutils literal notranslate"><span class="pre">--</span></code> as a token for punctuation marks or unknown characters, these tokens are removed to ensure that only meaningful tokens are included. Then the stopwords are removed. At the end empty tokens are removed because these tokens can occur, for example, if the comment consists only of emojis.</p>
+<p>For preprocessing the text, we first create a stopword list and a punctuation list. Then we define methods for lemmatizing the text and removing punctuation marks. Both methods expect the text as input, perform the corresponding processing and return the processed text. The method <code class="docutils literal notranslate"><span class="pre">tokenize_and_lemmatize_text</span></code> performs the complete preprocessing. First the linebreaks and the emojis are removed. To remove the emojis the <code class="docutils literal notranslate"><span class="pre">cleantext</span></code> library is used. Then the two methods to remove punctuation and to perform lemmatization are applied. Since spacy returns a double bar <code class="docutils literal notranslate"><span class="pre">--</span></code> as a token for punctuation marks or unknown characters, these tokens are removed to ensure that only meaningful tokens are included. Then the stopwords are removed. At the end empty tokens are removed because these tokens can occur, for example, if the comment consists only of emojis.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>stop_words = set(stopwords.words(&#39;german&#39;))
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>stop_words = set(stopwords.words(&#39;german&#39;))
 regular_punctuation = list(string.punctuation)
 
 def get_lemmatized_text(text: str):
@@ -414,13 +415,13 @@ def remove_punctuation(text):
     return text.strip()
 
 def tokenize_and_lemmatize_text(text: str):
-    text = text.replace(&quot;\n&quot;, &quot;&quot;)
-    text = clean(text, no_emoji=True, lang=&quot;de&quot;)
+    text = clean(text, no_emoji=True, lang=&quot;de&quot;, no_urls=True)
     text = remove_punctuation(text)
     tokens = get_lemmatized_text(text)
     tokens = [token for token in tokens if token != &quot;--&quot;]
     tokens = [token for token in tokens if token not in stop_words]
-    tokens = [token for token in tokens if token != &quot; &quot; and token != &quot;&quot;]
+    tokens = [token for token in tokens if not token.isspace()] # remove spaces
+    tokens = [token for token in tokens if len(token) &gt; 1] # remove single characters
     return tokens
 </pre></div>
 </div>
@@ -429,18 +430,25 @@ def tokenize_and_lemmatize_text(text: str):
 <p>To preprocess all comments, they are first loaded from the csv file and then it is ensured that all comments are in string format. This step is necessary because otherwise the error occurs later that the comment would not be a string. This problem is probably caused by the fact that special characters are interpreted incorrectly when the comments are saved or read in. At the end we get a list that contains for each comment a list of tokens, as we can see in the output.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>comments = pd.read_csv(&quot;data/youtube_comments_500.csv&quot;)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>comments = pd.read_csv(&quot;data/youtube_comments_500.csv&quot;)
 comments[&quot;Comments&quot;] = comments[&quot;Comments&quot;].astype(str)
 preprocessed_comments = []
-for index, row in comments.iterrows():
-    preprocessed_comments.append(tokenize_and_lemmatize_text(row[&quot;Comments&quot;]))
+for index, row in tqdm(comments.iterrows()):
+    preprocessed_text: list = tokenize_and_lemmatize_text(row[&quot;Comments&quot;])
+    if len(preprocessed_text) &gt; 1:
+        preprocessed_comments.append(preprocessed_text)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>406242it [24:50, 272.51it/s]
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>preprocessed_comments[0:3]
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>preprocessed_comments[0:2]
 </pre></div>
 </div>
 </div>
@@ -463,26 +471,7 @@ for index, row in comments.iterrows():
   &#39;brauchen&#39;,
   &#39;Verteidigungsminister&#39;,
   &#39;Stelle&#39;,
-  &#39;sparen&#39;],
- [&#39;grüne&#39;,
-  &#39;früh&#39;,
-  &#39;Peace&#39;,
-  &#39;Zeichen&#39;,
-  &#39;Symbol&#39;,
-  &#39;heute&#39;,
-  &#39;Panzer&#39;,
-  &#39;wenigstens&#39;,
-  &#39;klein&#39;,
-  &#39;Haubitze&#39;,
-  &#39;bedenken&#39;,
-  &#39;Militär&#39;,
-  &#39;ja&#39;,
-  &#39;grün&#39;,
-  &#39;grün&#39;,
-  &#39;Wiese&#39;,
-  &#39;wachsen&#39;,
-  &#39;braun&#39;,
-  &#39;Dreck&#39;]]
+  &#39;sparen&#39;]]
 </pre></div>
 </div>
 </div>
@@ -490,7 +479,7 @@ for index, row in comments.iterrows():
 <p>The preprocessing is quite time-consuming and takes a few minutes, which is why the processed comments are saved as a pickle file. Saving the list as a pickle file makes it possible to save the list directly and load it again. Saving the comments here as a csv makes little sense, as the list of tokens for each comment has a different length.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>file = Path(&quot;data/youtube_comments_500_preprocessed.pkl&quot;)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>file = Path(&quot;data/youtube_comments_500_preprocessed.pkl&quot;)
 if not file.exists():
     with open(&quot;data/youtube_comments_500_preprocessed.pkl&quot;, &quot;wb&quot;) as fw:
         pickle.dump(preprocessed_comments, fw)
@@ -500,7 +489,7 @@ if not file.exists():
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>with open(&quot;data/youtube_comments_500_preprocessed.pkl&quot;, &quot;rb&quot;) as fr:
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>with open(&quot;data/youtube_comments_500_preprocessed.pkl&quot;, &quot;rb&quot;) as fr:
     preprocessed_comments = pickle.load(fr)
 </pre></div>
 </div>
@@ -512,17 +501,16 @@ if not file.exists():
 <p>To compare which option performed better, two metrics are used.The Perplexity measures how well the model can fit the actual word representation. The coherence measures how semantically coherent two topics are. However, the best model achieved by these metrics is not always the most interpretable model from a human perspective <span id="id4">[<a class="reference internal" href="bibliography.html#id2" title="Wouter van Atteveldt. Computational analysis of communication: a practical introduction to the analysis of texts, networks, and images with code examples in Python and R. Wiley Blackwell, Hoboken, USA Sussex, UK, 2022. ISBN 978-1-119-68023-9.">Atteveldt, 2022</a>]</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>import gensim
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import gensim
 import gensim.corpora as corpora
 from gensim.models import CoherenceModel
-import pyLDAvis.gensim_models
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>dictionary = corpora.Dictionary(preprocessed_comments)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>dictionary = corpora.Dictionary(preprocessed_comments)
 dictionary.filter_extremes(no_below=20, no_above=0.8)
 corpus = [dictionary.doc2bow(text) for text in preprocessed_comments]
 </pre></div>
@@ -531,154 +519,862 @@ corpus = [dictionary.doc2bow(text) for text in preprocessed_comments]
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>lda_model = gensim.models.ldamodel.LdaModel(corpus, num_topics = 6, id2word=dictionary, passes=15, alpha=&quot;auto&quot;, eta=&quot;auto&quot;)
-lda_model.save(&#39;lda_model_20.gensim&#39;)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>lda_model = gensim.models.ldamodel.LdaModel(corpus, num_topics = 20, id2word=dictionary, passes=15, alpha=&quot;auto&quot;, eta=&quot;auto&quot;)
+lda_model.save(&#39;lda_models/lda_model_20.gensim&#39;)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>lda_model = gensim.models.ldamodel.LdaModel.load(&quot;lda_model_10.gensim&quot;)
-for index, topic in lda_model.show_topics(num_topics=6, num_words=10, formatted=False):
-    print(f&quot;Topic {index}: \n{[word[0] for word in topic]}&quot;)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>lda_model_6 = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_6.gensim&quot;)
+lda_model_10 = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_10.gensim&quot;)
+lda_model_20 = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_20.gensim&quot;)
+
+# Compute Perplexity
+print(&#39;LDA_6 Perplexity: &#39;, lda_model_6.log_perplexity(corpus))
+print(&#39;LDA_10 Perplexity: &#39;, lda_model_10.log_perplexity(corpus))
+print(&#39;LDA_20 Perplexity: &#39;, lda_model_20.log_perplexity(corpus))
+
+# Compute Coherence Score
+coherence_model_lda_6 = CoherenceModel(model=lda_model_6, texts=preprocessed_comments, dictionary=dictionary, coherence=&#39;c_v&#39;)
+coherence_lda_6 = coherence_model_lda_6.get_coherence()
+print(&#39;LDA_6 Coherence Score: &#39;, coherence_lda_6)
+
+coherence_model_lda_10 = CoherenceModel(model=lda_model_10, texts=preprocessed_comments, dictionary=dictionary, coherence=&#39;c_v&#39;)
+coherence_lda_10 = coherence_model_lda_10.get_coherence()
+print(&#39;LDA_10 Coherence Score: &#39;, coherence_lda_10)
+
+coherence_model_lda_20 = CoherenceModel(model=lda_model_20, texts=preprocessed_comments, dictionary=dictionary, coherence=&#39;c_v&#39;)
+coherence_lda_20 = coherence_model_lda_20.get_coherence()
+print(&#39;LDA_20 Coherence Score: &#39;, coherence_lda_20)
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Topic 0: 
-[&#39;innen&#39;, &#39;\n&#39;, &#39;Sektendepp&#39;, &#39;fordern&#39;, &#39;hetzen&#39;, &#39;Putinanhimmler&#39;, &#39;danken&#39;, &#39;Lüge&#39;, &#39;nix&#39;, &#39;Beweis&#39;]
-Topic 1: 
-[&#39;Jahr&#39;, &#39;sagen&#39;, &#39;brauchen&#39;, &#39;afd&#39;, &#39;bitte&#39;, &#39;natürlich&#39;, &#39;glauben&#39;, &#39;letzter&#39;, &#39;klar&#39;, &#39;jemand&#39;]
-Topic 2: 
-[&#39;Russland&#39;, &#39;Krieg&#39;, &#39;USA&#39;, &#39;Ukraine&#39;, &#39;Putin&#39;, &#39;EU&#39;, &#39;Coronaleugner&#39;, &#39;Waffe&#39;, &#39;Staat&#39;, &#39;russisch&#39;]
-Topic 3: 
-[&#39;Behauptung&#39;, &#39;CDU&#39;, &#39;teuer&#39;, &#39;arm&#39;, &#39;Preis&#39;, &#39;besonders&#39;, &#39;Fakt&#39;, &#39;blöd&#39;, &#39;Ausländer&#39;, &#39;Christian&#39;]
-Topic 4: 
-[&#39;Kommentar&#39;, &#39;The&#39;, &#39;wünschen&#39;, &#39;offensichtlich&#39;, &#39;dr&#39;, &#39;Beleidigung&#39;, &#39;passen&#39;, &#39;Rente&#39;, &#39;de&#39;, &#39;fehlen&#39;]
-Topic 5: 
-[&#39;Name&#39;, &#39;beweisen&#39;, &#39;bald&#39;, &#39;Gas&#39;, &#39;tragen&#39;, &#39;Absonderung&#39;, &#39;Maske&#39;, &#39;kaufen&#39;, &#39;50&#39;, &#39;Michael&#39;]
-Topic 6: 
-[&#39;ja&#39;, &#39;mehr&#39;, &#39;gut&#39;, &#39;schon&#39;, &#39;Deutschland&#39;, &#39;mal&#39;, &#39;sollen&#39;, &#39;geben&#39;, &#39;immer&#39;, &#39;wer&#39;]
-Topic 7: 
-[&#39;2&#39;, &#39;1&#39;, &#39;3&#39;, &#39;5&#39;, &#39;10&#39;, &#39;Million&#39;, &#39;000&#39;, &#39;4&#39;, &#39;Lara&#39;, &#39;Croft&#39;]
-Topic 8: 
-[&#39;  &#39;, &#39;   &#39;, &#39;s&#39;, &#39;heute&#39;, &#39;Tagesschau&#39;, &#39;Tag&#39;, &#39;berichten&#39;, &#39;Thema&#39;, &#39;Medium&#39;, &#39;rd&#39;]
-Topic 9: 
-[&#39;deutsch&#39;, &#39;    &#39;, &#39;grün&#39;, &#39;n&#39;, &#39;     &#39;, &#39;China&#39;, &#39;erster&#39;, &#39;Berlin&#39;, &#39;Scholz&#39;, &#39;Strom&#39;]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>LDA_6 Perplexity:  -8.334388322182123
+LDA_10 Perplexity:  -9.166142281809835
+LDA_20 Perplexity:  -13.330936599649911
+LDA_6 Coherence Score:  0.6025754127903082
+LDA_10 Coherence Score:  0.5074582503859234
+LDA_20 Coherence Score:  0.4254128399081809
 </pre></div>
 </div>
 </div>
 </div>
-<div class="cell docutils container">
+<div class="cell tag_hide-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>lda_model = gensim.models.ldamodel.LdaModel.load(&quot;lda_model_20.gensim&quot;)
-for index, topic in lda_model.show_topics(num_topics=10, num_words=10, formatted=False):
-        print(f&quot;Topic {index}: \n{[word[0] for word in topic]}&quot;)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>lda_model = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_6.gensim&quot;)
+display(pd.DataFrame({f&quot;Topic {n}&quot;:[word for (word,word_weight) in words] for (n, words) in lda_model.show_topics(formatted=False, num_words=15)}))
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Topic 0: 
-[&#39;sehen&#39;, &#39;alt&#39;, &#39;nehmen&#39;, &#39;Mann&#39;, &#39;@the&#39;, &#39;dagegen&#39;, &#39;handeln&#39;, &#39;20&#39;, &#39;Bundeswehr&#39;, &#39;kriegen&#39;]
-Topic 1: 
-[&#39;wann&#39;, &#39;=&#39;, &#39;zumindest&#39;, &#39;hoffentlich&#39;, &#39;ehrlich&#39;, &#39;sowieso&#39;, &#39;illegal&#39;, &#39;6&#39;, &#39;Pass&#39;, &#39;tv&#39;]
-Topic 2: 
-[&#39;innen&#39;, &#39;Nachricht&#39;, &#39;gerne&#39;, &#39;wünschen&#39;, &#39;vergessen&#39;, &#39;blöd&#39;, &#39;scheinen&#39;, &#39;@mrscrewy&#39;, &#39;Freund&#39;, &#39;angst&#39;]
-Topic 3: 
-[&#39;sollen&#39;, &#39;warum&#39;, &#39;bekommen&#39;, &#39;erst&#39;, &#39;hoch&#39;, &#39;Leben&#39;, &#39;bezahlen&#39;, &#39;Strom&#39;, &#39;zurück&#39;, &#39;reichen&#39;]
-Topic 4: 
-[&#39;glauben&#39;, &#39;wichtig&#39;, &#39;mussn&#39;, &#39;bekannt&#39;, &#39;wm&#39;, &#39;fehlen&#39;, &#39;100&#39;, &#39;Polizist&#39;, &#39;extrem&#39;, &#39;weiterhin&#39;]
-Topic 5: 
-[&#39;groß&#39;, &#39;Zeit&#39;, &#39;wohl&#39;, &#39;lang&#39;, &#39;kurz&#39;, &#39;Teil&#39;, &#39;Auge&#39;, &#39;kaum&#39;, &#39;wahr&#39;, &#39;merken&#39;]
-Topic 6: 
-[&#39;mehr&#39;, &#39;Deutschland&#39;, &#39;geben&#39;, &#39;deutsch&#39;, &#39;gehen&#39;, &#39;ganz&#39;, &#39;Land&#39;, &#39;müssen&#39;, &#39;Regierung&#39;, &#39;USA&#39;]
-Topic 7: 
-[&#39;Leute&#39;, &#39;lassen&#39;, &#39;schön&#39;, &#39;krank&#39;, &#39;passieren&#39;, &#39;tragen&#39;, &#39;lieber&#39;, &#39;Maske&#39;, &#39;verbieten&#39;, &#39;Lauterbach&#39;]
-Topic 8: 
-[&#39;..&#39;, &#39;endlich&#39;, &#39;Panzer&#39;, &#39;schicken&#39;, &#39;toll&#39;, &#39;fahren&#39;, &quot;&#39;&quot;, &#39;schließen&#39;, &#39;danach&#39;, &#39;@han&#39;]
-Topic 9: 
-[&#39;Kind&#39;, &#39;daran&#39;, &#39;etwa&#39;, &#39;Familie&#39;, &#39;Grenze&#39;, &#39;Steuer&#39;, &#39;schaden&#39;, &#39;Maßnahme&#39;, &#39;usw.&#39;, &#39;kümmern&#39;]
-Topic 10: 
-[&#39;Recht&#39;, &#39;voll&#39;, &#39;@fckafd&#39;, &#39;erinnern&#39;, &#39;Hetzer&#39;, &#39;willst&#39;, &#39;Interesse&#39;, &#39;irgendwann&#39;, &#39;anstatt&#39;, &#39;entwickeln&#39;]
-Topic 11: 
-[&#39;Corona&#39;, &#39;eh&#39;, &#39;peinlich&#39;, &#39;Ausland&#39;, &#39;meist&#39;, &#39;etc.&#39;, &#39;Regime&#39;, &#39;leugnen&#39;, &#39;;)&#39;, &#39;Kanzler&#39;]
-Topic 12: 
-[&#39;bleiben&#39;, &#39;Frau&#39;, &#39;Frage&#39;, &#39;stellen&#39;, &#39;Medium&#39;, &#39;nennen&#39;, &#39;Scholz&#39;, &#39;setzen&#39;, &#39;Sache&#39;, &#39;funktionieren&#39;]
-Topic 13: 
-[&#39;Herr&#39;, &#39;nein&#39;, &#39;n&#39;, &#39;ard&#39;, &#39;Aussage&#39;, &#39;Michel&#39;, &#39;komisch&#39;, &#39;zdf&#39;, &#39;drauf&#39;, &#39;bisher&#39;]
-Topic 14: 
-[&#39;Tagesschau&#39;, &#39;erster&#39;, &#39;eben&#39;, &#39;Thema&#39;, &#39;berichten&#39;, &#39;wieso&#39;, &#39;Propaganda&#39;, &#39;Rex&#39;, &#39;Imperator&#39;, &#39;@wilhelm&#39;]
-Topic 15: 
-[&#39;klein&#39;, &#39;darüber&#39;, &#39;her&#39;, &#39;passen&#39;, &#39;Silvester&#39;, &#39;nämlich&#39;, &#39;elser&#39;, &#39;Terrorist&#39;, &#39;Hass&#39;, &#39;Erfolg&#39;]
-Topic 16: 
-[&#39;Mensch&#39;, &#39;einfach&#39;, &#39;vieler&#39;, &#39;natürlich&#39;, &#39;letzter&#39;, &#39;schlecht&#39;, &#39;heißen&#39;, &#39;Gesellschaft&#39;, &#39;jung&#39;, &#39;bestehen&#39;]
-Topic 17: 
-[&#39;ja&#39;, &#39;gut&#39;, &#39;schon&#39;, &#39;mal&#39;, &#39;kommen&#39;, &#39;sagen&#39;, &#39;finden&#39;, &#39;gar&#39;, &#39;klar&#39;, &#39;dabei&#39;]
-Topic 18: 
-[&#39;Tag&#39;, &#39;paar&#39;, &#39;grüne&#39;, &#39;teuer&#39;, &#39;ziehen&#39;, &#39;gewinnen&#39;, &#39;kosten&#39;, &#39;super&#39;, &#39;weder&#39;, &#39;Ding&#39;]
-Topic 19: 
-[&#39;echt&#39;, &#39;_&#39;, &#39;ach&#39;, &#39;darum&#39;, &#39;for&#39;, &#39;Bundesregierung&#39;, &#39;to&#39;, &#39;The&#39;, &#39;per&#39;, &#39;inzwischen&#39;]
-</pre></div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Topic 0</th>
+      <th>Topic 1</th>
+      <th>Topic 2</th>
+      <th>Topic 3</th>
+      <th>Topic 4</th>
+      <th>Topic 5</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Jahr</td>
+      <td>ja</td>
+      <td>Regierung</td>
+      <td>mehr</td>
+      <td>innen</td>
+      <td>Nachricht</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Deutschland</td>
+      <td>gut</td>
+      <td>Frau</td>
+      <td>sollen</td>
+      <td>Sektendepp</td>
+      <td>The</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Russland</td>
+      <td>schon</td>
+      <td>grün</td>
+      <td>geben</td>
+      <td>Coronaleugner</td>
+      <td>Reichsbürger</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Krieg</td>
+      <td>mal</td>
+      <td>endlich</td>
+      <td>Mensch</td>
+      <td>hetzen</td>
+      <td>Reinhard</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>USA</td>
+      <td>wer</td>
+      <td>Politiker</td>
+      <td>Deutschland</td>
+      <td>Behauptung</td>
+      <td>Youtube</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Ukraine</td>
+      <td>immer</td>
+      <td>Medium</td>
+      <td>Land</td>
+      <td>Lüge</td>
+      <td>Antwort</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>seit</td>
+      <td>gehen</td>
+      <td>wählen</td>
+      <td>warum</td>
+      <td>Putinanhimmler</td>
+      <td>Weihnachten</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>Putin</td>
+      <td>kommen</td>
+      <td>Volk</td>
+      <td>müssen</td>
+      <td>Lara</td>
+      <td>oh</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>Waffe</td>
+      <td>deutsch</td>
+      <td>Demokratie</td>
+      <td>tun</td>
+      <td>Beweis</td>
+      <td>Mrscrewy</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>russisch</td>
+      <td>ganz</td>
+      <td>eur</td>
+      <td>vieler</td>
+      <td>Croft</td>
+      <td>de</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>EU</td>
+      <td>sagen</td>
+      <td>Herr</td>
+      <td>Leute</td>
+      <td>Name</td>
+      <td>jährig</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>10</td>
+      <td>sehen</td>
+      <td>Partei</td>
+      <td>Kind</td>
+      <td>Michael</td>
+      <td>Müller</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>Europa</td>
+      <td>wissen</td>
+      <td>wann</td>
+      <td>Problem</td>
+      <td>beweisen</td>
+      <td>dürsch</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>ukrain</td>
+      <td>einfach</td>
+      <td>Berlin</td>
+      <td>dürfen</td>
+      <td>Jinping</td>
+      <td>Henning</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>Panzer</td>
+      <td>heute</td>
+      <td>EU</td>
+      <td>dafür</td>
+      <td>drohen</td>
+      <td>Kreml</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
 </div>
-</div>
-</div>
-<div class="cell docutils container">
+<div class="cell tag_hide-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>lda_model = gensim.models.ldamodel.LdaModel.load(&quot;lda_model_50.gensim&quot;)
-for index, topic in lda_model.show_topics(num_topics=20, num_words=10, formatted=False):
-        print(f&quot;Topic {index}: \n{[word[0] for word in topic]}&quot;)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>lda_model = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_10.gensim&quot;)
+display(pd.DataFrame({f&quot;Topic {n}&quot;:[word for (word,word_weight) in words] for (n, words) in lda_model.show_topics(formatted=False, num_topics=10, num_words=15)}))
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Topic 0: 
-[&#39;mehr&#39;, &#39;sollen&#39;, &#39;müssen&#39;, &#39;tun&#39;, &#39;bekommen&#39;, &#39;Geld&#39;, &#39;Politik&#39;, &#39;bezahlen&#39;, &#39;Bürger&#39;, &#39;zerstören&#39;]
-Topic 1: 
-[&#39;stellen&#39;, &#39;nix&#39;, &#39;fordern&#39;, &#39;möchten&#39;, &#39;meister&#39;, &#39;ständig&#39;, &#39;solange&#39;, &#39;peinlich&#39;, &#39;Armee&#39;, &#39;zusätzlich&#39;]
-Topic 2: 
-[&#39;..&#39;, &#39;.....&#39;, &#39;wenig&#39;, &#39;informieren&#39;, &#39;drauf&#39;, &#39;soweit&#39;, &#39;aussehen&#39;, &#39;leer&#39;, &#39;abgeben&#39;, &#39;scheinbar&#39;]
-Topic 3: 
-[&#39;Tagesschau&#39;, &#39;Kommentar&#39;, &#39;schreiben&#39;, &#39;viele&#39;, &#39;lesen&#39;, &#39;dank&#39;, &#39;@fckafd&#39;, &#39;kannst&#39;, &#39;freuen&#39;, &#39;=&#39;]
-Topic 4: 
-[&#39;Demokratie&#39;, &#39;kosten&#39;, &#39;nutzen&#39;, &#39;Sicherheit&#39;, &#39;ansehen&#39;, &#39;belegen&#39;, &#39;gucken&#39;, &#39;erleben&#39;, &#39;gestalten&#39;, &#39;verursachen&#39;]
-Topic 5: 
-[&#39;bekannt&#39;, &#39;bestimmt&#39;, &#39;Realität&#39;, &#39;illegal&#39;, &#39;einsetzen&#39;, &#39;aufgrund&#39;, &#39;Leistung&#39;, &#39;üblich&#39;, &#39;betrachten&#39;, &#39;Bedingung&#39;]
-Topic 6: 
-[&#39;\n&#39;, &#39;Herr&#39;, &#39;Klimawandel&#39;, &#39;ziehen&#39;, &#39;super&#39;, &#39;Minute&#39;, &#39;total&#39;, &#39;lieben&#39;, &#39;soviel&#39;, &#39;Stunde&#39;]
-Topic 7: 
-[&#39;einfach&#39;, &#39;deshalb&#39;, &#39;Rentner&#39;, &#39;Generation&#39;, &#39;bloß&#39;, &#39;ähnlich&#39;, &#39;Stelle&#39;, &#39;entweder&#39;, &#39;Sprache&#39;, &#39;vorstellen&#39;]
-Topic 8: 
-[&#39;verlieren&#39;, &#39;System&#39;, &#39;Typ&#39;, &#39;Video&#39;, &#39;lediglich&#39;, &#39;betreiben&#39;, &#39;weißen&#39;, &#39;warm&#39;, &#39;konsequent&#39;, &#39;Willkür&#39;]
-Topic 9: 
-[&#39;mal&#39;, &#39;gehen&#39;, &#39;endlich&#39;, &#39;Name&#39;, &#39;arbeiten&#39;, &#39;wann&#39;, &#39;darum&#39;, &#39;Kopf&#39;, &#39;Berichterstattung&#39;, &#39;Alexander&#39;]
-Topic 10: 
-[&#39;Jahr&#39;, &#39;seit&#39;, &#39;nie&#39;, &#39;Youtube&#39;, &#39;Lügner&#39;, &#39;löschen&#39;, &#39;verfolgen&#39;, &#39;feiern&#39;, &#39;Rakete&#39;, &#39;Rumänien&#39;]
-Topic 11: 
-[&#39;gerne&#39;, &#39;Bevölkerung&#39;, &#39;raus&#39;, &#39;Teil&#39;, &#39;Gewalt&#39;, &#39;außerdem&#39;, &#39;wen&#39;, &#39;xd&#39;, &#39;nett&#39;, &#39;vertreten&#39;]
-Topic 12: 
-[&#39;lassen&#39;, &#39;kämpfen&#39;, &#39;tragen&#39;, &#39;Wolf&#39;, &#39;Maske&#39;, &#39;Lauterbach&#39;, &#39;stecken&#39;, &#39;geh&#39;, &#39;scheiß&#39;, &#39;melden&#39;]
-Topic 13: 
-[&#39;ganz&#39;, &#39;Welt&#39;, &#39;wichtig&#39;, &#39;ach&#39;, &#39;Gesellschaft&#39;, &#39;setzen&#39;, &#39;demokratisch&#39;, &#39;lachen&#39;, &#39;kaputt&#39;, &#39;international&#39;]
-Topic 14: 
-[&#39;Million&#39;, &#39;sprechen&#39;, &#39;etwa&#39;, &#39;Rente&#39;, &#39;Korruption&#39;, &#39;Michel&#39;, &#39;extrem&#39;, &#39;mehrere&#39;, &#39;billig&#39;, &#39;gesund&#39;]
-Topic 15: 
-[&#39;vollständig&#39;, &#39;gesamt&#39;, &#39;tja&#39;, &#39;unbedingt&#39;, &#39;bisschen&#39;, &#39;Leid&#39;, &#39;Liebe&#39;, &#39;empfehlen&#39;, &#39;Steuerzahler&#39;, &#39;zig&#39;]
-Topic 16: 
-[&#39;sagen&#39;, &#39;ab&#39;, &#39;bitte&#39;, &#39;echt&#39;, &#39;falsch&#39;, &#39;fast&#39;, &#39;CDU&#39;, &#39;20&#39;, &#39;morgen&#39;, &#39;Uhr&#39;]
-Topic 17: 
-[&#39;schaffen&#39;, &#39;eur&#39;, &#39;linker&#39;, &#39;damals&#39;, &#39;Arbeit&#39;, &#39;Freund&#39;, &#39;Angst&#39;, &#39;Gegenteil&#39;, &#39;warten&#39;, &#39;Gefahr&#39;]
-Topic 18: 
-[&#39;*&#39;, &#39;Michael&#39;, &#39;@***pergon&#39;, &#39;unglaublich&#39;, &#39;3.&#39;, &#39;kommunistisch&#39;, &#39;These&#39;, &#39;anderswo&#39;, &#39;wk&#39;, &#39;canceln&#39;]
-Topic 19: 
-[&#39;geben&#39;, &#39;Leute&#39;, &#39;klein&#39;, &#39;genug&#39;, &#39;bereits&#39;, &#39;Corona&#39;, &#39;Wahrheit&#39;, &#39;suchen&#39;, &#39;wahrscheinlich&#39;, &#39;kriegen&#39;]
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Topic 0</th>
+      <th>Topic 1</th>
+      <th>Topic 2</th>
+      <th>Topic 3</th>
+      <th>Topic 4</th>
+      <th>Topic 5</th>
+      <th>Topic 6</th>
+      <th>Topic 7</th>
+      <th>Topic 8</th>
+      <th>Topic 9</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>ja</td>
+      <td>grün</td>
+      <td>Russland</td>
+      <td>Polizei</td>
+      <td>10</td>
+      <td>schön</td>
+      <td>dumm</td>
+      <td>innen</td>
+      <td>12</td>
+      <td>sollen</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>mehr</td>
+      <td>öffentlich</td>
+      <td>Krieg</td>
+      <td>Euro</td>
+      <td>Million</td>
+      <td>afd</td>
+      <td>erster</td>
+      <td>Sektendepp</td>
+      <td>14</td>
+      <td>wer</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>gut</td>
+      <td>ard</td>
+      <td>USA</td>
+      <td>Absonderung</td>
+      <td>000</td>
+      <td>Kommentar</td>
+      <td>Coronaleugner</td>
+      <td>hetzen</td>
+      <td>Mädchen</td>
+      <td>sagen</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Deutschland</td>
+      <td>Wahrheit</td>
+      <td>Putin</td>
+      <td>Mathias</td>
+      <td>rd</td>
+      <td>klein</td>
+      <td>schreiben</td>
+      <td>Lüge</td>
+      <td>11</td>
+      <td>sehen</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>schon</td>
+      <td>links</td>
+      <td>Ukraine</td>
+      <td>Korruption</td>
+      <td>2022</td>
+      <td>halt</td>
+      <td>na</td>
+      <td>fordern</td>
+      <td>xi</td>
+      <td>einfach</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>mal</td>
+      <td>Aussage</td>
+      <td>EU</td>
+      <td>Milliarde</td>
+      <td>20</td>
+      <td>wählen</td>
+      <td>Behauptung</td>
+      <td>selber</td>
+      <td>Hans</td>
+      <td>warum</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>geben</td>
+      <td>The</td>
+      <td>Waffe</td>
+      <td>verkaufen</td>
+      <td>sterben</td>
+      <td>danken</td>
+      <td>nix</td>
+      <td>bleiben</td>
+      <td>jährig</td>
+      <td>wissen</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>Jahr</td>
+      <td>Ausländer</td>
+      <td>endlich</td>
+      <td>europäisch</td>
+      <td>Corona</td>
+      <td>echt</td>
+      <td>Name</td>
+      <td>Putinanhimmler</td>
+      <td>Müller</td>
+      <td>tun</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>deutsch</td>
+      <td>Angst</td>
+      <td>russisch</td>
+      <td>Wiese</td>
+      <td>100</td>
+      <td>lange</td>
+      <td>Nachricht</td>
+      <td>Beweis</td>
+      <td>00</td>
+      <td>Leute</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>immer</td>
+      <td>etc</td>
+      <td>Europa</td>
+      <td>Pergon</td>
+      <td>ca</td>
+      <td>Partei</td>
+      <td>beweisen</td>
+      <td>Jinping</td>
+      <td>40</td>
+      <td>Kind</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>gehen</td>
+      <td>Rex</td>
+      <td>ukrain</td>
+      <td>Hetzer</td>
+      <td>Swongeböte</td>
+      <td>Demokratie</td>
+      <td>darauf</td>
+      <td>gesinnungsbraun</td>
+      <td>24</td>
+      <td>finden</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>kommen</td>
+      <td>rot</td>
+      <td>China</td>
+      <td>kriminell</td>
+      <td>tot</td>
+      <td>Berlin</td>
+      <td>vielleicht</td>
+      <td>Klimawandel</td>
+      <td>Blödsinn</td>
+      <td>Frau</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>Mensch</td>
+      <td>traurig</td>
+      <td>Panzer</td>
+      <td>öl</td>
+      <td>kämpfen</td>
+      <td>stimmen</td>
+      <td>Propaganda</td>
+      <td>behaupten</td>
+      <td>geh</td>
+      <td>denken</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>ganz</td>
+      <td>Wilhelm</td>
+      <td>Volk</td>
+      <td>Inflation</td>
+      <td>pro</td>
+      <td>lesen</td>
+      <td>offensichtlich</td>
+      <td>immer</td>
+      <td>35</td>
+      <td>Problem</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>Land</td>
+      <td>Imperator</td>
+      <td>Scholz</td>
+      <td>steigen</td>
+      <td>Freiheit</td>
+      <td>grüne</td>
+      <td>drohen</td>
+      <td>Papst</td>
+      <td>Fckafd</td>
+      <td>lassen</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>lda_model = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_20.gensim&quot;)
+display(pd.DataFrame({f&quot;Topic {n}&quot;:[word for (word,word_weight) in words] for (n, words) in lda_model.show_topics(formatted=False, num_topics=20, num_words=15)}))
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Topic 0</th>
+      <th>Topic 1</th>
+      <th>Topic 2</th>
+      <th>Topic 3</th>
+      <th>Topic 4</th>
+      <th>Topic 5</th>
+      <th>Topic 6</th>
+      <th>Topic 7</th>
+      <th>Topic 8</th>
+      <th>Topic 9</th>
+      <th>Topic 10</th>
+      <th>Topic 11</th>
+      <th>Topic 12</th>
+      <th>Topic 13</th>
+      <th>Topic 14</th>
+      <th>Topic 15</th>
+      <th>Topic 16</th>
+      <th>Topic 17</th>
+      <th>Topic 18</th>
+      <th>Topic 19</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>grün</td>
+      <td>Jahr</td>
+      <td>Tagesschau</td>
+      <td>schreiben</td>
+      <td>Polizei</td>
+      <td>ja</td>
+      <td>sehen</td>
+      <td>EU</td>
+      <td>deutsch</td>
+      <td>stimmen</td>
+      <td>neu</td>
+      <td>The</td>
+      <td>Deutschland</td>
+      <td>jemand</td>
+      <td>Russland</td>
+      <td>Wort</td>
+      <td>innen</td>
+      <td>Mensch</td>
+      <td>Frau</td>
+      <td>nie</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>na</td>
+      <td>seit</td>
+      <td>erster</td>
+      <td>Name</td>
+      <td>öffentlich</td>
+      <td>mehr</td>
+      <td>echt</td>
+      <td>Politik</td>
+      <td>berichten</td>
+      <td>zurück</td>
+      <td>schön</td>
+      <td>darauf</td>
+      <td>Regierung</td>
+      <td>verlieren</td>
+      <td>Krieg</td>
+      <td>co2</td>
+      <td>Coronaleugner</td>
+      <td>Land</td>
+      <td>Kind</td>
+      <td>Thema</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>grüne</td>
+      <td>letzter</td>
+      <td>eur</td>
+      <td>nennen</td>
+      <td>verbieten</td>
+      <td>gut</td>
+      <td>falsch</td>
+      <td>Politiker</td>
+      <td>Volk</td>
+      <td>teuer</td>
+      <td>endlich</td>
+      <td>Antwort</td>
+      <td>afd</td>
+      <td>ne</td>
+      <td>USA</td>
+      <td>Frankreich</td>
+      <td>hetzen</td>
+      <td>Welt</td>
+      <td>bitte</td>
+      <td>voll</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>ard</td>
+      <td>10</td>
+      <td>Berlin</td>
+      <td>Michael</td>
+      <td>Klimawandel</td>
+      <td>schon</td>
+      <td>beide</td>
+      <td>danken</td>
+      <td>Recht</td>
+      <td>12</td>
+      <td>dumm</td>
+      <td>tatsächlich</td>
+      <td>Staat</td>
+      <td>trotzdem</td>
+      <td>Putin</td>
+      <td>Flüchtling</td>
+      <td>fordern</td>
+      <td>Geld</td>
+      <td>Kommentar</td>
+      <td>absolut</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>linker</td>
+      <td>nächster</td>
+      <td>Reinhard</td>
+      <td>dank</td>
+      <td>Klima</td>
+      <td>mal</td>
+      <td>lieb</td>
+      <td>Russe</td>
+      <td>darüber</td>
+      <td>Preis</td>
+      <td>Scholz</td>
+      <td>oft</td>
+      <td>weit</td>
+      <td>typisch</td>
+      <td>Ukraine</td>
+      <td>weltweit</td>
+      <td>Behauptung</td>
+      <td>brauchen</td>
+      <td>nehmen</td>
+      <td>Wahrheit</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>SPD</td>
+      <td>Million</td>
+      <td>sowas</td>
+      <td>kannst</td>
+      <td>schützen</td>
+      <td>sollen</td>
+      <td>Weg</td>
+      <td>vergessen</td>
+      <td>Schuld</td>
+      <td>14</td>
+      <td>wann</td>
+      <td>etwa</td>
+      <td>zeigen</td>
+      <td>Mathias</td>
+      <td>Waffe</td>
+      <td>bekannt</td>
+      <td>Lüge</td>
+      <td>stehen</td>
+      <td>alt</td>
+      <td>and</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>links</td>
+      <td>zwei</td>
+      <td>kaufen</td>
+      <td>Gott</td>
+      <td>Fakt</td>
+      <td>geben</td>
+      <td>suchen</td>
+      <td>krank</td>
+      <td>Bild</td>
+      <td>30</td>
+      <td>ach</td>
+      <td>Nazi</td>
+      <td>Demokratie</td>
+      <td>Rente</td>
+      <td>russisch</td>
+      <td>wahrscheinlich</td>
+      <td>selber</td>
+      <td>ab</td>
+      <td>Mann</td>
+      <td>handeln</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>sofort</td>
+      <td>000</td>
+      <td>spielen</td>
+      <td>mögen</td>
+      <td>fahren</td>
+      <td>immer</td>
+      <td>Merkel</td>
+      <td>raus</td>
+      <td>lächerlich</td>
+      <td>11</td>
+      <td>wünschen</td>
+      <td>drohen</td>
+      <td>Medium</td>
+      <td>kriegen</td>
+      <td>Europa</td>
+      <td>Youtube</td>
+      <td>Beweis</td>
+      <td>eigen</td>
+      <td>Frage</td>
+      <td>Bundestag</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>offensichtlich</td>
+      <td>Milliarde</td>
+      <td>wahr</td>
+      <td>einsam</td>
+      <td>Polizist</td>
+      <td>wer</td>
+      <td>Hand</td>
+      <td>Ampel</td>
+      <td>freuen</td>
+      <td>vorbei</td>
+      <td>sitzen</td>
+      <td>toll</td>
+      <td>wählen</td>
+      <td>xi</td>
+      <td>ukrain</td>
+      <td>europäisch</td>
+      <td>Nachricht</td>
+      <td>wegen</td>
+      <td>hören</td>
+      <td>25</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>Angst</td>
+      <td>2022</td>
+      <td>oh</td>
+      <td>Iran</td>
+      <td>Gewalt</td>
+      <td>gehen</td>
+      <td>Seite</td>
+      <td>wieso</td>
+      <td>willst</td>
+      <td>treffen</td>
+      <td>Propaganda</td>
+      <td>Thomas</td>
+      <td>Meinung</td>
+      <td>Wiese</td>
+      <td>China</td>
+      <td>Gedanke</td>
+      <td>beweisen</td>
+      <td>leben</td>
+      <td>Herr</td>
+      <td>super</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>Korruption</td>
+      <td>20</td>
+      <td>Fußball</td>
+      <td>treiben</td>
+      <td>mussn</td>
+      <td>kommen</td>
+      <td>Lösung</td>
+      <td>dr</td>
+      <td>hoffentlich</td>
+      <td>schaden</td>
+      <td>Glück</td>
+      <td>warten</td>
+      <td>Bürger</td>
+      <td>Präsident</td>
+      <td>Panzer</td>
+      <td>Generation</td>
+      <td>bleiben</td>
+      <td>gehören</td>
+      <td>lesen</td>
+      <td>zerstören</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>Wahl</td>
+      <td>Monat</td>
+      <td>Freiheit</td>
+      <td>Inflation</td>
+      <td>fliegen</td>
+      <td>ganz</td>
+      <td>Familie</td>
+      <td>Geschichte</td>
+      <td>leisten</td>
+      <td>extrem</td>
+      <td>Bundeswehr</td>
+      <td>zweiter</td>
+      <td>schnell</td>
+      <td>schuldig</td>
+      <td>nein</td>
+      <td>Rakete</td>
+      <td>Aussage</td>
+      <td>davon</td>
+      <td>Gesellschaft</td>
+      <td>verfolgen</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>erkennen</td>
+      <td>Euro</td>
+      <td>Mal</td>
+      <td>Covid</td>
+      <td>bedeuten</td>
+      <td>sagen</td>
+      <td>bestimmt</td>
+      <td>demokratisch</td>
+      <td>erwarten</td>
+      <td>00</td>
+      <td>fehlen</td>
+      <td>Gegenteil</td>
+      <td>egal</td>
+      <td>Beitrag</td>
+      <td>ukraine</td>
+      <td>Gericht</td>
+      <td>behaupten</td>
+      <td>leider</td>
+      <td>jung</td>
+      <td>angst</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>abschaffen</td>
+      <td>Habeck</td>
+      <td>etc</td>
+      <td>Regime</td>
+      <td>Böller</td>
+      <td>einfach</td>
+      <td>verkaufen</td>
+      <td>Hilfe</td>
+      <td>entscheiden</td>
+      <td>Luft</td>
+      <td>Müller</td>
+      <td>Bericht</td>
+      <td>Partei</td>
+      <td>Lügner</td>
+      <td>liefern</td>
+      <td>Alexander</td>
+      <td>wm</td>
+      <td>Leben</td>
+      <td>lernen</td>
+      <td>Argument</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>blöd</td>
+      <td>50</td>
+      <td>rechter</td>
+      <td>Merz</td>
+      <td>rechtlich</td>
+      <td>warum</td>
+      <td>Schnettka</td>
+      <td>Hitler</td>
+      <td>danach</td>
+      <td>Sanktion</td>
+      <td>beenden</td>
+      <td>40</td>
+      <td>politisch</td>
+      <td>drauf</td>
+      <td>Frieden</td>
+      <td>Nacht</td>
+      <td>Beleidigung</td>
+      <td>schaffen</td>
+      <td>Schule</td>
+      <td>Afghanistan</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
 </div>
-<div class="cell docutils container">
+<div class="cell tag_hide-input docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>from matplotlib import pyplot as plt
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from matplotlib import pyplot as plt
 from wordcloud import WordCloud
 import matplotlib.colors as mcolors
 
@@ -686,9 +1382,10 @@ cols = [color for name, color in mcolors.TABLEAU_COLORS.items()]
 
 cloud = WordCloud(background_color=&#39;white&#39;, width=2500, height=1800, max_words=10, colormap=&#39;tab10&#39;, color_func=lambda *args, **kwargs: cols[i], prefer_horizontal=1.0)
 
+lda_model = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_10.gensim&quot;)
 topics = lda_model.show_topics(formatted=False)
 
-fig, axes = plt.subplots(2, 2, figsize=(10,10), sharex=True, sharey=True)
+fig, axes = plt.subplots(5, 2, figsize=(10,10), sharex=True, sharey=True)
 
 for i, ax in enumerate(axes.flatten()):
     fig.add_subplot(ax)
@@ -707,16 +1404,7 @@ plt.show()
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/topic_model_17_0.png" src="_images/topic_model_17_0.png" />
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>lda_model = gensim.models.ldamodel.LdaModel.load(&quot;lda_model_10.gensim&quot;)
-lda_display = pyLDAvis.gensim_models.prepare(lda_model, corpus, dictionary, sort_topics=False)
-pyLDAvis.display(lda_display)
-</pre></div>
-</div>
+<img alt="_images/topic_model_18_0.png" src="_images/topic_model_18_0.png" />
 </div>
 </div>
 </section>

@@ -369,14 +369,20 @@ title="Print to PDF"
                 
   <section class="tex2jax_ignore mathjax_ignore" id="dictionary-analysis">
 <h1>Dictionary Analysis<a class="headerlink" href="#dictionary-analysis" title="Permalink to this headline">#</a></h1>
-<p>The second method uses dictionary analysis to identify and count comments from lateral thinkers. The dictionary analysis is a very simple method and is derived from sentiment analysis. Due to the simplicity of the model, the results must be critically examined and questioned at the end. For example, due to the bag-of-words representation in the model, we cannot take negations into account, which can lead to misleading results.</p>
-<p>The dictionary used is the RPX-Lex dictionary, which was developed to measure german right-wing populist conspiracy discourse <span id="id1">[<a class="reference internal" href="bibliography.html#id12" title="Cornelius Puschmann, Hevin Karakurt, Carolin Amlinger, Nicola Gess, and Oliver Nachtwey. Rpc-lex: a dictionary to measure german right-wing populist conspiracy discourse online. Convergence, 28(4):1144-1171, 2022. URL: https://doi.org/10.1177/13548565221109440, arXiv:https://doi.org/10.1177/13548565221109440, doi:10.1177/13548565221109440.">Puschmann <em>et al.</em>, 2022</a>]</span>. The dictionary contains 14,105 terms which are divided into 13 categories, such as Suspicion, Antisemitism or Esotericism <span id="id2">[<a class="reference internal" href="bibliography.html#id12" title="Cornelius Puschmann, Hevin Karakurt, Carolin Amlinger, Nicola Gess, and Oliver Nachtwey. Rpc-lex: a dictionary to measure german right-wing populist conspiracy discourse online. Convergence, 28(4):1144-1171, 2022. URL: https://doi.org/10.1177/13548565221109440, arXiv:https://doi.org/10.1177/13548565221109440, doi:10.1177/13548565221109440.">Puschmann <em>et al.</em>, 2022</a>]</span>. It should be noted, that some terms appear in more than one category, as they are assigned to several categories. This circumstance will be taken into account later in the analysis so that hits are not counted twice.</p>
+<p>As second method the dictionary analysis is used to identify and count comments from lateral thinkers. The dictionary analysis is a very simple method and is derived from sentiment analysis. Due to the simplicity of the model, the results must be critically examined and questioned at the end. For example, due to the bag-of-words representation in the model, we cannot take negations into account, which can lead to misleading results <span id="id1">[<a class="reference internal" href="bibliography.html#id2" title="Wouter van Atteveldt. Computational analysis of communication: a practical introduction to the analysis of texts, networks, and images with code examples in Python and R. Wiley Blackwell, Hoboken, USA Sussex, UK, 2022. ISBN 978-1-119-68023-9.">Atteveldt, 2022</a>]</span>.</p>
+<p>The dictionary used is the RPX-Lex dictionary, which was developed to measure German right-wing populist conspiracy discourse <span id="id2">[<a class="reference internal" href="bibliography.html#id12" title="Cornelius Puschmann, Hevin Karakurt, Carolin Amlinger, Nicola Gess, and Oliver Nachtwey. Rpc-lex: a dictionary to measure german right-wing populist conspiracy discourse online. Convergence, 28(4):1144-1171, 2022. URL: https://doi.org/10.1177/13548565221109440, arXiv:https://doi.org/10.1177/13548565221109440, doi:10.1177/13548565221109440.">Puschmann <em>et al.</em>, 2022</a>]</span>. The dictionary contains 14,105 terms which are divided into 13 categories, such as Suspicion, Antisemitism or Esotericism <span id="id3">[<a class="reference internal" href="bibliography.html#id12" title="Cornelius Puschmann, Hevin Karakurt, Carolin Amlinger, Nicola Gess, and Oliver Nachtwey. Rpc-lex: a dictionary to measure german right-wing populist conspiracy discourse online. Convergence, 28(4):1144-1171, 2022. URL: https://doi.org/10.1177/13548565221109440, arXiv:https://doi.org/10.1177/13548565221109440, doi:10.1177/13548565221109440.">Puschmann <em>et al.</em>, 2022</a>]</span>. It should be noted, that some terms appear in more than one category, as they are assigned to several categories. This circumstance will be taken into account later in the analysis so that hits are not counted twice.</p>
 <p>First, we load the dictionary and as we can see, it contains 14,105 terms as stated in the paper.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>import pandas as pd
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>import matplotlib.pyplot as plt
+import pandas as pd
 from cleantext import clean
 from tqdm import tqdm
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Since the GPL-licensed package `unidecode` is not installed, using Python&#39;s `unicodedata` package which yields worse results.
 </pre></div>
 </div>
 </div>
@@ -472,9 +478,10 @@ display(rpx_dict[[&quot;term&quot;, &#39;category_en&#39;]])
 <p>14105 rows × 2 columns</p>
 </div></div></div>
 </div>
+<p>Then we define the method for the dictionary analysis. The comment is passed to the method and first it is split into a list of words. After that it iterates over each term in the dictionary. First it checks if the term already occurs in the identified terms and if so the iteration is skipped. This check is necessary to skip terms that are part of several categories and therefore already identified. Since the dictionary contains not only single words, but also phrases with several words, we need to take these into account. If the dictionary term is a phrase, it is checked whether the phrase occurs in the text or not, and if the dictionary term is a single word, it is checked whether the word occurs in the list of words created at the beginning.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>def get_dictionary_analysis_term_occurence(text: str):
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>def get_dictionary_analysis_term_occurrence(text: str):
     term_occurrence = 0
     identified_terms = []
     text_tokens = set(text.split(&quot; &quot;))
@@ -495,6 +502,7 @@ display(rpx_dict[[&quot;term&quot;, &#39;category_en&#39;]])
 </div>
 </div>
 </div>
+<p>Before the dictionary analysis can be performed, a bit of preprocessing is required. As before, we load the comments and make sure they are all in string format. Then a function is defined which removes emojis, links and mentions. This method is then applied to all comments. In the end all empty comments are removed, which are basically all comments that only contain emojis.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>comments_df = pd.read_csv(&quot;data/youtube_comments_500.csv&quot;)
@@ -514,23 +522,25 @@ comments_df = comments_df[comments_df.Comments != &quot;&quot;]
 </div>
 </div>
 </div>
+<p>Iterating over all comments to apply the dictionary analysis takes several minutes. In the end, two columns are added to the dataframe. One contains the number of dictionary terms found and the other a list of the terms found. We can see that 345,620 comments contain at least one term from the dictionary, which corresponds to 85% of all comments.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>dict_term_occurrence_list = []
 dict_identified_terms_list = []
 
 for text in tqdm(comments_df.Comments.to_list()):
-    occurrence_counter, identified_terms_list = get_dictionary_analysis_term_occurence(text)
+    occurrence_counter, identified_terms_list = get_dictionary_analysis_term_occurrence(text)
     dict_term_occurrence_list.append(occurrence_counter)
     dict_identified_terms_list.append(identified_terms_list)
 
 comments_df[&quot;dict_term_occurrence&quot;] = dict_term_occurrence_list
 comments_df[&quot;dict_identified_terms_list&quot;] = dict_identified_terms_list
+comments_df.to_csv(&quot;data/dictionary_analysis.csv&quot;, index=False)
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 401282/401282 [07:11&lt;00:00, 930.61it/s] 
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 401282/401282 [07:10&lt;00:00, 932.33it/s] 
 </pre></div>
 </div>
 </div>
@@ -649,20 +659,25 @@ comments_df[&quot;dict_identified_terms_list&quot;] = dict_identified_terms_list
 <p>345620 rows × 4 columns</p>
 </div></div></div>
 </div>
+<p>If we look at a histogram of the distribution of the number of hits, we can see that many comments contain only a few words from the dictionary.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>comments_df.hist(column=&quot;dict_term_occurrence&quot;, legend=True, bins=50, range=[0,50])
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>hist = comments_df.plot.hist(column=&quot;dict_term_occurrence&quot;, legend=False, bins=50, range=[0,50])
+hist.set_xlabel(&quot;Number of dictionary hits&quot;)
+hist.set_ylabel(&quot;Number of comments&quot;)
+hist.set_title(&quot;Distribution of the number of hits&quot;)
+hist.legend([&quot;Dictionary term occurrence&quot;])
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[&lt;AxesSubplot: title={&#39;center&#39;: &#39;dict_term_occurrence&#39;}&gt;]],
-      dtype=object)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x176949ee0&gt;
 </pre></div>
 </div>
-<img alt="_images/dictionary_analysis_7_1.png" src="_images/dictionary_analysis_7_1.png" />
+<img alt="_images/dictionary_analysis_11_1.png" src="_images/dictionary_analysis_11_1.png" />
 </div>
 </div>
+<p>The number of comments containing more than four terms from the dictionary is already much smaller. Four or more terms contain only 133,700 comments, which corresponds to 33% of all comments.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>display(comments_df.loc[comments_df[&#39;dict_term_occurrence&#39;] &gt; 4])
@@ -777,6 +792,63 @@ comments_df[&quot;dict_identified_terms_list&quot;] = dict_identified_terms_list
 <p>133700 rows × 4 columns</p>
 </div></div></div>
 </div>
+<p>In order to check the analysis, random examples from the comments are selected and classified below.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>for index, values in comments_df.loc[comments_df[&#39;dict_term_occurrence&#39;] &gt; 0].sample(10)[
+    [&quot;Comments&quot;, &quot;dict_identified_terms_list&quot;]].iterrows():
+    print(f&quot;Sample {index + 1}: {values[&#39;dict_identified_terms_list&#39;]}\n&quot;)
+    print(values[&quot;Comments&quot;])
+    print(&quot;-&quot; * 150)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 392575: [&#39;deutschland&#39;, &#39;frauen&#39;, &#39;zieht&#39;, &#39;geburtenrate&#39;]
+
+&quot;taliban verbannen frauen von universitäten&quot; - deutschland 2050 dank invasion, geburtenrate und des vernichtungshasses der ökobolschewisten. zieht euch warm an, mädels.
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Sample 99556: [&#39;bereicherern&#39;, &#39;bilder&#39;, &#39;zeigt&#39;, &#39;lieber&#39;, &#39;staatsfunk&#39;, &#39;zeigen&#39;, &#39;ausländischen&#39;]
+
+hat der staatsfunk keine bilder von den bereicherern zeigen wollen? ihr zeigt lieber bilder von ausländischen faschisten.
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Sample 128489: [&#39;blödsinn&#39;, &#39;einfach&#39;, &#39;mitbekommen&#39;, &#39;rest&#39;, &#39;warum&#39;, &#39;arzt&#39;, &#39;politiker&#39;]
+
+ich habe auch schon während der &quot;maskenpflicht&quot; keine maske getragen. ich habe mir einfach ein attest vom arzt geholt und fertig. ich habe mich nur gewundert, warum der rest bei diesem blödsinn mit den masken mitmacht. zumal doch alle mitbekommen haben, dass es bei den masken nur darum ging, dass als politiker getarnte pharmalobbyisten an den maskendeals verdienen.
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Sample 318015: [&#39;öffentlichen&#39;, &#39;bitte&#39;]
+
+bitte reform des öffentlichen rundfunks.
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Sample 305435: [&#39;warum&#39;]
+
+und warum haben sie den kosovo blockiert?
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Sample 316087: [&#39;berichtet&#39;, &#39;regierungen&#39;, &#39;warum&#39;, &#39;proteste&#39;]
+
+warum berichtet ihr nicht über die massiven proteste gegen die regierungen in peru und brasilien?
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Sample 64994: [&#39;bekämpft&#39;, &#39;einfach&#39;, &#39;wissen&#39;, &#39;wie&#39;, &#39;wahren&#39;, &#39;chinesen&#39;]
+
+einfach mal die wahren infektionszahlen zensiert.
+die chinesen wissen wie viren bekämpft werden.
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Sample 4130: [&#39;stellen&#39;, &#39;militär&#39;, &#39;besser&#39;, &#39;sollten&#39;, &#39;usa&#39;]
+
+ich finde, wir sollten unser militär besser unter das kommando der usa stellen !
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Sample 189388: [&#39;bedeutet&#39;]
+
+bedeutet das, es sind 15, 5, oder -10 grad in der ukraine?
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Sample 233506: [&#39;macht&#39;, &#39;mächtige&#39;, &#39;politik&#39;, &#39;viele&#39;, &#39;wie&#39;, &#39;anarchie&#39;, &#39;selten&#39;]
+
+für wie viele sekunden? anarchie ist selten stabil und viele mächtige können ihre macht auch ohne politik nutzen.
+------------------------------------------------------------------------------------------------------------------------------------------------------
+</pre></div>
+</div>
+</div>
+</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>for index, values in comments_df.loc[comments_df[&#39;dict_term_occurrence&#39;] &gt; 4].sample(10)[[&quot;Comments&quot;, &quot;dict_identified_terms_list&quot;]].iterrows():
@@ -787,58 +859,66 @@ comments_df[&quot;dict_identified_terms_list&quot;] = dict_identified_terms_list
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 398335: [&#39;politik&#39;, &#39;presse&#39;, &#39;stimmt&#39;, &#39;handlanger&#39;, &#39;meint&#39;]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 320027: [&#39;arbeit&#39;, &#39;dafür&#39;, &#39;artikel&#39;, &#39;merkt&#39;, &#39;sklaven&#39;, &#39;sklaverei&#39;, &#39;spielen&#39;, &#39;niemals&#39;, &#39;reichen&#39;, &#39;gesellschaft&#39;, &#39;solange&#39;, &#39;naja&#39;, &#39;normaler&#39;]
 
-wenn auf einen in gewahrsam genommenen reichsbürger-rentner vier journalisten kommen, dann:
-a) stimmt die gewaltenteilung
-b) ist es eine farce
-c) ist die presse handlanger der politik geworden
-was meint ihr?
+chancengleichheit sind leere versprechen. mit normaler arbeit wird man niemals reich. ihr sklaven dürft die supersportwagen jachten luxus artikel und villas für die reichen bauen. und kriegt dafür hungerlohn. ist das gerechtigkeit?
+oder moderne sklaverei mit vorzügen. naja wenn kümmert es, spielen ja alle brav mit. solange es klassen gesellschaft gibt. aber nichts ist für ewig. merkt euch meine wörter.
 ------------------------------------------------------------------------------------------------------------------------------------------------------
-Sample 178360: [&#39;wenig&#39;, &#39;wie&#39;, &#39;ebenso&#39;, &#39;gehören&#39;, &#39;schwäche&#39;, &#39;deutscher&#39;]
+Sample 380858: [&#39;seit&#39;, &#39;sollen&#39;, &#39;wegen&#39;, &#39;irgendeine&#39;, &#39;teppich&#39;, &#39;themen&#39;, &#39;kurze&#39;, &#39;chinesen&#39;, &#39;gestern&#39;]
 
-metalhead kulturbanausen, die meinen, ihre schwäche durch kraft- und fäkalausdrücke kompensieren zu müssen, gehören ebenso wenig zu einer kulturnation, wie barbaren, die in der genuss verschleuderter deutscher staatsbürgerschaften kommen.
+themen der sendung:
+00:00 - hi ihr ottos
+00:21 - mccarthy seit gestern nicht beliebter geworden
+03:33 - chinesen sollen bei einreise auf vertrauenswürdigkeit getestet werden
+05:49 - sylvestergewalt nur ausdruck von integrationswunsch
+08:38 - ehrenparade und roter teppich für lambrecht wegen puma-erfolg
+10:54 - frankreich hat funktionierende panzer
+11:20 - ex-papst immer noch tot
+11:47 - irgendeine britin jetzt auch tot
+12:17 - kurze unterbrechung
+13:50 - die ottozahlen
+14:10 - wetter: herbst
 ------------------------------------------------------------------------------------------------------------------------------------------------------
-Sample 361514: [&#39;vollkommen&#39;, &#39;bringen&#39;, &#39;konstruiert&#39;, &#39;staatlichen&#39;, &#39;selbstredend&#39;, &#39;illegalen&#39;, &#39;abschlachten&#39;, &#39;mädchen&#39;]
+Sample 10895: [&#39;finde&#39;, &#39;jahr&#39;, &#39;wurde&#39;, &#39;dabei&#39;, &#39;grünen&#39;, &#39;ziele&#39;, &#39;gesehen&#39;, &#39;fdp&#39;, &#39;stärken&#39;]
 
-die staatsfeindin antifa-faeser konstruiert etwas mit den vollkommen harmlosen reichsbürgern, um vom abschlachten der mädchen durch ihre illegalen abzulenken. die staatlichen maulhuren bringen diese farce selbstredend an erster stelle.
+ich finde es gut das die spd, fdp und die grünen ihr ziele stärken verfolgen/durchsetzten wollen. was dabei rauskommt haben wir letztes jahr gesehen als nur noch diskutiert wurde und man sich auf nix einigen konnte.
 ------------------------------------------------------------------------------------------------------------------------------------------------------
-Sample 117851: [&#39;gehört&#39;, &#39;partei&#39;, &#39;spielt&#39;, &#39;terror&#39;, &#39;afd&#39;]
+Sample 289717: [&#39;dafür&#39;, &#39;geht&#39;, &#39;polizei&#39;, &#39;traurig&#39;, &#39;unsere&#39;, &#39;angeblichen&#39;, &#39;mann&#39;, &#39;wer&#39;, &#39;wo&#39;, &#39;müssen&#39;, &#39;staat&#39;, &#39;um die&#39;, &#39;sinnlose&#39;, &#39;unseren&#39;, &#39;verschwenden&#39;, &#39;bundestag&#39;, &#39;steuergelder&#39;, &#39;bezahlen&#39;, &#39;garnicht&#39;, &#39;gleich&#39;, &#39;bitten&#39;, &#39;deutscher&#39;, &#39;klima&#39;]
 
-und schon wieder spielt die afd eine rolle, wenn es um terror geht.
-diese facho partei gehört verboten.
+die angeblichen klima schützer das ich nicht lache machen nur ärger wo sie können und verschwenden unsere steuergelder für sinnlose polizei einsätze die sie dann von den objekten gereummt werden und wer zahlt das alles wir von unseren steuergelder geht garnicht alle die meinen sich ögenwo an zu ketten und die polizei zu behindern sollte mann gleich zu kasse bitten um die gelder der einsätze der polizei wieder zubekommen damit nicht wir alle steuerbürger dafür bezahlen müssen sonder nur die solche einsätze auslösen es ist traurig von den staat das die klima aktiviesten nicht zu kasse gebeten werden können die solche einsätze verursacht tübisch deutscher bundestag keiner will sich die händeverbrennen
 ------------------------------------------------------------------------------------------------------------------------------------------------------
-Sample 164673: [&#39;dafür&#39;, &#39;denen&#39;, &#39;gehalten&#39;, &#39;krank&#39;, &#39;land&#39;, &#39;schwachsinn&#39;, &#39;frauen&#39;, &#39;gibt&#39;, &#39;idioten&#39;, &#39;ganzen&#39;, &#39;seite&#39;, &#39;die da&#39;, &#39;genug&#39;, &#39;armen&#39;]
+Sample 317230: [&#39;deutschland&#39;, &#39;ansichten&#39;, &#39;gibt&#39;, &#39;idioten&#39;, &#39;unserer&#39;, &#39;warum&#39;, &#39;verstehe&#39;, &#39;linken&#39;, &#39;konsens&#39;, &#39;politiker&#39;, &#39;afd&#39;]
 
-da war ja auch nichts! können die armen wirtschafts... pardon &quot;kriegs&quot;flüchtlinge ja nichts dafür das die sexy frauen keine armlänge abstand gehalten haben. das kann man denen doch nicht antun! die armen. na spass bei seite dieses land ist nur noch krank mit ihrem ganzen schwachsinn und es gibt genug idioten in dem land die das noch unterstützen.
+ich verstehe die linken &amp; afd nicht ihre politiker haben bis auf kleinigkeiten die selben ansichten warum gibt es hier keinen konsens gegen die idioten unserer regierung..
+grün ist in deutschland ja schon ein synonym für blödheit.
 ------------------------------------------------------------------------------------------------------------------------------------------------------
-Sample 165013: [&#39;vielleicht&#39;, &#39;davon&#39;, &#39;gibt&#39;, &#39;viele&#39;, &#39;müssen&#39;]
+Sample 363650: [&#39;hass&#39;, &#39;mehrheit&#39;, &#39;überwältigende&#39;, &#39;wegen&#39;, &#39;grund&#39;, &#39;wahre&#39;, &#39;von wegen&#39;, &#39;eu&#39;, &#39;usa&#39;, &#39;hetze&#39;, &#39;vorgehen&#39;]
 
-vielleicht gibt es zu viele davon und die berufsdemonstranten müssen sich aufteilen.
+von wegen hass und hetze bei twitter....die überwältigende mehrheit will die begnadigung von snowden und assange! oder ist das der wahre grund dafür, dass die usa hörige eu gegen twitter/musk vorgehen will.
 ------------------------------------------------------------------------------------------------------------------------------------------------------
-Sample 300075: [&#39;eigenen&#39;, &#39;gehen&#39;, &#39;geht&#39;, &#39;wie&#39;, &#39;staat&#39;, &#39;versicherung&#39;, &#39;zahlen&#39;, &#39;dachte&#39;]
+Sample 182816: [&#39;kommen&#39;, &#39;macht&#39;, &#39;beginn&#39;, &#39;heute&#39;, &#39;laut&#39;, &#39;russischen&#39;, &#39;russland&#39;, &#39;bekannten&#39;, &#39;handeln&#39;, &#39;putin&#39;, &#39;daher&#39;, &#39;doktor&#39;, &#39;professor&#39;, &#39;westen&#39;, &#39;aktiv&#39;]
 
-kainer dachte ich mir doch. bei vorschlägen wie bei dem von ihnen geht es nämlich immer darum, daß andere sich einschränken bzw. mehr zahlen müssen. aber die eigenen gesundheitlich schädlichen angewohnheiten gehen dem staat und der versicherung nichts an.
+die vorhersagen der weltberühmten bulgarischen hellseherin baba vanga werden heute in putin-russland von putin-propagandamachern sehr aktiv genutzt. baba vanga hat wiederholt erklärt, dass ab dem beginn des 21. jahrhunderts wladimir in russland an die macht kommen wird, der den westen besiegen und russland wird zum spirituellen zentrum der welt. daher ist es möglich, dass putin sich in seinem handeln unter anderem von den vorhersagen von baba vanga leiten lässt, denn laut dem bekannten russischen oppositionsblogger, politikanalytiker, professor und doktor der geschichtswissenschaften valeri solowej, ist wladimir putin dem spiritualismus sehr zugetan.
 ------------------------------------------------------------------------------------------------------------------------------------------------------
-Sample 70362: [&#39;entschieden&#39;, &#39;hätte&#39;, &#39;jahren&#39;, &#39;seit&#39;, &#39;wäre&#39;, &#39;genau&#39;, &#39;afd&#39;]
+Sample 118531: [&#39;deutschland&#39;, &#39;ermordet&#39;, &#39;heucheln&#39;, &#39;irgendetwas&#39;, &#39;fehlt&#39;, &#39;mädchen&#39;]
 
-3:00 hätte das die afd vorgeschlagen oder entschieden wäre es rassistisch, aber so ist es ok. den genau das will die afd seit jahren :d
+wenn es den gesinnungsbraunen sektendepp:innen an erinnerungsvermögen fehlt und es ihnen &quot;unglaublich&quot; und &quot;unvorstellbar&quot; vorkommt, dass 14-jährige mädchen in deutschland ermordet werden; wenn sie beileid heucheln und irgendetwas fordern:
+gesinnungsbraune sektendepp:innen haben beispielsweise diese 14-jährigen mädchen ermordet: ayse, 1996 in mölln; miya, 1996 in lübeck; jana, 1998 in saalfeld/saale; armela, 2016 on münchen, sabine, 2016 in münchen.
 ------------------------------------------------------------------------------------------------------------------------------------------------------
-Sample 273243: [&#39;dagegen&#39;, &#39;amerikanische&#39;, &#39;glaube&#39;, &#39;weltkrieg&#39;, &#39;zweiten&#39;, &#39;bayern&#39;]
+Sample 222739: [&#39;feindlich&#39;, &#39;interesse&#39;, &#39;wissen&#39;, &#39;wer&#39;, &#39;deutliches&#39;, &#39;eventuell&#39;, &#39;russland&#39;, &#39;daran&#39;, &#39;regieren&#39;, &#39;usa&#39;, &#39;china&#39;, &#39;gegenüber&#39;]
 
-seemann ich glaube bayern war doch nach dem zweiten weltkrieg amerikanische besatzungszone. die kasernen sind also dort. in bawü waren es dagegen die franzosen
+solemnis
+zu wissen wer in den usa regiert, ist für alle relevant.
+egal ob man den usa freundlich, oder feindlich gegenüber steht.
+dies hat nichts mit winseln zu tun.
+auch in russland und china hat man ein deutliches interesse daran zu wissen, wer regiert, oder eventuell regieren könnte.
+lg
 ------------------------------------------------------------------------------------------------------------------------------------------------------
-Sample 183284: [&#39;bekommen&#39;, &#39;gehört&#39;, &#39;wirklich&#39;, &#39;zerstört&#39;, &#39;menschen&#39;, &#39;versucht&#39;, &#39;leben&#39;, &#39;mensch&#39;, &#39;virus&#39;, &#39;irgendwann&#39;]
+Sample 31931: [&#39;kinder&#39;, &#39;macht&#39;, &#39;sagen&#39;, &#39;schieben&#39;, &#39;namen&#39;, &#39;bestimmt&#39;, &#39;cdu&#39;, &#39;guten&#39;, &#39;wähler&#39;, &#39;schule&#39;]
 
-meiner meinug nach sollte man es, das corona virus abstufem!
-wir bekommen es nicht weg.
-es gehört dazu.
-das virus will den menschen nicht töten!
-es versucht mit dem menschen zuleben.
-das virus versucht mit dem menschen zu leben.
-da sich virus und mensch nicht wirklich unterscheiden.
-der virus versucht seinen wirt nicht umzubringen damit es leben kann!
-der mensch zerstört seinen planeten und kann irgendwann nicht mehr leben.
+der typ , der meinem 1/2 namen geklaut hat , ist eine rampensau , der sich immer in den vordergrund schieben muß . bestimmt hat er schon in der schule andere kinder verpetzt , um sich bei den leheren beliebt zu machen .
+übrigens : ich bin zwar kein wähler der cdu , aber ich muß sagen , dass unser ministerpräsident daniel günther einen guten job macht .
+grüße aus dem hohen norden .
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 </pre></div>
 </div>
@@ -854,62 +934,61 @@ der mensch zerstört seinen planeten und kann irgendwann nicht mehr leben.
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 242548: [&#39;deutschland&#39;, &#39;dummheit&#39;, &#39;eigentlich&#39;, &#39;glück&#39;, &#39;komplett&#39;, &#39;reine&#39;, &#39;reiner&#39;, &#39;beim&#39;, &#39;wie&#39;, &#39;seid&#39;, &#39;aufgrund&#39;, &#39;soviel&#39;, &#39;studierte&#39;, &#39;sucht&#39;, &#39;sieg&#39;, &#39;konsequenzen&#39;, &#39;neben&#39;]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 88531: [&#39;deutschland&#39;, &#39;eigenen&#39;, &#39;falsche&#39;, &#39;geht&#39;, &#39;sowas&#39;, &#39;brauchen&#39;, &#39;wie&#39;, &#39;welt&#39;, &#39;gelöst&#39;, &#39;genug&#39;, &#39;probleme&#39;, &#39;verdienst&#39;, &#39;china&#39;]
 
-wm - aus
-nun sucht ihr also einen schuldigen am wm- ausschied.... personelle konsequenzen aufgrund eines spiels bei dem neben komplett unbedeutsamen nebensachlichkeiten bloss das reine glück auf einen sieg erforderlich ist ? ist das euer ernst? sagt, wie trivial seid ihr eigentlich ??? wir haben soviel abiturienten beim dfb und bundesweit soviel studierte menschen, doch wie kann es sein, dass deutschland inzwischen an reiner dummheit nicht mehr zu überbieten ist ???
+cruhser
+oh, falsche antwort, 1. mein verdienst ist überdurchschnittlich und geht dich ein scheißdreck an. und 2. ist mir die baerbock sowas von scheißegal, die fährt durch die welt und verhält sich wie ein holzklotz und will auch noch china ans bein pischern. die ist behindert man. und es geht darum das wir im eigenen land, in deutschland genug probleme haben, die erstmal gelöst werden müssen. und sollche steuergeldverteilerrin brauchen wir schon mal garnicht.
+du intelligenzbestie.
 ------------------------------------------------------------------------------------------------------------------------------------------------------
-Sample 225632: [&#39;denkt&#39;, &#39;ganze&#39;, &#39;jemand&#39;, &#39;kommt&#39;, &#39;zwei&#39;, &#39;quasi&#39;, &#39;wie&#39;, &#39;wann&#39;, &#39;lieben&#39;, &#39;guten&#39;, &#39;liebe&#39;, &#39;mittelstand&#39;, &#39;stammt&#39;, &#39;china&#39;]
+Sample 158036: [&#39;deutschland&#39;, &#39;eins&#39;, &#39;kommen&#39;, &#39;kotzt&#39;, &#39;zwei&#39;, &#39;beitrag&#39;, &#39;schwer&#39;, &#39;tage&#39;, &#39;tote&#39;, &#39;reichsbürger&#39;, &#39;messer&#39;, &#39;asylbewerber&#39;, &#39;mädchen&#39;]
 
-guten abend, ihr lieben menschen. corona quasi besiegt? da hab ich jetzt nur noch zwei fragen. stammt das virus, was uns ganze existenzen kostete, jetzt aus einem labor oder kommt es von dieser ollen fledermaus? und die wichtigere frage, wenn der shit aus einem labor stammt, wann muss china dann schadensersatz zahlen? oder hat jemand &quot;wie geil geschrien&quot;, als jemand meinte er experimentiert wie ein genie? also liebe regierung, was denkt ihr für den überwiegenden mittelstand zu tun?
+es war wieder klar, dass zwei tage nachdem ein asylbewerber ein mädchen mit einem messer schwer verletzt- und eins zu tote gemetzelt hat, jetzt ein beitrag zu reichsbürgern kommen musste. dieser heuchler-staat kotzt mich so an. die reichsbürger sind in deutschland das kleinste problem.
 ------------------------------------------------------------------------------------------------------------------------------------------------------
-Sample 310633: [&#39;deutschland&#39;, &#39;wissen&#39;, &#39;heute&#39;, &#39;russen&#39;, &#39;wie&#39;, &#39;faktisch&#39;, &#39;sache&#39;, &#39;usa&#39;, &#39;vereinigten staaten&#39;, &#39;europäische&#39;, &#39;kolonie&#39;, &#39;kolonien&#39;]
+Sample 308754: [&#39;ganze&#39;, &#39;jahr&#39;, &#39;jahren&#39;, &#39;leute&#39;, &#39;seit&#39;, &#39;verlogene&#39;, &#39;zurück&#39;, &#39;hört&#39;, &#39;schön&#39;, &#39;sieht&#39;, &#39;geschickt&#39;, &#39;gespielt&#39;, &#39;gute&#39;, &#39;karten&#39;]
 
-*(8)* die *pläne der usa,* rußland in eine kolonie zu verwandeln, sind gescheitert. *dumasprecher wjatscheslaw:* &quot;wir russen wissen was sache ist, und wie die usa tickt, was deutschland noch nicht begriffen hat&quot;.
-viele europäische staaten, *wie auch deutschland* sind heute faktisch kolonien der vereinigten staaten. *rd*
+magyarorszagon richtig. und schön verlogen. das ganze jahr hört und sieht man mache leute nicht aber weihnachten melden die sich dann. ich habe karten zurück geschickt und anrufe ignoriert. alle kontakte abgebrochen. nun habe ich seit einigen jahren niemanden mehr weil ich das verlogene getunte nicht mit gespielt habe. ihnen eine gute zeit.
 ------------------------------------------------------------------------------------------------------------------------------------------------------
-Sample 141554: [&#39;dagegen&#39;, &#39;denen&#39;, &#39;eben&#39;, &#39;echt&#39;, &#39;eigentlich&#39;, &#39;ganz&#39;, &#39;lange&#39;, &#39;vergewaltigt&#39;, &#39;wegen&#39;, &#39;davon&#39;, &#39;erst&#39;, &#39;frauen&#39;, &#39;grund&#39;, &#39;hören&#39;, &#39;mann&#39;, &#39;paar&#39;, &#39;starke&#39;, &#39;warum&#39;, &#39;wie&#39;, &#39;beweise&#39;, &#39;beweisen&#39;, &#39;gesehen&#39;, &#39;schützen&#39;, &#39;irgendetwas&#39;, &#39;worden&#39;, &#39;kenne&#39;, &#39;passiert&#39;, &#39;wacht auf&#39;, &#39;später&#39;, &#39;patriot&#39;, &#39;sehe&#39;, &#39;vergewaltigungen&#39;]
+Sample 124415: [&#39;deutschen&#39;, &#39;land&#39;, &#39;traurig&#39;, &#39;überhaupt&#39;, &#39;geworden&#39;, &#39;läuft&#39;, &#39;nachrichten&#39;, &#39;vertuschen&#39;, &#39;ganzen&#39;, &#39;dreck&#39;, &#39;ausland&#39;, &#39;deutsches&#39;]
 
-also, tausende gestandene männer, die später ganz kräftig den harten mann markieren, machen die biege und überlassen diese frauen ihrem schicksal?
-ich halte das eh nach wie vor für panikmache.
-im ernst, die paar fälle...
-wegen denen muss nun echt nichts unternommen werden..
-gibt es eigentlich videos davon?
-ach, und selbst wenn, ist eh alles meinungsmache.
-egal, egal, ist nie passiert und der starke patriot hat eh eine ausrede warum er nichts dagegen unternommen hat.
-und bis ich beweise gesehen habe ist es eh nur hören sagen.
-mal ganz davon abgesehen dass risikogruppen sich eben selbst schützen müssen. ich sehe nicht ein warum andere da mit reingezogen werden sollten.
-echt mal, die paar vergewaltigungen (die mir erst noch einer beweisen muss) sind noch lange kein grund sich wegen irgendetwas aufzuregen.
-also ich kenne niemanden der vergewaltigt worden ist.
-alles panikmache.
-wacht auf.
+läuft in den deutschen nachrichten überhaupt noch was deutsches oder wird immer nur übers ausland berichtet? damit man den ganzen dreck hier vertuschen kann oder so traurig was aus diesem land hier geworden ist.
 ------------------------------------------------------------------------------------------------------------------------------------------------------
-Sample 212118: [&#39;braucht&#39;, &#39;kommen&#39;, &#39;terroristische&#39;, &#39;regierung&#39;, &#39;unterstützung&#39;, &#39;um die&#39;, &#39;welt&#39;, &#39;sturz&#39;, &#39;nation&#39;, &#39;republik&#39;, &#39;islamische&#39;]
+Sample 107110: [&#39;bekommt&#39;, &#39;klar&#39;, &#39;leugnet&#39;, &#39;merkel&#39;, &#39;video&#39;, &#39;wissen&#39;, &#39;davon&#39;, &#39;gibt&#39;, &#39;partei&#39;, &#39;wahrheit&#39;, &#39;neue&#39;, &#39;stehen&#39;, &#39;einzige&#39;, &#39;flüchtlingskrise&#39;, &#39;folgen&#39;, &#39;misere&#39;, &#39;afd&#39;, &#39;migrationspolitik&#39;]
 
-die nation iran braucht die umfassende unterstützung der welt, um die terroristische islamische republik zu zerstören, die die welt satt hat. der sturz der regierung khamenei wird allen zugute kommen
+bei julian reichelt gibt es ein gutes video zur misere &quot;die wahrheit über die neue flüchtlingskrise // faeser leugnet migrations-probleme!&quot;: von der ampel-regierung wird viel versprochen, es folgen aber keine taten. und die kommunen stehen kurz vorm kollaps. davon will die zuständige innenministerin faeser (spd) aber nichts wissen - aus angst, die afd bekommt mehr stimmen.
+wie gesagt: die afd ist die einzige partei im bundestag, die schon unter merkel klar gegen die migrationspolitik gewesen ist.
 ------------------------------------------------------------------------------------------------------------------------------------------------------
-Sample 178328: [&#39;angegriffen&#39;, &#39;deutschland&#39;, &#39;kämpft&#39;, &#39;wirklich&#39;, &#39;wurde&#39;, &#39;polen&#39;, &#39;versucht&#39;, &#39;um die&#39;, &#39;besser&#39;, &#39;russland&#39;, &#39;daran&#39;, &#39;gesprengt&#39;, &#39;ukraine&#39;]
+Sample 341145: [&#39;ganz&#39;, &#39;kommt&#39;, &#39;instrumentalisieren&#39;, &#39;medienwirksam&#39;, &#39;mittlerweile&#39;, &#39;politisch&#39;, &#39;polizisten&#39;, &#39;bitte&#39;, &#39;darin&#39;, &#39;verbreitet&#39;, &#39;müsste&#39;]
 
-wolf kämpft nein, ich glaube, dass nordstream von polen gesprengt wurde - weil russland die ukraine angegriffen und versucht hat, deutschland zu erpressen. deinen geschichtsunterricht würde ich dir so dermaßen um die ohren hauen, dass du wirklich besser daran tust, deine klappe zu halten.
+nachdem alle &quot;böllermänner&quot; wieder auf freiem fuß sind, müsste nun, nach muster, der offene opferbrief eines verletzten polizisten o.a. medienwirksam verbreitet werden. darin appelliert man beruhigend an die bürger, das silvesterchaos bitte nicht politisch zu instrumentalisieren um gegen &quot;rächts&quot; vorzugehen..............oder war&#39;s andersrum? man kommt ja mittlerweile ganz durcheinander!
 ------------------------------------------------------------------------------------------------------------------------------------------------------
-Sample 406083: [&#39;tragen&#39;, &#39;dabei&#39;, &#39;deutlich&#39;, &#39;migranten&#39;, &#39;welche&#39;, &#39;wie&#39;, &#39;fürs&#39;, &#39;fachkräfte&#39;, &#39;westlichen&#39;, &#39;finanzministerium&#39;, &#39;fast&#39;, &#39;linksgrün&#39;, &#39;soviel&#39;, &#39;staaten&#39;, &#39;einwanderer&#39;, &#39;ländern&#39;]
+Sample 166147: [&#39;darf&#39;, &#39;gerecht&#39;, &#39;leute&#39;, &#39;volk&#39;, &#39;wohl&#39;, &#39;denke&#39;, &#39;deutsche&#39;, &#39;gibt&#39;, &#39;namen&#39;, &#39;wenig&#39;, &#39;wer&#39;, &#39;wiederum&#39;, &#39;bleibt&#39;, &#39;ganzen&#39;, &#39;wunschdenken&#39;, &#39;besser&#39;, &#39;arbeiten&#39;, &#39;halten&#39;, &#39;wahrscheinlich&#39;, &#39;gewählt&#39;, &#39;spd&#39;, &#39;verlangt&#39;]
 
-fachkräfte fürs linksgrün wählen? welche einwanderergruppen tragen denn wieviel zum staatshaushalt bei?
-das dänische finanzministerium hat das 2018 einmal aufgeschlüsselt und dabei festgestellt, dass einwanderer aus westlichen ländern fast soviel leisten, wie dänen, aber migranten aus nichtwestlichen staaten (und insbesondere aus muslimischen) im vergleich deutlich abfallen.
-warum werden solche kriterien bei den plänen der ampel nicht berücksichtigt?
+ja dann informier dich mal wer jetzt verteidigungsminister werden könnte
+es gibt jetzt schon 3 namen
+aber die können die qualifikationen die du hier verlangst und die ich hier und auch ich denke mal auch das gesamte deutsche volk hier verlangt nicht gerecht werden
+3 namen die wiederum nichts bringen
+1. lars klingbeil spd vorsitzender
+2. eva högl spd mitglied
+3. siemtje möller
+schade kein general a.d. dabei
+also im groben und ganzen könntest ein klein wenig besser werden aber das war&#39;s dann aber auch
+es sei denn die ausgewählten leute wenn sie dann als verteidigungsminister gewählt werden arbeiten für das verteidigungsministerium und für dieses deutsche volk
+was sehr wahrscheinlich nur ein wunschdenken ist
+träumen darf man ja wohl noch oder ?
+weil träume halten einen am leben
+aber ich denke mal das bleibt alles ihr eim traum
 ------------------------------------------------------------------------------------------------------------------------------------------------------
-Sample 148366: [&#39;ganze&#39;, &#39;lange&#39;, &#39;lüge&#39;, &#39;sollen&#39;, &#39;brexit&#39;, &#39;plappern&#39;, &#39;unserer&#39;, &#39;warum&#39;, &#39;welche&#39;, &#39;falsch&#39;, &#39;gebracht&#39;, &#39;halten&#39;, &#39;leider&#39;, &#39;lieber&#39;, &#39;alten&#39;, &#39;aufgrund&#39;, &#39;briten&#39;, &#39;eu&#39;, &#39;probleme&#39;]
+Sample 205747: [&#39;wegen&#39;, &#39;fall&#39;, &#39;mann&#39;, &#39;wer&#39;, &#39;auf jeden fall&#39;, &#39;gesehen&#39;, &#39;irgendwelche&#39;, &#39;hauptsache&#39;, &#39;holen&#39;, &#39;stand&#39;, &#39;asylanten&#39;]
 
-das sind die selben argumente, welche die brexiteers immer gebracht haben. leider hat sich das ganze inzwischen als lüge herausgestellt. der brexit hat die briten schon mehr gekostet, als sie jemals eingezahlt haben. die meisten halten es aufgrund der probleme inzwischen für einen fehler, aus der eu ausgetreten zu sein.
-aber warum sollen wir aus den fehlern unserer nachbarn lernen, wir plappern lieber die alten stammtischparolen nach, die sich schon lange als falsch herausgestellt haben.
+auf jeden fall sonst machen die nur scheiße, dann holen die irgendwelche asylanten und die machen das, hauptsache billig, hat mann gesehen bei corona, wer stand supermärkte und so weiter an der tür und hat geschaut wegen masken, ausländer!
 ------------------------------------------------------------------------------------------------------------------------------------------------------
-Sample 171541: [&#39;deutschland&#39;, &#39;ganze&#39;, &#39;hätte&#39;, &#39;krieg&#39;, &#39;längst&#39;, &#39;lebensmittel&#39;, &#39;völlig&#39;, &#39;wäre&#39;, &#39;flüchtlinge&#39;, &#39;hätten&#39;, &#39;liefern&#39;, &#39;nato&#39;, &#39;niemals&#39;, &#39;putin&#39;, &#39;schuld&#39;, &#39;somit&#39;, &#39;ukraine&#39;, &#39;waffen&#39;, &#39;später&#39;, &#39;verantwortung&#39;, &#39;geschichte&#39;, &#39;helfen&#39;]
+Sample 230148: [&#39;geht&#39;, &#39;herr&#39;, &#39;schande&#39;, &#39;sofort&#39;, &#39;verleugnet&#39;, &#39;herrn&#39;, &#39;wahre&#39;, &#39;wahren&#39;, &#39;welt&#39;, &#39;gott&#39;, &#39;wort&#39;, &#39;werdet&#39;, &#39;jesus&#39;]
 
-niemals hätte deutschland waffen in die ukraine liefern dürfen. später wird die geschichte wieder nur deutschland zur verantwortung ziehen. der ganze krieg wäre ohne die waffenlieferungen schon längst zu ende. man kann flüchtlinge aufnehmen und decken, lebensmittel liefern. und man kann das gespräch mit putin suchen. lösungen finden, kompromisse beschließen. aber waffen und panzerlieferungen sind völlig indiskutabel. vor allem deutschland hätte sich niemals einmischen dürfen. schweden, schweiz, norwegen, niederlande, die hätten helfen können, aber niemals deutschland. schuld an dem krieg ist die nato und somit die usa.
+tut sofort wahre buße erniedrigt euch in schande all eurer sünden vor dem herrn jesus christus. nimmt gottes gnade an. verleugnet euer sündiges leben. werdet knechte gottes. evangelisiert 24 stunden. liest gottes wort die bibel und liebt nicht diese welt noch was in der welt ist. ihr dürft nix mehr wollen. vertraut nur herrn jesus christus. geht zu den ungläubigen hin und bekehrt sie zum einzig wahren gott herr jesus christus.
 ------------------------------------------------------------------------------------------------------------------------------------------------------
-Sample 135347: [&#39;deutschen&#39;, &#39;möglich&#39;, &#39;viele&#39;, &#39;wer&#39;, &#39;wie&#39;, &#39;ende&#39;, &#39;andernfalls&#39;, &#39;steckt&#39;, &#39;anschlägen&#39;, &#39;präsident&#39;, &#39;hauptsache&#39;, &#39;gegenseitig&#39;, &#39;helfen&#39;, &#39;sprechen&#39;]
+Sample 210313: [&#39;gebiete&#39;, &#39;kohle&#39;, &#39;rest&#39;, &#39;deutlich&#39;, &#39;einwohner&#39;, &#39;verschweigen&#39;, &#39;wie&#39;, &#39;wo&#39;, &#39;recht&#39;, &#39;genug&#39;, &#39;rein&#39;, &#39;bestimmt&#39;, &#39;entscheidungsträger&#39;]
 
-us präsident truman gegen ende des 2. weltkrieges, sinngemäß: wenn wir sehen, die deutschen gewinnen, dann helfen wir den russen. andernfalls helfen wir den deutschen. hauptsache dass sich so viele wie möglich gegenseitig erschießen. so sprechen nur freunde. apropos feinde, wer steckt jetzt hinter den anschlägen auf nord-stream2?
+rwe ist rein kommerziell orientiert, die entscheidungsträger bei rwe würden sich bestimmt nicht den aufwand machen und einwohner entschädigen, gebäude abreißen und gebiete absperren, wenn wo anders noch genug leicht zugängliche kohle ist. studien, die behaupten, dass das bisherige abbaugebiet ausreiche, verschweigen oft, dass der aufwand (und damit auch die co2 produktion) für den rest des bisherigen abbaugebietes deutlich höher ist, wie für die relativ leicht zugängliche kohle unter dem recht kleinem ort lützerath.
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 </pre></div>
 </div>

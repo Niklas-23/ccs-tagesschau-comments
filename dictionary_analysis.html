@@ -104,7 +104,7 @@ const thebe_selector_output = ".output, .cell_output"
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
                 <a class="reference internal" href="intro.html">
-                    About this project
+                    Analysis of German YouTube comments: How people from the lateral thinking movement dominate the comments section under videos of the “tagesschau” channel
                 </a>
             </li>
         </ul>
@@ -379,7 +379,7 @@ from tqdm import tqdm
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>rpx_dict = pd.read_csv(&quot;dictionary_analysis/rpc_lex.csv&quot;, delimiter=&quot;;&quot;)
-rpx_dict
+display(rpx_dict[[&quot;term&quot;, &#39;category_en&#39;]])
 </pre></div>
 </div>
 </div>
@@ -403,104 +403,68 @@ rpx_dict
     <tr style="text-align: right;">
       <th></th>
       <th>term</th>
-      <th>category_code</th>
-      <th>category_de</th>
       <th>category_en</th>
-      <th>dereko_frequency</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
       <td>-etage</td>
-      <td>SCAN</td>
-      <td>Skandalisierung</td>
       <td>Scandalization</td>
-      <td>NaN</td>
     </tr>
     <tr>
       <th>1</th>
       <td>#abgase</td>
-      <td>SCAN</td>
-      <td>Skandalisierung</td>
       <td>Scandalization</td>
-      <td>NaN</td>
     </tr>
     <tr>
       <th>2</th>
       <td>#kreuzfahrtschiffe</td>
-      <td>SCAN</td>
-      <td>Skandalisierung</td>
       <td>Scandalization</td>
-      <td>NaN</td>
     </tr>
     <tr>
       <th>3</th>
       <td>#schwerölverbrennung</td>
-      <td>SCAN</td>
-      <td>Skandalisierung</td>
       <td>Scandalization</td>
-      <td>NaN</td>
     </tr>
     <tr>
       <th>4</th>
       <td>#umweltskandal</td>
-      <td>SCAN</td>
-      <td>Skandalisierung</td>
       <td>Scandalization</td>
-      <td>NaN</td>
     </tr>
     <tr>
       <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
       <td>...</td>
       <td>...</td>
     </tr>
     <tr>
       <th>14100</th>
       <td>wurzelrassenlehre</td>
-      <td>ESO</td>
-      <td>(Rechts-)Esoterik</td>
       <td>Esotericism</td>
-      <td>NaN</td>
     </tr>
     <tr>
       <th>14101</th>
       <td>z-plan</td>
-      <td>ESO</td>
-      <td>(Rechts-)Esoterik</td>
       <td>Esotericism</td>
-      <td>NaN</td>
     </tr>
     <tr>
       <th>14102</th>
       <td>zahlenmystik</td>
-      <td>ESO</td>
-      <td>(Rechts-)Esoterik</td>
       <td>Esotericism</td>
-      <td>NaN</td>
     </tr>
     <tr>
       <th>14103</th>
       <td>zeitenwende</td>
-      <td>ESO</td>
-      <td>(Rechts-)Esoterik</td>
       <td>Esotericism</td>
-      <td>9810,00000000000</td>
     </tr>
     <tr>
       <th>14104</th>
       <td>zentralwillen</td>
-      <td>ESO</td>
-      <td>(Rechts-)Esoterik</td>
       <td>Esotericism</td>
-      <td>NaN</td>
     </tr>
   </tbody>
 </table>
-<p>14105 rows × 5 columns</p>
+<p>14105 rows × 2 columns</p>
 </div></div></div>
 </div>
 <div class="cell docutils container">
@@ -514,12 +478,10 @@ rpx_dict
             continue # Skip terms that have already been identified but occur in multiple categories
 
         if &quot; &quot; in term:
-            print(&quot;Space in term&quot;)
             if term in text: # Dictionary term consists of several words
                 term_occurrence+=1
                 identified_terms.append(term)
         else:
-            print(&quot;Standard&quot;)
             if term in text_tokens: # Dictionary term is a single word
                 term_occurrence+=1
                 identified_terms.append(term)
@@ -542,9 +504,14 @@ def clean_text(text:str):
     return &quot; &quot;.join(new_text)
 
 comments_df[&quot;Comments&quot;] = comments_df[&quot;Comments&quot;].apply(lambda text: clean_text(text))
-comments_df =comments_df[comments_df.Comments != &quot;&quot;]
-
-dict_term_occurrence_list = []
+comments_df = comments_df[comments_df.Comments != &quot;&quot;]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>dict_term_occurrence_list = []
 dict_identified_terms_list = []
 
 for text in tqdm(comments_df.Comments.to_list()):
@@ -558,14 +525,14 @@ comments_df[&quot;dict_identified_terms_list&quot;] = dict_identified_terms_list
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 406242/406242 [12:41&lt;00:00, 533.82it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 401282/401282 [07:11&lt;00:00, 930.61it/s] 
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>comments_df.loc[comments_df[&#39;dict_term_occurrence&#39;] &gt; 0]
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>display(comments_df.loc[comments_df[&#39;dict_term_occurrence&#39;] &gt; 0])
 </pre></div>
 </div>
 </div>
@@ -599,36 +566,36 @@ comments_df[&quot;dict_identified_terms_list&quot;] = dict_identified_terms_list
       <th>0</th>
       <td>0</td>
       <td>wollt ihr jetzt jeden tag einen großen bericht...</td>
-      <td>33</td>
-      <td>[ganz, große, großen, bericht, ganz, großen, s...</td>
+      <td>7</td>
+      <td>[ganz, großen, bericht, schön, panzer, sinnlos...</td>
     </tr>
     <tr>
       <th>1</th>
       <td>1</td>
-      <td>Wenn Scholz alles besser weiss, wieso braucht ...</td>
-      <td>20</td>
-      <td>[brauch, braucht, weiss, wieso, wie, wieso, be...</td>
+      <td>wenn scholz alles besser weiss, wieso braucht ...</td>
+      <td>3</td>
+      <td>[braucht, wieso, besser]</td>
     </tr>
     <tr>
       <th>2</th>
       <td>2</td>
-      <td>Die Grünen hatten Früher das Peace Zeichen als...</td>
-      <td>22</td>
-      <td>[heute, wen, wenig, heute, wächst, heute, weni...</td>
+      <td>die grünen hatten früher das peace zeichen als...</td>
+      <td>9</td>
+      <td>[grünen, heute, militär, panzer, wächst, frühe...</td>
     </tr>
     <tr>
       <th>3</th>
       <td>3</td>
-      <td>Der Westen ist ein Kriegstreiber bis es zu ein...</td>
-      <td>29</td>
-      <td>[kommt, krieg, lange, weit, kommt, lange, mach...</td>
+      <td>der westen ist ein kriegstreiber bis es zu ein...</td>
+      <td>6</td>
+      <td>[kommt, lange, idioten, kriegstreiber, westen,...</td>
     </tr>
     <tr>
       <th>4</th>
       <td>4</td>
-      <td>Frieden schaffen ohne Waffen.</td>
-      <td>4</td>
-      <td>[schaf, schaffen, schaffen, schaffen]</td>
+      <td>frieden schaffen ohne waffen.</td>
+      <td>2</td>
+      <td>[schaffen, frieden]</td>
     </tr>
     <tr>
       <th>...</th>
@@ -638,48 +605,48 @@ comments_df[&quot;dict_identified_terms_list&quot;] = dict_identified_terms_list
       <td>...</td>
     </tr>
     <tr>
+      <th>406236</th>
+      <td>406236</td>
+      <td>was die union wieder will, die leute sind doch...</td>
+      <td>10</td>
+      <td>[land, leute, sollen, sowieso, wäre, brauchen,...</td>
+    </tr>
+    <tr>
       <th>406237</th>
       <td>406237</td>
-      <td>Kann jeder deutscher werden ,kein Problem sola...</td>
-      <td>59</td>
-      <td>[arbeit, gehen, lange, deutsche, lange, überwa...</td>
+      <td>kann jeder deutscher werden ,kein problem sola...</td>
+      <td>9</td>
+      <td>[gehen, deutsche, überwacht, irgendwelche, arb...</td>
     </tr>
     <tr>
       <th>406238</th>
       <td>406238</td>
-      <td>Dann nimm die Leute bei dir auf und verpflege ...</td>
-      <td>4</td>
-      <td>[halt, eu, halt, halt]</td>
+      <td>dann nimm die leute bei dir auf und verpflege ...</td>
+      <td>1</td>
+      <td>[leute]</td>
     </tr>
     <tr>
       <th>406239</th>
       <td>406239</td>
-      <td>🙄🤔als Staatenloser hatt mans aber auch nicht l...</td>
-      <td>7</td>
-      <td>[treiben, stimmt, treiben, ss, nich, nich, tt]</td>
+      <td>als staatenloser hatt mans aber auch nicht lei...</td>
+      <td>1</td>
+      <td>[stimmt]</td>
     </tr>
     <tr>
       <th>406240</th>
       <td>406240</td>
-      <td>Wann kommt der Blackout? Kinder könnt ihr ja e...</td>
-      <td>22</td>
-      <td>[kommt, kommt, schützen, kommt, kommt, kommt, ...</td>
-    </tr>
-    <tr>
-      <th>406241</th>
-      <td>406241</td>
-      <td>Den Blackout auf den du wartest, wird es nur g...</td>
-      <td>11</td>
-      <td>[eben, wen, eben, geben, geben, eben, eben, ge...</td>
+      <td>wann kommt der blackout? kinder könnt ihr ja e...</td>
+      <td>4</td>
+      <td>[kinder, kommt, wann, könnt]</td>
     </tr>
   </tbody>
 </table>
-<p>368240 rows × 4 columns</p>
+<p>345620 rows × 4 columns</p>
 </div></div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>comments_df.hist(column=&quot;dict_term_occurrence&quot;, legend=True, bins=50, range=[0,100])
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>comments_df.hist(column=&quot;dict_term_occurrence&quot;, legend=True, bins=50, range=[0,50])
 </pre></div>
 </div>
 </div>
@@ -688,7 +655,259 @@ comments_df[&quot;dict_identified_terms_list&quot;] = dict_identified_terms_list
       dtype=object)
 </pre></div>
 </div>
-<img alt="_images/dictionary_analysis_6_1.png" src="_images/dictionary_analysis_6_1.png" />
+<img alt="_images/dictionary_analysis_7_1.png" src="_images/dictionary_analysis_7_1.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>display(comments_df.loc[comments_df[&#39;dict_term_occurrence&#39;] &gt; 4])
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Unnamed: 0</th>
+      <th>Comments</th>
+      <th>dict_term_occurrence</th>
+      <th>dict_identified_terms_list</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>wollt ihr jetzt jeden tag einen großen bericht...</td>
+      <td>7</td>
+      <td>[ganz, großen, bericht, schön, panzer, sinnlos...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>die grünen hatten früher das peace zeichen als...</td>
+      <td>9</td>
+      <td>[grünen, heute, militär, panzer, wächst, frühe...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>der westen ist ein kriegstreiber bis es zu ein...</td>
+      <td>6</td>
+      <td>[kommt, lange, idioten, kriegstreiber, westen,...</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>7</td>
+      <td>donnor, beweis deine behauptung, die ukraine w...</td>
+      <td>5</td>
+      <td>[deutschland, beweis, ukraine, wagenknecht, so...</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>10</td>
+      <td>der fraktionslose bundestagsabgeordnete robert...</td>
+      <td>12</td>
+      <td>[eigenen, geht, politische, traut, dabei, klar...</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>406222</th>
+      <td>406222</td>
+      <td>und außerdem kann sich jeder im krankenhaus be...</td>
+      <td>5</td>
+      <td>[kohle, lassen, völlig, sachen, außer]</td>
+    </tr>
+    <tr>
+      <th>406223</th>
+      <td>406223</td>
+      <td>du hast es nicht verstanden junge ..\ndie ampe...</td>
+      <td>7</td>
+      <td>[deutschland, junge, hast, leben, arbeiten, eu...</td>
+    </tr>
+    <tr>
+      <th>406233</th>
+      <td>406233</td>
+      <td>deutschland hat fertig!\nausbildung fehlanzeig...</td>
+      <td>5</td>
+      <td>[deutschland, gerne, unsere, bestimmt, rentner]</td>
+    </tr>
+    <tr>
+      <th>406236</th>
+      <td>406236</td>
+      <td>was die union wieder will, die leute sind doch...</td>
+      <td>10</td>
+      <td>[land, leute, sollen, sowieso, wäre, brauchen,...</td>
+    </tr>
+    <tr>
+      <th>406237</th>
+      <td>406237</td>
+      <td>kann jeder deutscher werden ,kein problem sola...</td>
+      <td>9</td>
+      <td>[gehen, deutsche, überwacht, irgendwelche, arb...</td>
+    </tr>
+  </tbody>
+</table>
+<p>133700 rows × 4 columns</p>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>for index, values in comments_df.loc[comments_df[&#39;dict_term_occurrence&#39;] &gt; 4].sample(10)[[&quot;Comments&quot;, &quot;dict_identified_terms_list&quot;]].iterrows():
+    print(f&quot;Sample {index+1}: {values[&#39;dict_identified_terms_list&#39;]}\n&quot;)
+    print(values[&quot;Comments&quot;])
+    print(&quot;-&quot;*150)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 398335: [&#39;politik&#39;, &#39;presse&#39;, &#39;stimmt&#39;, &#39;handlanger&#39;, &#39;meint&#39;]
+
+wenn auf einen in gewahrsam genommenen reichsbürger-rentner vier journalisten kommen, dann:
+a) stimmt die gewaltenteilung
+b) ist es eine farce
+c) ist die presse handlanger der politik geworden
+was meint ihr?
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Sample 178360: [&#39;wenig&#39;, &#39;wie&#39;, &#39;ebenso&#39;, &#39;gehören&#39;, &#39;schwäche&#39;, &#39;deutscher&#39;]
+
+metalhead kulturbanausen, die meinen, ihre schwäche durch kraft- und fäkalausdrücke kompensieren zu müssen, gehören ebenso wenig zu einer kulturnation, wie barbaren, die in der genuss verschleuderter deutscher staatsbürgerschaften kommen.
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Sample 361514: [&#39;vollkommen&#39;, &#39;bringen&#39;, &#39;konstruiert&#39;, &#39;staatlichen&#39;, &#39;selbstredend&#39;, &#39;illegalen&#39;, &#39;abschlachten&#39;, &#39;mädchen&#39;]
+
+die staatsfeindin antifa-faeser konstruiert etwas mit den vollkommen harmlosen reichsbürgern, um vom abschlachten der mädchen durch ihre illegalen abzulenken. die staatlichen maulhuren bringen diese farce selbstredend an erster stelle.
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Sample 117851: [&#39;gehört&#39;, &#39;partei&#39;, &#39;spielt&#39;, &#39;terror&#39;, &#39;afd&#39;]
+
+und schon wieder spielt die afd eine rolle, wenn es um terror geht.
+diese facho partei gehört verboten.
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Sample 164673: [&#39;dafür&#39;, &#39;denen&#39;, &#39;gehalten&#39;, &#39;krank&#39;, &#39;land&#39;, &#39;schwachsinn&#39;, &#39;frauen&#39;, &#39;gibt&#39;, &#39;idioten&#39;, &#39;ganzen&#39;, &#39;seite&#39;, &#39;die da&#39;, &#39;genug&#39;, &#39;armen&#39;]
+
+da war ja auch nichts! können die armen wirtschafts... pardon &quot;kriegs&quot;flüchtlinge ja nichts dafür das die sexy frauen keine armlänge abstand gehalten haben. das kann man denen doch nicht antun! die armen. na spass bei seite dieses land ist nur noch krank mit ihrem ganzen schwachsinn und es gibt genug idioten in dem land die das noch unterstützen.
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Sample 165013: [&#39;vielleicht&#39;, &#39;davon&#39;, &#39;gibt&#39;, &#39;viele&#39;, &#39;müssen&#39;]
+
+vielleicht gibt es zu viele davon und die berufsdemonstranten müssen sich aufteilen.
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Sample 300075: [&#39;eigenen&#39;, &#39;gehen&#39;, &#39;geht&#39;, &#39;wie&#39;, &#39;staat&#39;, &#39;versicherung&#39;, &#39;zahlen&#39;, &#39;dachte&#39;]
+
+kainer dachte ich mir doch. bei vorschlägen wie bei dem von ihnen geht es nämlich immer darum, daß andere sich einschränken bzw. mehr zahlen müssen. aber die eigenen gesundheitlich schädlichen angewohnheiten gehen dem staat und der versicherung nichts an.
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Sample 70362: [&#39;entschieden&#39;, &#39;hätte&#39;, &#39;jahren&#39;, &#39;seit&#39;, &#39;wäre&#39;, &#39;genau&#39;, &#39;afd&#39;]
+
+3:00 hätte das die afd vorgeschlagen oder entschieden wäre es rassistisch, aber so ist es ok. den genau das will die afd seit jahren :d
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Sample 273243: [&#39;dagegen&#39;, &#39;amerikanische&#39;, &#39;glaube&#39;, &#39;weltkrieg&#39;, &#39;zweiten&#39;, &#39;bayern&#39;]
+
+seemann ich glaube bayern war doch nach dem zweiten weltkrieg amerikanische besatzungszone. die kasernen sind also dort. in bawü waren es dagegen die franzosen
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Sample 183284: [&#39;bekommen&#39;, &#39;gehört&#39;, &#39;wirklich&#39;, &#39;zerstört&#39;, &#39;menschen&#39;, &#39;versucht&#39;, &#39;leben&#39;, &#39;mensch&#39;, &#39;virus&#39;, &#39;irgendwann&#39;]
+
+meiner meinug nach sollte man es, das corona virus abstufem!
+wir bekommen es nicht weg.
+es gehört dazu.
+das virus will den menschen nicht töten!
+es versucht mit dem menschen zuleben.
+das virus versucht mit dem menschen zu leben.
+da sich virus und mensch nicht wirklich unterscheiden.
+der virus versucht seinen wirt nicht umzubringen damit es leben kann!
+der mensch zerstört seinen planeten und kann irgendwann nicht mehr leben.
+------------------------------------------------------------------------------------------------------------------------------------------------------
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>for index, values in comments_df.loc[comments_df[&#39;dict_term_occurrence&#39;] &gt; 10].sample(10)[[&quot;Comments&quot;, &quot;dict_identified_terms_list&quot;]].iterrows():
+    print(f&quot;Sample {index+1}: {values[&#39;dict_identified_terms_list&#39;]}\n&quot;)
+    print(values[&quot;Comments&quot;])
+    print(&quot;-&quot;*150)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 242548: [&#39;deutschland&#39;, &#39;dummheit&#39;, &#39;eigentlich&#39;, &#39;glück&#39;, &#39;komplett&#39;, &#39;reine&#39;, &#39;reiner&#39;, &#39;beim&#39;, &#39;wie&#39;, &#39;seid&#39;, &#39;aufgrund&#39;, &#39;soviel&#39;, &#39;studierte&#39;, &#39;sucht&#39;, &#39;sieg&#39;, &#39;konsequenzen&#39;, &#39;neben&#39;]
+
+wm - aus
+nun sucht ihr also einen schuldigen am wm- ausschied.... personelle konsequenzen aufgrund eines spiels bei dem neben komplett unbedeutsamen nebensachlichkeiten bloss das reine glück auf einen sieg erforderlich ist ? ist das euer ernst? sagt, wie trivial seid ihr eigentlich ??? wir haben soviel abiturienten beim dfb und bundesweit soviel studierte menschen, doch wie kann es sein, dass deutschland inzwischen an reiner dummheit nicht mehr zu überbieten ist ???
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Sample 225632: [&#39;denkt&#39;, &#39;ganze&#39;, &#39;jemand&#39;, &#39;kommt&#39;, &#39;zwei&#39;, &#39;quasi&#39;, &#39;wie&#39;, &#39;wann&#39;, &#39;lieben&#39;, &#39;guten&#39;, &#39;liebe&#39;, &#39;mittelstand&#39;, &#39;stammt&#39;, &#39;china&#39;]
+
+guten abend, ihr lieben menschen. corona quasi besiegt? da hab ich jetzt nur noch zwei fragen. stammt das virus, was uns ganze existenzen kostete, jetzt aus einem labor oder kommt es von dieser ollen fledermaus? und die wichtigere frage, wenn der shit aus einem labor stammt, wann muss china dann schadensersatz zahlen? oder hat jemand &quot;wie geil geschrien&quot;, als jemand meinte er experimentiert wie ein genie? also liebe regierung, was denkt ihr für den überwiegenden mittelstand zu tun?
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Sample 310633: [&#39;deutschland&#39;, &#39;wissen&#39;, &#39;heute&#39;, &#39;russen&#39;, &#39;wie&#39;, &#39;faktisch&#39;, &#39;sache&#39;, &#39;usa&#39;, &#39;vereinigten staaten&#39;, &#39;europäische&#39;, &#39;kolonie&#39;, &#39;kolonien&#39;]
+
+*(8)* die *pläne der usa,* rußland in eine kolonie zu verwandeln, sind gescheitert. *dumasprecher wjatscheslaw:* &quot;wir russen wissen was sache ist, und wie die usa tickt, was deutschland noch nicht begriffen hat&quot;.
+viele europäische staaten, *wie auch deutschland* sind heute faktisch kolonien der vereinigten staaten. *rd*
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Sample 141554: [&#39;dagegen&#39;, &#39;denen&#39;, &#39;eben&#39;, &#39;echt&#39;, &#39;eigentlich&#39;, &#39;ganz&#39;, &#39;lange&#39;, &#39;vergewaltigt&#39;, &#39;wegen&#39;, &#39;davon&#39;, &#39;erst&#39;, &#39;frauen&#39;, &#39;grund&#39;, &#39;hören&#39;, &#39;mann&#39;, &#39;paar&#39;, &#39;starke&#39;, &#39;warum&#39;, &#39;wie&#39;, &#39;beweise&#39;, &#39;beweisen&#39;, &#39;gesehen&#39;, &#39;schützen&#39;, &#39;irgendetwas&#39;, &#39;worden&#39;, &#39;kenne&#39;, &#39;passiert&#39;, &#39;wacht auf&#39;, &#39;später&#39;, &#39;patriot&#39;, &#39;sehe&#39;, &#39;vergewaltigungen&#39;]
+
+also, tausende gestandene männer, die später ganz kräftig den harten mann markieren, machen die biege und überlassen diese frauen ihrem schicksal?
+ich halte das eh nach wie vor für panikmache.
+im ernst, die paar fälle...
+wegen denen muss nun echt nichts unternommen werden..
+gibt es eigentlich videos davon?
+ach, und selbst wenn, ist eh alles meinungsmache.
+egal, egal, ist nie passiert und der starke patriot hat eh eine ausrede warum er nichts dagegen unternommen hat.
+und bis ich beweise gesehen habe ist es eh nur hören sagen.
+mal ganz davon abgesehen dass risikogruppen sich eben selbst schützen müssen. ich sehe nicht ein warum andere da mit reingezogen werden sollten.
+echt mal, die paar vergewaltigungen (die mir erst noch einer beweisen muss) sind noch lange kein grund sich wegen irgendetwas aufzuregen.
+also ich kenne niemanden der vergewaltigt worden ist.
+alles panikmache.
+wacht auf.
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Sample 212118: [&#39;braucht&#39;, &#39;kommen&#39;, &#39;terroristische&#39;, &#39;regierung&#39;, &#39;unterstützung&#39;, &#39;um die&#39;, &#39;welt&#39;, &#39;sturz&#39;, &#39;nation&#39;, &#39;republik&#39;, &#39;islamische&#39;]
+
+die nation iran braucht die umfassende unterstützung der welt, um die terroristische islamische republik zu zerstören, die die welt satt hat. der sturz der regierung khamenei wird allen zugute kommen
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Sample 178328: [&#39;angegriffen&#39;, &#39;deutschland&#39;, &#39;kämpft&#39;, &#39;wirklich&#39;, &#39;wurde&#39;, &#39;polen&#39;, &#39;versucht&#39;, &#39;um die&#39;, &#39;besser&#39;, &#39;russland&#39;, &#39;daran&#39;, &#39;gesprengt&#39;, &#39;ukraine&#39;]
+
+wolf kämpft nein, ich glaube, dass nordstream von polen gesprengt wurde - weil russland die ukraine angegriffen und versucht hat, deutschland zu erpressen. deinen geschichtsunterricht würde ich dir so dermaßen um die ohren hauen, dass du wirklich besser daran tust, deine klappe zu halten.
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Sample 406083: [&#39;tragen&#39;, &#39;dabei&#39;, &#39;deutlich&#39;, &#39;migranten&#39;, &#39;welche&#39;, &#39;wie&#39;, &#39;fürs&#39;, &#39;fachkräfte&#39;, &#39;westlichen&#39;, &#39;finanzministerium&#39;, &#39;fast&#39;, &#39;linksgrün&#39;, &#39;soviel&#39;, &#39;staaten&#39;, &#39;einwanderer&#39;, &#39;ländern&#39;]
+
+fachkräfte fürs linksgrün wählen? welche einwanderergruppen tragen denn wieviel zum staatshaushalt bei?
+das dänische finanzministerium hat das 2018 einmal aufgeschlüsselt und dabei festgestellt, dass einwanderer aus westlichen ländern fast soviel leisten, wie dänen, aber migranten aus nichtwestlichen staaten (und insbesondere aus muslimischen) im vergleich deutlich abfallen.
+warum werden solche kriterien bei den plänen der ampel nicht berücksichtigt?
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Sample 148366: [&#39;ganze&#39;, &#39;lange&#39;, &#39;lüge&#39;, &#39;sollen&#39;, &#39;brexit&#39;, &#39;plappern&#39;, &#39;unserer&#39;, &#39;warum&#39;, &#39;welche&#39;, &#39;falsch&#39;, &#39;gebracht&#39;, &#39;halten&#39;, &#39;leider&#39;, &#39;lieber&#39;, &#39;alten&#39;, &#39;aufgrund&#39;, &#39;briten&#39;, &#39;eu&#39;, &#39;probleme&#39;]
+
+das sind die selben argumente, welche die brexiteers immer gebracht haben. leider hat sich das ganze inzwischen als lüge herausgestellt. der brexit hat die briten schon mehr gekostet, als sie jemals eingezahlt haben. die meisten halten es aufgrund der probleme inzwischen für einen fehler, aus der eu ausgetreten zu sein.
+aber warum sollen wir aus den fehlern unserer nachbarn lernen, wir plappern lieber die alten stammtischparolen nach, die sich schon lange als falsch herausgestellt haben.
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Sample 171541: [&#39;deutschland&#39;, &#39;ganze&#39;, &#39;hätte&#39;, &#39;krieg&#39;, &#39;längst&#39;, &#39;lebensmittel&#39;, &#39;völlig&#39;, &#39;wäre&#39;, &#39;flüchtlinge&#39;, &#39;hätten&#39;, &#39;liefern&#39;, &#39;nato&#39;, &#39;niemals&#39;, &#39;putin&#39;, &#39;schuld&#39;, &#39;somit&#39;, &#39;ukraine&#39;, &#39;waffen&#39;, &#39;später&#39;, &#39;verantwortung&#39;, &#39;geschichte&#39;, &#39;helfen&#39;]
+
+niemals hätte deutschland waffen in die ukraine liefern dürfen. später wird die geschichte wieder nur deutschland zur verantwortung ziehen. der ganze krieg wäre ohne die waffenlieferungen schon längst zu ende. man kann flüchtlinge aufnehmen und decken, lebensmittel liefern. und man kann das gespräch mit putin suchen. lösungen finden, kompromisse beschließen. aber waffen und panzerlieferungen sind völlig indiskutabel. vor allem deutschland hätte sich niemals einmischen dürfen. schweden, schweiz, norwegen, niederlande, die hätten helfen können, aber niemals deutschland. schuld an dem krieg ist die nato und somit die usa.
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Sample 135347: [&#39;deutschen&#39;, &#39;möglich&#39;, &#39;viele&#39;, &#39;wer&#39;, &#39;wie&#39;, &#39;ende&#39;, &#39;andernfalls&#39;, &#39;steckt&#39;, &#39;anschlägen&#39;, &#39;präsident&#39;, &#39;hauptsache&#39;, &#39;gegenseitig&#39;, &#39;helfen&#39;, &#39;sprechen&#39;]
+
+us präsident truman gegen ende des 2. weltkrieges, sinngemäß: wenn wir sehen, die deutschen gewinnen, dann helfen wir den russen. andernfalls helfen wir den deutschen. hauptsache dass sich so viele wie möglich gegenseitig erschießen. so sprechen nur freunde. apropos feinde, wer steckt jetzt hinter den anschlägen auf nord-stream2?
+------------------------------------------------------------------------------------------------------------------------------------------------------
+</pre></div>
+</div>
 </div>
 </div>
 </section>

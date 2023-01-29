@@ -552,7 +552,7 @@ display(comments_df[[&quot;Comments&quot;, &quot;political_party&quot;, &quot;po
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>ax = comments_df[&quot;political_party&quot;].value_counts(normalize=True).sort_values().plot(kind=&quot;barh&quot;, title=&quot;Political parties&quot;)
-ax.bar_label(ax.containers[0])
+ax.bar_label(ax.containers[0], fmt=&quot;%.2f&quot;)
 ax.set_xlim(0,0.5)
 </pre></div>
 </div>

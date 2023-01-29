@@ -525,6 +525,7 @@ lda_model.save(&#39;lda_models/lda_model_20.gensim&#39;)
 </div>
 </div>
 </div>
+<p>Evaluating and comparing models is difficult but but two commong metrics are perplexity and coherence. The score of both metrics will decrease when adding more topics <span id="id5">[<a class="reference internal" href="bibliography.html#id2" title="Wouter van Atteveldt. Computational analysis of communication: a practical introduction to the analysis of texts, networks, and images with code examples in Python and R. Wiley Blackwell, Hoboken, USA Sussex, UK, 2022. ISBN 978-1-119-68023-9.">Atteveldt, 2022</a>]</span>. This behavior can also be seen in the models trained here. In theory, one looks for the inflection point at which the values of the two metrics fall at a much slower rate <span id="id6">[<a class="reference internal" href="bibliography.html#id2" title="Wouter van Atteveldt. Computational analysis of communication: a practical introduction to the analysis of texts, networks, and images with code examples in Python and R. Wiley Blackwell, Hoboken, USA Sussex, UK, 2022. ISBN 978-1-119-68023-9.">Atteveldt, 2022</a>]</span>. However, since only a few models were trained here, such an approach is difficult to carry out, especially since both metrics continue to decrease (at a similar rate).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>lda_model_6 = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_6.gensim&quot;)
@@ -562,6 +563,7 @@ LDA_20 Coherence Score:  0.4254128399081809
 </div>
 </div>
 </div>
+<p>If we look at the themes that the different models have found, we can identify some clear themes, but there are also some other themes that make little sense. Generally, the topics in the 6-topic model are too general. It is difficult to find clear themes there. In the models with 10 and 20 topics, on the other hand, it is easy to find some clear topics. Howeverm, it is difficult to say which of the two models is better.</p>
 <div class="cell tag_hide-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>lda_model = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_6.gensim&quot;)
@@ -1372,6 +1374,14 @@ display(pd.DataFrame({f&quot;Topic {n}&quot;:[word for (word,word_weight) in wor
 </table>
 </div></div></div>
 </div>
+<p>So far, only the top words for each topic have been considered, without taking into account the weighting of the words. With a wordcloud it is possible to include this weighting and thus get a better understanding of the topic. In order to keep it clear, it was decided to visualise the model with 10 topics using wordclouds. If we look at the wordclouds shown below, the following themes could be identified:</p>
+<ul class="simple">
+<li><p>Topic 0: This topic could be about Germany and domestic issues.</p></li>
+<li><p>Topic 2: This topic is obviously about the ukraine war.</p></li>
+<li><p>Topic 4: This topic seems to be related to the AFD. The terms suggest that it could be partly about calls to vote for the AFD or a statement that the AFD has been voted for in the past.</p></li>
+<li><p>Topic 6: This topic is about corona and corona deniers. However, it cannot be clearly stated whether these are more comments by corona deniers or rather comments by people who are upset about the corona deniers and criticise them.</p></li>
+<li><p>Topic 7: This topic could be about comments where others complain about the lateral thinking movement.</p></li>
+</ul>
 <div class="cell tag_hide-input docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from matplotlib import pyplot as plt
@@ -1404,7 +1414,7 @@ plt.show()
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/topic_model_18_0.png" src="_images/topic_model_18_0.png" />
+<img alt="_images/topic_model_21_0.png" src="_images/topic_model_21_0.png" />
 </div>
 </div>
 </section>

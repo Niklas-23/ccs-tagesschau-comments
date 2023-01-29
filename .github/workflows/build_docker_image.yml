@@ -1,5 +1,7 @@
 name: build-docker-images
 
+on: workflow_dispatch
+
 jobs:
   build-image-ubuntu:
     runs-on: ubuntu-latest

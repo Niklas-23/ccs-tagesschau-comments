@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Sentiment anlysis &#8212; Analysis of German YouTube comments: How people from the lateral thinking movement dominate the comments section under videos of the &#34;tagesschau&#34; channel</title>
+    <title>Sentiment analysis &#8212; Analysis of German YouTube comments: How people from the lateral thinking movement dominate the comments section under videos of the &#34;tagesschau&#34; channel</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -104,7 +104,7 @@ const thebe_selector_output = ".output, .cell_output"
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
                 <a class="reference internal" href="intro.html">
-                    Analysis of German YouTube comments: How people from the lateral thinking movement dominate the comments section under videos of the “tagesschau” channel
+                    About this project
                 </a>
             </li>
         </ul>
@@ -136,7 +136,7 @@ const thebe_selector_output = ".output, .cell_output"
  </li>
  <li class="toctree-l1 current active">
   <a class="current reference internal" href="#">
-   Sentiment anlysis
+   Sentiment analysis
   </a>
  </li>
  <li class="toctree-l1">
@@ -355,7 +355,7 @@ title="Print to PDF"
         <div class="col pl-md-3 pl-lg-5 content-container">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
-                <h1>Sentiment anlysis</h1>
+                <h1>Sentiment analysis</h1>
                 <!-- Table of contents -->
                 <div id="print-main-content">
                     <div id="jb-print-toc">
@@ -367,9 +367,10 @@ title="Print to PDF"
                 
               <div>
                 
-  <section class="tex2jax_ignore mathjax_ignore" id="sentiment-anlysis">
-<h1>Sentiment anlysis<a class="headerlink" href="#sentiment-anlysis" title="Permalink to this headline">#</a></h1>
-<p>The third methods used to answer the research questions are transformers for text classification.</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="sentiment-analysis">
+<h1>Sentiment analysis<a class="headerlink" href="#sentiment-analysis" title="Permalink to this headline">#</a></h1>
+<p>The third methods used to answer the research questions are transformers for text classification. Transformers are a relatively new technology in the NLP field and enable analyses that were not so easily possible before <span id="id1">[<a class="reference internal" href="bibliography.html#id2" title="Wouter van Atteveldt. Computational analysis of communication: a practical introduction to the analysis of texts, networks, and images with code examples in Python and R. Wiley Blackwell, Hoboken, USA Sussex, UK, 2022. ISBN 978-1-119-68023-9.">Atteveldt, 2022</a>]</span>. At the same time, they can perform analyses such as sentiment analysis much better and more precisely than it would be possible with a dictionary-based approach, for example <span id="id2">[<a class="reference internal" href="bibliography.html#id13" title="Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. Attention is all you need. 2017. URL: https://arxiv.org/abs/1706.03762, doi:10.48550/ARXIV.1706.03762.">Vaswani <em>et al.</em>, 2017</a>]</span>. The key component of transformers is the self-attention mechanism, which allows the model to weight different parts of a sequence dynamically, rather than relying on a fixed window size as in traditional RNNs or CNNs <span id="id3">[<a class="reference internal" href="bibliography.html#id13" title="Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. Attention is all you need. 2017. URL: https://arxiv.org/abs/1706.03762, doi:10.48550/ARXIV.1706.03762.">Vaswani <em>et al.</em>, 2017</a>]</span>. We are going to use a transfoer to analyse the sentiment of the comments.</p>
+<p>For this project the Hugging Face library is used, which provides pretrained state of th art models for many different application areas. Will we use a BERT based model that was trained on 1.8 million German-language samples <span id="id4">[<a class="reference internal" href="bibliography.html#id12" title="Oliver Guhr, Anne-Kathrin Schumann, Frank Bahrmann, and Hans Joachim Böhme. Training a broad-coverage german sentiment classification model for dialog systems. In Proceedings of The 12th Language Resources and Evaluation Conference, 1620–1625. Marseille, France, May 2020. European Language Resources Association. URL: https://www.aclweb.org/anthology/2020.lrec-1.202.">Guhr <em>et al.</em>, 2020</a>]</span> to perform sentiment analysis. The model has three labels for the sentiment: positive, neutral and negative.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>import pandas as pd
@@ -382,6 +383,7 @@ from cleantext import clean
 </div>
 </div>
 </div>
+<p>One advantage of transfoerm is that they usually require little preprocessing. After loading the comments, the emojis are removed from the comments first. In addition, all URLs and mentions are removed, as it is very unlikely that the model can do anything with this information. At the end, as in previous analyses, empty comments are removed.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>comments_df = pd.read_csv(&quot;data/youtube_comments_500.csv&quot;)
@@ -505,7 +507,12 @@ for text in tqdm(comments_df.Comments.to_list()):
 
 comments_df[&quot;sentiment&quot;] = label_list
 comments_df[&quot;sentiment_score&quot;] = score_list
-comments_df.to_csv(&quot;data/sentiments.csv&quot;)
+comments_df.to_csv(&quot;data/sentiments.csv&quot;, index=False)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 47%|████▋     | 189935/401282 [4:22:47&lt;5:35:47, 10.49it/s] 
 </pre></div>
 </div>
 </div>
@@ -640,7 +647,7 @@ ax.set_xlim(0,0.65)
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(0.0, 0.65)
 </pre></div>
 </div>
-<img alt="_images/sentiment_analysis_5_1.png" src="_images/sentiment_analysis_5_1.png" />
+<img alt="_images/sentiment_analysis_6_1.png" src="_images/sentiment_analysis_6_1.png" />
 </div>
 </div>
 </section>

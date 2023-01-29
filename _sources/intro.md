@@ -1,6 +1,8 @@
-# Analysis of German YouTube comments: How people from the lateral thinking movement dominate the comments section under videos of the "tagesschau" channel
+# About this project
 
-This Jupyter book contains an analysis of german YouTube comments to find out how the lateral thinking 
+## Analysis of German YouTube comments: How people from the lateral thinking movement dominate the comments section under videos of the "tagesschau" channel
+
+This Jupyter book contains an analysis of German YouTube comments to find out how the lateral thinking 
 movement dominates the
 comments section under videos of the "tagesschau" channel. For this purpose, the research question is described in more
 detail at the beginning. Subsequently, a dataset is created with the help of the YouTube API, which forms the basis for

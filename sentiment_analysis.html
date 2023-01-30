@@ -383,7 +383,7 @@ from cleantext import clean
 </div>
 </div>
 </div>
-<p>One advantage of transfoerm is that they usually require little preprocessing. After loading the comments, the emojis are removed from the comments first. In addition, all URLs and mentions are removed, as it is very unlikely that the model can do anything with this information. At the end, as in previous analyses, empty comments are removed.</p>
+<p>One advantage of transformers is that they usually require little preprocessing. After loading the comments, the emojis are removed from the comments first. In addition, all URLs and mentions are removed, as it is very unlikely that the model can do anything with this information. At the end, as in previous analyses, empty comments are removed.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>comments_df = pd.read_csv(&quot;data/youtube_comments_500.csv&quot;)
@@ -399,7 +399,7 @@ def clean_text(text:str):
 
 comments_df[&quot;Comments&quot;] = comments_df[&quot;Comments&quot;].apply(lambda text: clean_text(text))
 comments_df =comments_df[comments_df.Comments != &quot;&quot;]
-comments_df
+display(comments_df)
 </pre></div>
 </div>
 </div>
@@ -487,6 +487,7 @@ comments_df
 <p>401282 rows × 2 columns</p>
 </div></div></div>
 </div>
+<p>To start the sentiment analysis, the pretrained model is loaded together with the corrsponding tokenizer and model configuration. Then each comment is processed sequentially. First the input is tokenized and then passed to the model. The output of the model contains logits and is therefore converted into probabilities using the softmax function. Then the output is converted from a tensor into a numpy array in order to extract the label with with highest proability in the next step. To get the label with the highest proability the output list is first sorted. The numpy function argsort is used to sort the list and to get the index (and not the sorted values). Then the order of the sorting is reversed (<code class="docutils literal notranslate"><span class="pre">[::-1]</span></code>) and the first element is selected so that the index of the label with the highest probability is obtained. The corresponding confidence value is also stored. At the end all results are added to the dataframe and saved. When looking at the first lines of the dataframe, it can be seen that everything has worked.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>model_name = &quot;oliverguhr/german-sentiment-bert&quot;
@@ -508,11 +509,6 @@ for text in tqdm(comments_df.Comments.to_list()):
 comments_df[&quot;sentiment&quot;] = label_list
 comments_df[&quot;sentiment_score&quot;] = score_list
 comments_df.to_csv(&quot;data/sentiments.csv&quot;, index=False)
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 47%|████▋     | 189935/401282 [4:22:47&lt;5:35:47, 10.49it/s] 
 </pre></div>
 </div>
 </div>
@@ -543,7 +539,6 @@ comments.head(10)
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>Unnamed: 0.1</th>
       <th>Unnamed: 0</th>
       <th>Comments</th>
       <th>sentiment</th>
@@ -554,7 +549,6 @@ comments.head(10)
     <tr>
       <th>0</th>
       <td>0</td>
-      <td>0</td>
       <td>wollt ihr jetzt jeden tag einen großen bericht...</td>
       <td>negative</td>
       <td>0.997865</td>
@@ -562,83 +556,75 @@ comments.head(10)
     <tr>
       <th>1</th>
       <td>1</td>
-      <td>1</td>
-      <td>Wenn Scholz alles besser weiss, wieso braucht ...</td>
-      <td>negative</td>
-      <td>0.922022</td>
+      <td>wenn scholz alles besser weiss, wieso braucht ...</td>
+      <td>neutral</td>
+      <td>0.966083</td>
     </tr>
     <tr>
       <th>2</th>
       <td>2</td>
-      <td>2</td>
-      <td>Die Grünen hatten Früher das Peace Zeichen als...</td>
-      <td>neutral</td>
-      <td>0.682787</td>
+      <td>die grünen hatten früher das peace zeichen als...</td>
+      <td>negative</td>
+      <td>0.984363</td>
     </tr>
     <tr>
       <th>3</th>
       <td>3</td>
-      <td>3</td>
-      <td>Der Westen ist ein Kriegstreiber bis es zu ein...</td>
+      <td>der westen ist ein kriegstreiber bis es zu ein...</td>
       <td>neutral</td>
-      <td>0.994764</td>
+      <td>0.998064</td>
     </tr>
     <tr>
       <th>4</th>
       <td>4</td>
-      <td>4</td>
-      <td>Frieden schaffen ohne Waffen.</td>
+      <td>frieden schaffen ohne waffen.</td>
       <td>neutral</td>
-      <td>0.957964</td>
+      <td>0.995086</td>
     </tr>
     <tr>
       <th>5</th>
       <td>5</td>
-      <td>5</td>
-      <td>Donnor, dann sag Putin, er soll aus der Ukrain...</td>
+      <td>donnor, dann sag putin, er soll aus der ukrain...</td>
       <td>neutral</td>
-      <td>0.998527</td>
+      <td>0.998752</td>
     </tr>
     <tr>
       <th>6</th>
       <td>6</td>
-      <td>6</td>
-      <td>Kanal Sahra Wagenknecht: Erst Panzer, dann Kam...</td>
-      <td>neutral</td>
-      <td>0.524188</td>
+      <td>kanal sahra wagenknecht: erst panzer, dann kam...</td>
+      <td>negative</td>
+      <td>0.938369</td>
     </tr>
     <tr>
       <th>7</th>
       <td>7</td>
-      <td>7</td>
-      <td>Donnor, beweis deine Behauptung, die Ukraine w...</td>
-      <td>neutral</td>
-      <td>0.779697</td>
+      <td>donnor, beweis deine behauptung, die ukraine w...</td>
+      <td>negative</td>
+      <td>0.985598</td>
     </tr>
     <tr>
       <th>8</th>
       <td>8</td>
-      <td>8</td>
-      <td>Deutschland wird mit der Lieferung nichts gute...</td>
+      <td>deutschland wird mit der lieferung nichts gute...</td>
       <td>neutral</td>
-      <td>0.997424</td>
+      <td>0.991995</td>
     </tr>
     <tr>
       <th>9</th>
       <td>9</td>
-      <td>9</td>
-      <td>Warum? Frieden schaffen mit Waffen. Denk mal a...</td>
-      <td>negative</td>
-      <td>0.891107</td>
+      <td>warum? frieden schaffen mit waffen. denk mal a...</td>
+      <td>neutral</td>
+      <td>0.877570</td>
     </tr>
   </tbody>
 </table>
 </div></div></div>
 </div>
+<p>The results can now be visualised with the help of a bar chart. It can be seen that most comments are negative (49%), followed by neutral comments (42%). With 8%, only very few comments are positive. It can be concluded from this that the overall sentiment in the comments section is clearly negative.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>ax = comments[&quot;sentiment&quot;].value_counts(normalize=True).plot(kind=&quot;barh&quot;, title=&quot;Sentiment model&quot;)
-ax.bar_label(ax.containers[0])
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>ax = comments[&quot;sentiment&quot;].value_counts(normalize=True).sort_values().plot(kind=&quot;barh&quot;, title=&quot;Sentiment model&quot;)
+ax.bar_label(ax.containers[0], fmt=&quot;%.2f&quot;)
 ax.set_xlim(0,0.65)
 </pre></div>
 </div>
@@ -647,7 +633,7 @@ ax.set_xlim(0,0.65)
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(0.0, 0.65)
 </pre></div>
 </div>
-<img alt="_images/sentiment_analysis_6_1.png" src="_images/sentiment_analysis_6_1.png" />
+<img alt="_images/sentiment_analysis_8_1.png" src="_images/sentiment_analysis_8_1.png" />
 </div>
 </div>
 </section>

@@ -27,9 +27,9 @@ this, we will try to find answers to the following questions:
 
 - Which topics are dominant in the comments section below the videos?
 - How many comments can be attributed to the lateral thinking movement?
-- Do the comments of lateral thinkers make up the majority of all comments?
 - How dominant are right-wing comments?
 - What is the general sentiment in the comments section?
+- Do the comments of lateral thinkers make up the majority of all comments?
 
 The "tagesschau" channel was chosen because the comments were striking on the one hand and on the other hand because it
 is a channel from one of the public broadcasters. For the lateral thinking movement, the public broadcasters are a kind

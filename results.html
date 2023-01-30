@@ -343,12 +343,56 @@ title="Print to PDF"
     </ul>
   </div>
 </div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
 
     </div>
 </div>
 
 <!-- Table of contents -->
 <div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#which-topics-are-dominant-in-the-comments-section-below-the-videos">
+   Which topics are dominant in the comments section below the videos?
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#how-many-comments-can-be-attributed-to-the-lateral-thinking-movement">
+   How many comments can be attributed to the lateral thinking movement?
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#how-dominant-are-right-wing-comments">
+   How dominant are right-wing comments?
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#what-is-the-general-sentiment-in-the-comments-section">
+   What is the general sentiment in the comments section?
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#do-the-comments-of-lateral-thinkers-make-up-the-majority-of-all-comments">
+   Do the comments of lateral thinkers make up the majority of all comments?
+  </a>
+ </li>
+</ul>
+
+    </nav>
 </div>
     </div>
     <div class="article row">
@@ -360,6 +404,39 @@ title="Print to PDF"
                 <div id="print-main-content">
                     <div id="jb-print-toc">
                         
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#which-topics-are-dominant-in-the-comments-section-below-the-videos">
+   Which topics are dominant in the comments section below the videos?
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#how-many-comments-can-be-attributed-to-the-lateral-thinking-movement">
+   How many comments can be attributed to the lateral thinking movement?
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#how-dominant-are-right-wing-comments">
+   How dominant are right-wing comments?
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#what-is-the-general-sentiment-in-the-comments-section">
+   What is the general sentiment in the comments section?
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#do-the-comments-of-lateral-thinkers-make-up-the-majority-of-all-comments">
+   Do the comments of lateral thinkers make up the majority of all comments?
+  </a>
+ </li>
+</ul>
+
+                        </nav>
                     </div>
                 </div>
             </div>
@@ -369,6 +446,248 @@ title="Print to PDF"
                 
   <section class="tex2jax_ignore mathjax_ignore" id="results">
 <h1>Results<a class="headerlink" href="#results" title="Permalink to this headline">#</a></h1>
+<p>In this chapter the research questions from the beginng are answered on the basis of the insights gained in the previous chapters.</p>
+<section id="which-topics-are-dominant-in-the-comments-section-below-the-videos">
+<h2>Which topics are dominant in the comments section below the videos?<a class="headerlink" href="#which-topics-are-dominant-in-the-comments-section-below-the-videos" title="Permalink to this headline">#</a></h2>
+<p>To answer this question, the LDA topic model can be used. As illustrated in the corresponding chapter, the best results were achieved with the model that learned 10 topics. Below we can see again the wordcloud for the model with 10 topics, which was used to identify the individual themes. The results were mixed. In part, clear topics could be identified, but in part the topics found make little sense from a human point of view. Concrete topics that could be found were domestic politics, ukraine war, “AFD”, covid and the lateral thinking movement. From the analysis with pyLDAvis, we were also able to gain the insight that the topic of domestic politics dominates a particularly large proportion of the comments.</p>
+<p>The topics found are all related to the lateral thinking movement and thus support the thesis that the commments section is dominated by the lateral thinking movement. The dominance of the topic of domestic politics also fits in with this, as this is a topic often taken up in the lateral thinking movement. At the same time, however, it must also be taken into account that these topics have a lot of social relevance in the period under consideration. Thus, there could also be many comments on the topics, even though they were not written by lateral thinkers. Also not all topics of the model can be identified and assigned to the movement.</p>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from matplotlib import pyplot as plt
+from wordcloud import WordCloud
+import matplotlib.colors as mcolors
+import gensim
+import gensim.corpora as corpora
+from gensim.models import CoherenceModel
+
+cols = [color for name, color in mcolors.TABLEAU_COLORS.items()]
+
+cloud = WordCloud(background_color=&#39;white&#39;, width=2500, height=1800, max_words=10, colormap=&#39;tab10&#39;, color_func=lambda *args, **kwargs: cols[i], prefer_horizontal=1.0)
+
+lda_model = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_10.gensim&quot;)
+topics = lda_model.show_topics(formatted=False)
+
+fig, axes = plt.subplots(5, 2, figsize=(10,10), sharex=True, sharey=True)
+
+for i, ax in enumerate(axes.flatten()):
+    fig.add_subplot(ax)
+    topic_words = dict(topics[i][1])
+    cloud.generate_from_frequencies(topic_words, max_font_size=300)
+    plt.gca().imshow(cloud)
+    plt.gca().set_title(&#39;Topic &#39; + str(i), fontdict=dict(size=16))
+    plt.gca().axis(&#39;off&#39;)
+
+
+plt.subplots_adjust(wspace=0, hspace=0)
+plt.margins(x=0, y=0)
+plt.tight_layout()
+plt.show()
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/results_1_0.png" src="_images/results_1_0.png" />
+</div>
+</div>
+</section>
+<section id="how-many-comments-can-be-attributed-to-the-lateral-thinking-movement">
+<h2>How many comments can be attributed to the lateral thinking movement?<a class="headerlink" href="#how-many-comments-can-be-attributed-to-the-lateral-thinking-movement" title="Permalink to this headline">#</a></h2>
+<p>To answer this question, the dictionary analysis is used. The analysis with the RPC-Lex dictionary showed that 345,620 comments contain terms from the dictionary, which corresponds to 85% of all comments. The examination of examples shows, however, that not all comments that had a hit can also be attributed to the lateral thinking movement. Even by increasing the number of dictionary terms found in the comment, the accuracy could not be substantially improved. This suggests that the dictionary could be too general to identify lateral thinkers comments. This assumption is supported by the fact that the paper also states that the use of the dictionary to classify such comments needs to be critically reviewed, as the main purpose of the dictionary is to distinguish between different types of comments from lateral thinkers <span id="id1">[<a class="reference internal" href="bibliography.html#id11" title="Cornelius Puschmann, Hevin Karakurt, Carolin Amlinger, Nicola Gess, and Oliver Nachtwey. Rpc-lex: a dictionary to measure german right-wing populist conspiracy discourse online. Convergence, 28(4):1144-1171, 2022. URL: https://doi.org/10.1177/13548565221109440, arXiv:https://doi.org/10.1177/13548565221109440, doi:10.1177/13548565221109440.">Puschmann <em>et al.</em>, 2022</a>]</span>.</p>
+<p>If this circumstance is taken into account and one considers the proportion of correct hits in the analysis of the samples, one can assume that half of all hits are also correct. Based on this assumption, 172,810 comments can still be attributed to the lateral thinking movement, which corresponds to 43% of all comments. This is still a large proportion, especially considering the proportion this movement has in society.</p>
+</section>
+<section id="how-dominant-are-right-wing-comments">
+<h2>How dominant are right-wing comments?<a class="headerlink" href="#how-dominant-are-right-wing-comments" title="Permalink to this headline">#</a></h2>
+<p>This question can be answered with the help of the RPC-Lex dictionary categories. The dictionary contains two categories that can be considered right-wing oriented: Anti-immigration/Islamophobia and Nationalism. To answer the questions the results from the dictionary are loaded. During the analysis, it was always saved which terms were found. This is now used to see how many of these terms can be assigned to the two categories Anti-immigration/Islamophobia and Nationalism.</p>
+<p>To do this, first the results and the dictionary are loaded. Then a set is created, which contains only the terms of these two categories. This set contains 2,377 terms and is therefore much smaller than the complete dictionary. Afterwards we iterate over all comments to see how many of the previously found dictionary terms can be found in this reduced set of right-wing terms. The result is that 296960 comments contain right-wing terms.</p>
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import pandas as pd
+from ast import  literal_eval
+comments_df = pd.read_csv(&quot;data/dictionary_analysis.csv&quot;)
+comments_df = comments_df.drop(columns=comments_df.columns[0], axis=1)
+rpx_dict = pd.read_csv(&quot;dictionary_analysis/rpc_lex.csv&quot;, delimiter=&quot;;&quot;)
+rpx_dict_nat = rpx_dict[rpx_dict.category_code == &quot;NAT&quot;]
+rpx_dict_isla = rpx_dict[rpx_dict.category_code == &quot;ISLA&quot;]
+
+right_wing_terms = set(rpx_dict_nat.term.to_list()).union(rpx_dict_isla.term.to_list())
+print(len(right_wing_terms))
+
+dict_right_wing_term_occurrence_list = []
+comments_df.dict_identified_terms_list = comments_df.dict_identified_terms_list.apply(lambda x: literal_eval(x))
+for term_list in comments_df.dict_identified_terms_list.to_list():
+    term_occurrence = 0
+    for index, term in enumerate(term_list):
+        if term in right_wing_terms:
+            term_occurrence += 1
+    dict_right_wing_term_occurrence_list.append(term_occurrence)
+    term_occurrence = 0
+
+comments_df[&quot;right_wing_term_occurence&quot;] = dict_right_wing_term_occurrence_list
+display(comments_df.loc[comments_df[&#39;right_wing_term_occurence&#39;] &gt; 0])
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2377
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Comments</th>
+      <th>dict_term_occurrence</th>
+      <th>dict_identified_terms_list</th>
+      <th>right_wing_term_occurence</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>wollt ihr jetzt jeden tag einen großen bericht...</td>
+      <td>7</td>
+      <td>[ganz, großen, bericht, schön, panzer, sinnlos...</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>wenn scholz alles besser weiss, wieso braucht ...</td>
+      <td>3</td>
+      <td>[braucht, wieso, besser]</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>die grünen hatten früher das peace zeichen als...</td>
+      <td>9</td>
+      <td>[grünen, heute, militär, panzer, wächst, frühe...</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>der westen ist ein kriegstreiber bis es zu ein...</td>
+      <td>6</td>
+      <td>[kommt, lange, idioten, kriegstreiber, westen,...</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>frieden schaffen ohne waffen.</td>
+      <td>2</td>
+      <td>[schaffen, frieden]</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>401274</th>
+      <td>88 kommentare --- schnell die flucht ergreifen...</td>
+      <td>4</td>
+      <td>[schnell, 88, kommentare, flucht]</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>401276</th>
+      <td>was die union wieder will, die leute sind doch...</td>
+      <td>10</td>
+      <td>[land, leute, sollen, sowieso, wäre, brauchen,...</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>401277</th>
+      <td>kann jeder deutscher werden ,kein problem sola...</td>
+      <td>9</td>
+      <td>[gehen, deutsche, überwacht, irgendwelche, arb...</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>401278</th>
+      <td>dann nimm die leute bei dir auf und verpflege ...</td>
+      <td>1</td>
+      <td>[leute]</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>401280</th>
+      <td>wann kommt der blackout? kinder könnt ihr ja e...</td>
+      <td>4</td>
+      <td>[kinder, kommt, wann, könnt]</td>
+      <td>4</td>
+    </tr>
+  </tbody>
+</table>
+<p>296960 rows × 4 columns</p>
+</div></div></div>
+</div>
+<p>This result is rather surprising, since only one fifth of the dictionary words were used while the number of hits decreased by only about 15%. If we again take into account that there are a large number of false positives, the overall large proportion of hits nevertheless leads to the conclusion that right-wing oriented comments have a relatively strong dominance.</p>
+</section>
+<section id="what-is-the-general-sentiment-in-the-comments-section">
+<h2>What is the general sentiment in the comments section?<a class="headerlink" href="#what-is-the-general-sentiment-in-the-comments-section" title="Permalink to this headline">#</a></h2>
+<p>The sentiment analysis has shown that the comments section under videos of the “tagesschau” channel is strongly negative. Only very few comments were positive and most comments were neutral or negative, with the negative comments making up the largest proportion. In view of the terms and comments observed in the previous analyses, this result was to be expected.</p>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import pandas as pd
+comments_df = pd.read_csv(&quot;data/sentiments.csv&quot;)
+ax = comments_df[&quot;sentiment&quot;].value_counts(normalize=True).sort_values().plot(kind=&quot;barh&quot;, title=&quot;Sentiment model&quot;)
+ax.bar_label(ax.containers[0], fmt=&quot;%.2f&quot;)
+ax.set_xlim(0,0.65)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(0.0, 0.65)
+</pre></div>
+</div>
+<img alt="_images/results_6_1.png" src="_images/results_6_1.png" />
+</div>
+</div>
+</section>
+<section id="do-the-comments-of-lateral-thinkers-make-up-the-majority-of-all-comments">
+<h2>Do the comments of lateral thinkers make up the majority of all comments?<a class="headerlink" href="#do-the-comments-of-lateral-thinkers-make-up-the-majority-of-all-comments" title="Permalink to this headline">#</a></h2>
+<p>This question is difficult to answer with the help of the topic model, since domestic topics make up a large part of it and this topic cannot be assigned directly to lateral thinking movement. The dictionary analysis, on the other hand, allows the conclusion that lateral thinkers write many comments and dominate the comments section, at least partially. The negative sentiment revealed by the sentiment analysis supports this assumption. Furthermore, the analysis of political orientation can be used to answer this question. Most of the comments can be assigned to the conservative or extreme direction, as it has already been mentioned in the chapter before. The distribution among the parties is very different from the current polls<a class="footnote-reference brackets" href="#forsa" id="id2">1</a>, which is why this result also supports the assumption that comments by lateral thinkers make up a large proportion.</p>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import pandas as pd
+comments_df = pd.read_csv(&quot;data/political_parties.csv&quot;)
+ax = comments_df[&quot;political_party&quot;].value_counts(normalize=True).sort_values().plot(kind=&quot;barh&quot;, title=&quot;Political parties&quot;)
+ax.bar_label(ax.containers[0], fmt=&quot;%.2f&quot;)
+ax.set_xlim(0,0.5)
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(0.0, 0.5)
+</pre></div>
+</div>
+<img alt="_images/results_8_1.png" src="_images/results_8_1.png" />
+</div>
+</div>
+<hr class="footnotes docutils" />
+<dl class="footnote brackets">
+<dt class="label" id="forsa"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>
+<dd><p>see <a class="reference external" href="https://dawum.de/Bundestag/Forsa/2023-01-24/">https://dawum.de/Bundestag/Forsa/2023-01-24/</a></p>
+</dd>
+</dl>
+</section>
 </section>
 
     <script type="text/x-thebe-config">

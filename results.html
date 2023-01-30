@@ -390,6 +390,11 @@ title="Print to PDF"
    Do the comments of lateral thinkers make up the majority of all comments?
   </a>
  </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#result-validity">
+   Result validity
+  </a>
+ </li>
 </ul>
 
     </nav>
@@ -434,6 +439,11 @@ title="Print to PDF"
    Do the comments of lateral thinkers make up the majority of all comments?
   </a>
  </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#result-validity">
+   Result validity
+  </a>
+ </li>
 </ul>
 
                         </nav>
@@ -457,7 +467,6 @@ title="Print to PDF"
 from wordcloud import WordCloud
 import matplotlib.colors as mcolors
 import gensim
-import gensim.corpora as corpora
 from gensim.models import CoherenceModel
 
 cols = [color for name, color in mcolors.TABLEAU_COLORS.items()]
@@ -492,7 +501,7 @@ plt.show()
 </section>
 <section id="how-many-comments-can-be-attributed-to-the-lateral-thinking-movement">
 <h2>How many comments can be attributed to the lateral thinking movement?<a class="headerlink" href="#how-many-comments-can-be-attributed-to-the-lateral-thinking-movement" title="Permalink to this headline">#</a></h2>
-<p>To answer this question, the dictionary analysis is used. The analysis with the RPC-Lex dictionary showed that 345,620 comments contain terms from the dictionary, which corresponds to 85% of all comments. The examination of examples shows, however, that not all comments that had a hit can also be attributed to the lateral thinking movement. Even by increasing the number of dictionary terms found in the comment, the accuracy could not be substantially improved. This suggests that the dictionary could be too general to identify lateral thinkers comments. This assumption is supported by the fact that the paper also states that the use of the dictionary to classify such comments needs to be critically reviewed, as the main purpose of the dictionary is to distinguish between different types of comments from lateral thinkers <span id="id1">[<a class="reference internal" href="bibliography.html#id11" title="Cornelius Puschmann, Hevin Karakurt, Carolin Amlinger, Nicola Gess, and Oliver Nachtwey. Rpc-lex: a dictionary to measure german right-wing populist conspiracy discourse online. Convergence, 28(4):1144-1171, 2022. URL: https://doi.org/10.1177/13548565221109440, arXiv:https://doi.org/10.1177/13548565221109440, doi:10.1177/13548565221109440.">Puschmann <em>et al.</em>, 2022</a>]</span>.</p>
+<p>To answer this question, the dictionary analysis is used. The analysis with the RPC-Lex dictionary showed that 345,620 comments contain terms from the dictionary, which corresponds to 85% of all comments. The examination of examples shows, however, that not all comments that had a hit can also be attributed to the lateral thinking movement. Even by increasing the number of dictionary terms found in the comment, the accuracy could not be substantially improved. This suggests that the dictionary could be too general to identify lateral thinkers comments. This assumption is supported by the fact that the paper also states that the use of the dictionary to classify such comments needs to be critically reviewed, as the main purpose of the dictionary is to distinguish between different types of comments from lateral thinkers <span id="id1">[<a class="reference internal" href="bibliography.html#id9" title="Cornelius Puschmann, Hevin Karakurt, Carolin Amlinger, Nicola Gess, and Oliver Nachtwey. Rpc-lex: a dictionary to measure german right-wing populist conspiracy discourse online. Convergence, 28(4):1144-1171, 2022. URL: https://doi.org/10.1177/13548565221109440, arXiv:https://doi.org/10.1177/13548565221109440, doi:10.1177/13548565221109440.">Puschmann <em>et al.</em>, 2022</a>]</span>.</p>
 <p>If this circumstance is taken into account and one considers the proportion of correct hits in the analysis of the samples, one can assume that half of all hits are also correct. Based on this assumption, 172,810 comments can still be attributed to the lateral thinking movement, which corresponds to 43% of all comments. This is still a large proportion, especially considering the proportion this movement has in society.</p>
 </section>
 <section id="how-dominant-are-right-wing-comments">
@@ -501,7 +510,8 @@ plt.show()
 <p>To do this, first the results and the dictionary are loaded. Then a set is created, which contains only the terms of these two categories. This set contains 2,377 terms and is therefore much smaller than the complete dictionary. Afterwards we iterate over all comments to see how many of the previously found dictionary terms can be found in this reduced set of right-wing terms. The result is that 296960 comments contain right-wing terms.</p>
 <div class="cell tag_hide-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import pandas as pd
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from IPython.core.display_functions import display
+import pandas as pd
 from ast import  literal_eval
 comments_df = pd.read_csv(&quot;data/dictionary_analysis.csv&quot;)
 comments_df = comments_df.drop(columns=comments_df.columns[0], axis=1)
@@ -681,6 +691,9 @@ ax.set_xlim(0,0.5)
 <img alt="_images/results_8_1.png" src="_images/results_8_1.png" />
 </div>
 </div>
+</section>
+<section id="result-validity">
+<h2>Result validity<a class="headerlink" href="#result-validity" title="Permalink to this headline">#</a></h2>
 <hr class="footnotes docutils" />
 <dl class="footnote brackets">
 <dt class="label" id="forsa"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>

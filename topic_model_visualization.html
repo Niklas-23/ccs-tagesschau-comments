@@ -431,7 +431,8 @@ title="Print to PDF"
 <p>If we take a closer look at the model with 10 topics, it is noticeable that a large proportion of the comments are on topics 1 and 10. Topic 10 is very vague and cannot be described in detail. Topic 1, however, could be domestic policy. This topic therefore seems to play a major role in the comments, which is not surprising.</p>
 <div class="cell tag_hide-input docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import pyLDAvis.gensim_models
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from IPython.core.display_functions import display
+import pyLDAvis.gensim_models
 import gensim
 import gensim.corpora as corpora
 import pickle

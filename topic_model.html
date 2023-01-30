@@ -373,7 +373,7 @@ title="Print to PDF"
 <p>First, the libraries for the preprocessing of the dataset are imported. To remove stopwords the stopword list from the Natural Language Toolkit (NLTK) is used. In addition, the spacy library is used for lemmatization. Lemmatization is an important and often used pre-processing step for topic modelling, because it has been shown that lemmatization can lead to better results <span id="id2">[<a class="reference internal" href="bibliography.html#id8" title="Chandler May, Ryan Cotterell, and Benjamin Van Durme. An Analysis of Lemmatization on Topic Models of Morphologically Rich Language. May 2019. arXiv:1608.03995 [cs]. URL: http://arxiv.org/abs/1608.03995 (visited on 2023-01-27), doi:10.48550/arXiv.1608.03995.">May <em>et al.</em>, 2019</a>]</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from IPython.core.display_functions import display
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>from IPython.core.display_functions import display
 import pandas as pd
 from cleantext import clean
 import pickle
@@ -399,7 +399,7 @@ spacy_model_german = spacy.load(&quot;de_core_news_md&quot;, disable=[&quot;pars
 <p>For preprocessing the text, we first create a stopword list and a punctuation list. Then we define methods for lemmatizing the text and removing punctuation marks. Both methods expect the text as input, perform the corresponding processing and return the processed text. The method <code class="docutils literal notranslate"><span class="pre">tokenize_and_lemmatize_text</span></code> performs the complete preprocessing. First the linebreaks and the emojis are removed. To remove the emojis the <code class="docutils literal notranslate"><span class="pre">cleantext</span></code> library is used. Then the two methods to remove punctuation and to perform lemmatization are applied. Since spacy returns a double bar <code class="docutils literal notranslate"><span class="pre">--</span></code> as a token for punctuation marks or unknown characters, these tokens are removed to ensure that only meaningful tokens are included. Then the stopwords are removed. At the end empty tokens are removed because these tokens can occur, for example, if the comment consists only of emojis.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>stop_words = set(stopwords.words(&#39;german&#39;))
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>stop_words = set(stopwords.words(&#39;german&#39;))
 regular_punctuation = list(string.punctuation)
 
 def get_lemmatized_text(text: str):
@@ -431,7 +431,7 @@ def tokenize_and_lemmatize_text(text: str):
 <p>To preprocess all comments, they are first loaded from the csv file and then it is ensured that all comments are in string format. This step is necessary because otherwise the error occurs later that the comment would not be a string. This problem is probably caused by the fact that special characters are interpreted incorrectly when the comments are saved or read in. At the end we get a list that contains for each comment a list of tokens, as we can see in the output.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>comments = pd.read_csv(&quot;data/youtube_comments_500.csv&quot;)
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>comments = pd.read_csv(&quot;data/youtube_comments_500.csv&quot;)
 comments[&quot;Comments&quot;] = comments[&quot;Comments&quot;].astype(str)
 preprocessed_comments = []
 for index, row in tqdm(comments.iterrows()):
@@ -449,7 +449,7 @@ for index, row in tqdm(comments.iterrows()):
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>preprocessed_comments[0:2]
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>preprocessed_comments[0:2]
 </pre></div>
 </div>
 </div>
@@ -480,7 +480,7 @@ for index, row in tqdm(comments.iterrows()):
 <p>The preprocessing is quite time-consuming and takes a few minutes, which is why the processed comments are saved as a pickle file. Saving the list as a pickle file makes it possible to save the list directly and load it again. Saving the comments here as a csv makes little sense, as the list of tokens for each comment has a different length.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>file = Path(&quot;data/youtube_comments_500_preprocessed.pkl&quot;)
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>file = Path(&quot;data/youtube_comments_500_preprocessed.pkl&quot;)
 if not file.exists():
     with open(&quot;data/youtube_comments_500_preprocessed.pkl&quot;, &quot;wb&quot;) as fw:
         pickle.dump(preprocessed_comments, fw)
@@ -490,7 +490,7 @@ if not file.exists():
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>with open(&quot;data/youtube_comments_500_preprocessed.pkl&quot;, &quot;rb&quot;) as fr:
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>with open(&quot;data/youtube_comments_500_preprocessed.pkl&quot;, &quot;rb&quot;) as fr:
     preprocessed_comments = pickle.load(fr)
 </pre></div>
 </div>
@@ -502,7 +502,7 @@ if not file.exists():
 <p>To compare which option performed better, two metrics are used.The Perplexity measures how well the model can fit the actual word representation. The coherence measures how semantically coherent two topics are. However, the best model achieved by these metrics is not always the most interpretable model from a human perspective <span id="id4">[<a class="reference internal" href="bibliography.html#id2" title="Wouter van Atteveldt. Computational analysis of communication: a practical introduction to the analysis of texts, networks, and images with code examples in Python and R. Wiley Blackwell, Hoboken, USA Sussex, UK, 2022. ISBN 978-1-119-68023-9.">Atteveldt, 2022</a>]</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import gensim
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>import gensim
 import gensim.corpora as corpora
 from gensim.models import CoherenceModel
 </pre></div>
@@ -511,7 +511,7 @@ from gensim.models import CoherenceModel
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>dictionary = corpora.Dictionary(preprocessed_comments)
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>dictionary = corpora.Dictionary(preprocessed_comments)
 dictionary.filter_extremes(no_below=20, no_above=0.8)
 corpus = [dictionary.doc2bow(text) for text in preprocessed_comments]
 </pre></div>
@@ -520,7 +520,7 @@ corpus = [dictionary.doc2bow(text) for text in preprocessed_comments]
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>lda_model = gensim.models.ldamodel.LdaModel(corpus, num_topics = 20, id2word=dictionary, passes=15, alpha=&quot;auto&quot;, eta=&quot;auto&quot;)
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>lda_model = gensim.models.ldamodel.LdaModel(corpus, num_topics = 20, id2word=dictionary, passes=15, alpha=&quot;auto&quot;, eta=&quot;auto&quot;)
 lda_model.save(&#39;lda_models/lda_model_20.gensim&#39;)
 </pre></div>
 </div>
@@ -529,7 +529,7 @@ lda_model.save(&#39;lda_models/lda_model_20.gensim&#39;)
 <p>Evaluating and comparing models is difficult but but two commong metrics are perplexity and coherence. The score of both metrics will decrease when adding more topics <span id="id5">[<a class="reference internal" href="bibliography.html#id2" title="Wouter van Atteveldt. Computational analysis of communication: a practical introduction to the analysis of texts, networks, and images with code examples in Python and R. Wiley Blackwell, Hoboken, USA Sussex, UK, 2022. ISBN 978-1-119-68023-9.">Atteveldt, 2022</a>]</span>. This behavior can also be seen in the models trained here. In theory, one looks for the inflection point at which the values of the two metrics fall at a much slower rate <span id="id6">[<a class="reference internal" href="bibliography.html#id2" title="Wouter van Atteveldt. Computational analysis of communication: a practical introduction to the analysis of texts, networks, and images with code examples in Python and R. Wiley Blackwell, Hoboken, USA Sussex, UK, 2022. ISBN 978-1-119-68023-9.">Atteveldt, 2022</a>]</span>. However, since only a few models were trained here, such an approach is difficult to carry out, especially since both metrics continue to decrease (at a similar rate).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>lda_model_6 = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_6.gensim&quot;)
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>lda_model_6 = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_6.gensim&quot;)
 lda_model_10 = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_10.gensim&quot;)
 lda_model_20 = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_20.gensim&quot;)
 
@@ -567,7 +567,7 @@ LDA_20 Coherence Score:  0.4254128399081809
 <p>If we look at the themes that the different models have found, we can identify some clear themes, but there are also some other themes that make little sense. Generally, the topics in the 6-topic model are too general. It is difficult to find clear themes there. In the models with 10 and 20 topics, on the other hand, it is easy to find some clear topics. However, it is difficult to say which of the two models is better.</p>
 <div class="cell tag_hide-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>lda_model = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_6.gensim&quot;)
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>lda_model = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_6.gensim&quot;)
 display(pd.DataFrame({f&quot;Topic {n}&quot;:[word for (word,word_weight) in words] for (n, words) in lda_model.show_topics(formatted=False, num_words=15)}))
 </pre></div>
 </div>
@@ -741,7 +741,7 @@ display(pd.DataFrame({f&quot;Topic {n}&quot;:[word for (word,word_weight) in wor
 </div>
 <div class="cell tag_hide-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>lda_model = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_10.gensim&quot;)
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>lda_model = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_10.gensim&quot;)
 display(pd.DataFrame({f&quot;Topic {n}&quot;:[word for (word,word_weight) in words] for (n, words) in lda_model.show_topics(formatted=False, num_topics=10, num_words=15)}))
 </pre></div>
 </div>
@@ -979,7 +979,7 @@ display(pd.DataFrame({f&quot;Topic {n}&quot;:[word for (word,word_weight) in wor
 </div>
 <div class="cell tag_hide-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>lda_model = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_20.gensim&quot;)
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>lda_model = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_20.gensim&quot;)
 display(pd.DataFrame({f&quot;Topic {n}&quot;:[word for (word,word_weight) in words] for (n, words) in lda_model.show_topics(formatted=False, num_topics=20, num_words=15)}))
 </pre></div>
 </div>
@@ -1385,7 +1385,7 @@ display(pd.DataFrame({f&quot;Topic {n}&quot;:[word for (word,word_weight) in wor
 </ul>
 <div class="cell tag_hide-input docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from matplotlib import pyplot as plt
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>from matplotlib import pyplot as plt
 from wordcloud import WordCloud
 import matplotlib.colors as mcolors
 

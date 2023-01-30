@@ -18,9 +18,9 @@ jobs:
         python-version: 3.9
 
       # Build docker image
-    - name: Build docker image
-      run: |
-        docker build .
+    #- name: Build docker image
+      #run: |
+        #docker build .
 
     # Install dependencies
     - name: Install dependencies

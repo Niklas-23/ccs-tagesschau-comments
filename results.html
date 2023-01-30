@@ -463,34 +463,34 @@ title="Print to PDF"
 <p>The topics found are all related to the lateral thinking movement and thus support the thesis that the commments section is dominated by the lateral thinking movement. The dominance of the topic of domestic politics also fits in with this, as this is a topic often taken up in the lateral thinking movement. At the same time, however, it must also be taken into account that these topics have a lot of social relevance in the period under consideration. Thus, there could also be many comments on the topics, even though they were not written by lateral thinkers. Also not all topics of the model can be identified and assigned to the movement.</p>
 <div class="cell tag_hide-input docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from matplotlib import pyplot as plt
-from wordcloud import WordCloud
-import matplotlib.colors as mcolors
-import gensim
-from gensim.models import CoherenceModel
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">wordcloud</span> <span class="kn">import</span> <span class="n">WordCloud</span>
+<span class="kn">import</span> <span class="nn">matplotlib.colors</span> <span class="k">as</span> <span class="nn">mcolors</span>
+<span class="kn">import</span> <span class="nn">gensim</span>
+<span class="kn">from</span> <span class="nn">gensim.models</span> <span class="kn">import</span> <span class="n">CoherenceModel</span>
 
-cols = [color for name, color in mcolors.TABLEAU_COLORS.items()]
+<span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">color</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="n">mcolors</span><span class="o">.</span><span class="n">TABLEAU_COLORS</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
 
-cloud = WordCloud(background_color=&#39;white&#39;, width=2500, height=1800, max_words=10, colormap=&#39;tab10&#39;, color_func=lambda *args, **kwargs: cols[i], prefer_horizontal=1.0)
+<span class="n">cloud</span> <span class="o">=</span> <span class="n">WordCloud</span><span class="p">(</span><span class="n">background_color</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">2500</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">1800</span><span class="p">,</span> <span class="n">max_words</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">colormap</span><span class="o">=</span><span class="s1">&#39;tab10&#39;</span><span class="p">,</span> <span class="n">color_func</span><span class="o">=</span><span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">cols</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">prefer_horizontal</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
 
-lda_model = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_10.gensim&quot;)
-topics = lda_model.show_topics(formatted=False)
+<span class="n">lda_model</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">ldamodel</span><span class="o">.</span><span class="n">LdaModel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;lda_models/lda_model_10.gensim&quot;</span><span class="p">)</span>
+<span class="n">topics</span> <span class="o">=</span> <span class="n">lda_model</span><span class="o">.</span><span class="n">show_topics</span><span class="p">(</span><span class="n">formatted</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-fig, axes = plt.subplots(5, 2, figsize=(10,10), sharex=True, sharey=True)
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-for i, ax in enumerate(axes.flatten()):
-    fig.add_subplot(ax)
-    topic_words = dict(topics[i][1])
-    cloud.generate_from_frequencies(topic_words, max_font_size=300)
-    plt.gca().imshow(cloud)
-    plt.gca().set_title(&#39;Topic &#39; + str(i), fontdict=dict(size=16))
-    plt.gca().axis(&#39;off&#39;)
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">axes</span><span class="o">.</span><span class="n">flatten</span><span class="p">()):</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+    <span class="n">topic_words</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">topics</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">cloud</span><span class="o">.</span><span class="n">generate_from_frequencies</span><span class="p">(</span><span class="n">topic_words</span><span class="p">,</span> <span class="n">max_font_size</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">cloud</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Topic &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">fontdict</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">16</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
 
 
-plt.subplots_adjust(wspace=0, hspace=0)
-plt.margins(x=0, y=0)
-plt.tight_layout()
-plt.show()
+<span class="n">plt</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">wspace</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">hspace</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">margins</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -510,30 +510,30 @@ plt.show()
 <p>To do this, first the results and the dictionary are loaded. Then a set is created, which contains only the terms of these two categories. This set contains 2,377 terms and is therefore much smaller than the complete dictionary. Afterwards we iterate over all comments to see how many of the previously found dictionary terms can be found in this reduced set of right-wing terms. The result is that 296960 comments contain right-wing terms.</p>
 <div class="cell tag_hide-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from IPython.core.display_functions import display
-import pandas as pd
-from ast import  literal_eval
-comments_df = pd.read_csv(&quot;data/dictionary_analysis.csv&quot;)
-comments_df = comments_df.drop(columns=comments_df.columns[0], axis=1)
-rpx_dict = pd.read_csv(&quot;dictionary_analysis/rpc_lex.csv&quot;, delimiter=&quot;;&quot;)
-rpx_dict_nat = rpx_dict[rpx_dict.category_code == &quot;NAT&quot;]
-rpx_dict_isla = rpx_dict[rpx_dict.category_code == &quot;ISLA&quot;]
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.core.display_functions</span> <span class="kn">import</span> <span class="n">display</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">ast</span> <span class="kn">import</span>  <span class="n">literal_eval</span>
+<span class="n">comments_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;data/dictionary_analysis.csv&quot;</span><span class="p">)</span>
+<span class="n">comments_df</span> <span class="o">=</span> <span class="n">comments_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">comments_df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">rpx_dict</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;dictionary_analysis/rpc_lex.csv&quot;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;;&quot;</span><span class="p">)</span>
+<span class="n">rpx_dict_nat</span> <span class="o">=</span> <span class="n">rpx_dict</span><span class="p">[</span><span class="n">rpx_dict</span><span class="o">.</span><span class="n">category_code</span> <span class="o">==</span> <span class="s2">&quot;NAT&quot;</span><span class="p">]</span>
+<span class="n">rpx_dict_isla</span> <span class="o">=</span> <span class="n">rpx_dict</span><span class="p">[</span><span class="n">rpx_dict</span><span class="o">.</span><span class="n">category_code</span> <span class="o">==</span> <span class="s2">&quot;ISLA&quot;</span><span class="p">]</span>
 
-right_wing_terms = set(rpx_dict_nat.term.to_list()).union(rpx_dict_isla.term.to_list())
-print(len(right_wing_terms))
+<span class="n">right_wing_terms</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">rpx_dict_nat</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">to_list</span><span class="p">())</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">rpx_dict_isla</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">to_list</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">right_wing_terms</span><span class="p">))</span>
 
-dict_right_wing_term_occurrence_list = []
-comments_df.dict_identified_terms_list = comments_df.dict_identified_terms_list.apply(lambda x: literal_eval(x))
-for term_list in comments_df.dict_identified_terms_list.to_list():
-    term_occurrence = 0
-    for index, term in enumerate(term_list):
-        if term in right_wing_terms:
-            term_occurrence += 1
-    dict_right_wing_term_occurrence_list.append(term_occurrence)
-    term_occurrence = 0
+<span class="n">dict_right_wing_term_occurrence_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">comments_df</span><span class="o">.</span><span class="n">dict_identified_terms_list</span> <span class="o">=</span> <span class="n">comments_df</span><span class="o">.</span><span class="n">dict_identified_terms_list</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">literal_eval</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">term_list</span> <span class="ow">in</span> <span class="n">comments_df</span><span class="o">.</span><span class="n">dict_identified_terms_list</span><span class="o">.</span><span class="n">to_list</span><span class="p">():</span>
+    <span class="n">term_occurrence</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">term</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">term_list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">right_wing_terms</span><span class="p">:</span>
+            <span class="n">term_occurrence</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">dict_right_wing_term_occurrence_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">term_occurrence</span><span class="p">)</span>
+    <span class="n">term_occurrence</span> <span class="o">=</span> <span class="mi">0</span>
 
-comments_df[&quot;right_wing_term_occurence&quot;] = dict_right_wing_term_occurrence_list
-display(comments_df.loc[comments_df[&#39;right_wing_term_occurence&#39;] &gt; 0])
+<span class="n">comments_df</span><span class="p">[</span><span class="s2">&quot;right_wing_term_occurence&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dict_right_wing_term_occurrence_list</span>
+<span class="n">display</span><span class="p">(</span><span class="n">comments_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">comments_df</span><span class="p">[</span><span class="s1">&#39;right_wing_term_occurence&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -655,11 +655,11 @@ display(comments_df.loc[comments_df[&#39;right_wing_term_occurence&#39;] &gt; 0]
 <p>The sentiment analysis has shown that the comments section under videos of the “tagesschau” channel is strongly negative. Only very few comments were positive and most comments were neutral or negative, with the negative comments making up the largest proportion. In view of the terms and comments observed in the previous analyses, this result was to be expected.</p>
 <div class="cell tag_hide-input docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import pandas as pd
-comments_df = pd.read_csv(&quot;data/sentiments.csv&quot;)
-ax = comments_df[&quot;sentiment&quot;].value_counts(normalize=True).sort_values().plot(kind=&quot;barh&quot;, title=&quot;Sentiment model&quot;)
-ax.bar_label(ax.containers[0], fmt=&quot;%.2f&quot;)
-ax.set_xlim(0,0.65)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="n">comments_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;data/sentiments.csv&quot;</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">comments_df</span><span class="p">[</span><span class="s2">&quot;sentiment&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;barh&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Sentiment model&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">bar_label</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">containers</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%.2f</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.65</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -676,11 +676,11 @@ ax.set_xlim(0,0.65)
 <p>This question is difficult to answer with the help of the topic model, since domestic topics make up a large part of it and this topic cannot be assigned directly to lateral thinking movement. The dictionary analysis, on the other hand, allows the conclusion that lateral thinkers write many comments and dominate the comments section, at least partially. The negative sentiment revealed by the sentiment analysis supports this assumption. Furthermore, the analysis of political orientation can be used to answer this question. Most of the comments can be assigned to the conservative or extreme direction, as it has already been mentioned in the chapter before. The distribution among the parties is very different from the current polls<a class="footnote-reference brackets" href="#forsa" id="id2">1</a>, which is why this result also supports the assumption that comments by lateral thinkers make up a large proportion.</p>
 <div class="cell tag_hide-input docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import pandas as pd
-comments_df = pd.read_csv(&quot;data/political_parties.csv&quot;)
-ax = comments_df[&quot;political_party&quot;].value_counts(normalize=True).sort_values().plot(kind=&quot;barh&quot;, title=&quot;Political parties&quot;)
-ax.bar_label(ax.containers[0], fmt=&quot;%.2f&quot;)
-ax.set_xlim(0,0.5)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="n">comments_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;data/political_parties.csv&quot;</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">comments_df</span><span class="p">[</span><span class="s2">&quot;political_party&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;barh&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Political parties&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">bar_label</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">containers</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%.2f</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.5</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

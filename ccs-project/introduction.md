@@ -2,7 +2,7 @@
 
 With the advent of Covid 19, the right-wing populist conspiracy discourse gained further momentum and social media
 attention
-to these topics increased. This new movement is usually referred to as the lateral thinking movement
+to these topics increased. This movement is usually referred to as the lateral thinking movement
 (Querdenker-Bewegung) and unites
 anti-vaccinationists, esotericists, conspiracy theorists and right-wingers in one group {cite:p}`muller_extrem_2022`.
 But also people who have had little political involvement are part of this new movement {cite:p}`muller_extrem_2022`.

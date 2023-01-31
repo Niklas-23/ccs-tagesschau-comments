@@ -410,16 +410,16 @@ title="Print to PDF"
 <p>To get started, the API key and the playlist ID are inserted first. The “tagesschau” channel provides a playlist that lists the 8 p.m. videos in almost chronological order. The order is only almost chronological, because some videos have been deleted and re-uploaded. These videos often contain fewer comments, as many have been lost when the video was deleted. However, deleted and re-uploaded videos only occur very rarely and therefore this limitation could be neglected. Then the YouTube API is initialized and ready for use.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>from googleapiclient.discovery import build
-from IPython.core.display_functions import display
-import pandas as pd
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">googleapiclient.discovery</span> <span class="kn">import</span> <span class="n">build</span>
+<span class="kn">from</span> <span class="nn">IPython.core.display_functions</span> <span class="kn">import</span> <span class="n">display</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
-api_key = &#39;&#39; # Insert your own API key
-playlist_id = &quot;PL4A2F331EE86DCC22&quot;
-max_results_comments = 100
-max_results_playlist = 50
+<span class="n">api_key</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># Insert your own API key</span>
+<span class="n">playlist_id</span> <span class="o">=</span> <span class="s2">&quot;PL4A2F331EE86DCC22&quot;</span>
+<span class="n">max_results_comments</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">max_results_playlist</span> <span class="o">=</span> <span class="mi">50</span>
 
-youtube_api = build(&#39;youtube&#39;, &#39;v3&#39;, developerKey=api_key)
+<span class="n">youtube_api</span> <span class="o">=</span> <span class="n">build</span><span class="p">(</span><span class="s1">&#39;youtube&#39;</span><span class="p">,</span> <span class="s1">&#39;v3&#39;</span><span class="p">,</span> <span class="n">developerKey</span><span class="o">=</span><span class="n">api_key</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -427,19 +427,19 @@ youtube_api = build(&#39;youtube&#39;, &#39;v3&#39;, developerKey=api_key)
 <p>To avoid problems with the quota limit, it was decided to download the comments of the 500 most recent videos. Assuming that the videos were uploaded in chronological order, we know that the videos cover the period from the 8th of September 2021 to the 21st of January 2023. Since a maximum of 50 videos are returned when playlist items are queried, 10 queries are sent to obtain the most recent 500 videos. Once all video IDs have been extracted, they are stored in a .csv file to make the results reproducible.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>video_ids = []
-playlist_response = youtube_api.playlistItems().list(part=&quot;snippet&quot;, playlistId=playlist_id, maxResults=max_results_playlist).execute()
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">video_ids</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">playlist_response</span> <span class="o">=</span> <span class="n">youtube_api</span><span class="o">.</span><span class="n">playlistItems</span><span class="p">()</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">part</span><span class="o">=</span><span class="s2">&quot;snippet&quot;</span><span class="p">,</span> <span class="n">playlistId</span><span class="o">=</span><span class="n">playlist_id</span><span class="p">,</span> <span class="n">maxResults</span><span class="o">=</span><span class="n">max_results_playlist</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
 
-for i in range(10):
-    for item in playlist_response[&quot;items&quot;]:
-        video_ids.append(item[&quot;snippet&quot;][&quot;resourceId&quot;][&quot;videoId&quot;])
-        if &quot;nextPageToken&quot; in playlist_response:
-            next_page_token = playlist_response[&quot;nextPageToken&quot;]
-        else:
-            break
-    playlist_response = youtube_api.playlistItems().list(part=&quot;snippet&quot;, playlistId=playlist_id, maxResults=max_results_playlist).execute()
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">playlist_response</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]:</span>
+        <span class="n">video_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;snippet&quot;</span><span class="p">][</span><span class="s2">&quot;resourceId&quot;</span><span class="p">][</span><span class="s2">&quot;videoId&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="s2">&quot;nextPageToken&quot;</span> <span class="ow">in</span> <span class="n">playlist_response</span><span class="p">:</span>
+            <span class="n">next_page_token</span> <span class="o">=</span> <span class="n">playlist_response</span><span class="p">[</span><span class="s2">&quot;nextPageToken&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="n">playlist_response</span> <span class="o">=</span> <span class="n">youtube_api</span><span class="o">.</span><span class="n">playlistItems</span><span class="p">()</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">part</span><span class="o">=</span><span class="s2">&quot;snippet&quot;</span><span class="p">,</span> <span class="n">playlistId</span><span class="o">=</span><span class="n">playlist_id</span><span class="p">,</span> <span class="n">maxResults</span><span class="o">=</span><span class="n">max_results_playlist</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
 
-len(video_ids)
+<span class="nb">len</span><span class="p">(</span><span class="n">video_ids</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -451,8 +451,8 @@ len(video_ids)
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>df = pd.DataFrame(data=video_ids, columns=[&quot;video_ids&quot;])
-df.to_csv(&quot;data/youtube_video_ids_500.csv&quot;)
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">video_ids</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;video_ids&quot;</span><span class="p">])</span>
+<span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;data/youtube_video_ids_500.csv&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -460,58 +460,58 @@ df.to_csv(&quot;data/youtube_video_ids_500.csv&quot;)
 <p>To download the comments three functions are implemented. The first function extracts the comments from a comment thread. The second function sends a request to the YouTube API to load a comment thread. The third function iterates over a list of video IDs and uses the first two functions to download all comment threads and to extract all comments. Once all comments have been extracted, they are stored in a .csv file, just like the video IDs before. It is important to note that for performance reasons and quota limitation, only the comment thread function of the YouTube API was used. This function has the limitation that for each comment, only a part of the reply comments are included and not all. To get all the replies would require sending requests to another API endpoint. Since this would massively slow down the speed of collecting the comments, it was decided not to do this and thus not to download a part of the reply comments. Downloading all comments took about 20 minutes.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>def load_comments(comment_thread):
-    comment_list = []
-    for item in comment_thread[&quot;items&quot;]:
-        comment = item[&quot;snippet&quot;][&quot;topLevelComment&quot;]
-        comment_text = comment[&quot;snippet&quot;][&quot;textDisplay&quot;]
-        comment_list.append(comment_text)
-        if &#39;replies&#39; in item.keys():
-            for reply in item[&#39;replies&#39;][&#39;comments&#39;]:
-                reply_text = reply[&quot;snippet&quot;][&quot;textDisplay&quot;]
-                comment_list.append(reply_text)
-    return comment_list
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">load_comments</span><span class="p">(</span><span class="n">comment_thread</span><span class="p">):</span>
+    <span class="n">comment_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">comment_thread</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]:</span>
+        <span class="n">comment</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">&quot;snippet&quot;</span><span class="p">][</span><span class="s2">&quot;topLevelComment&quot;</span><span class="p">]</span>
+        <span class="n">comment_text</span> <span class="o">=</span> <span class="n">comment</span><span class="p">[</span><span class="s2">&quot;snippet&quot;</span><span class="p">][</span><span class="s2">&quot;textDisplay&quot;</span><span class="p">]</span>
+        <span class="n">comment_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">comment_text</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;replies&#39;</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">reply</span> <span class="ow">in</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;replies&#39;</span><span class="p">][</span><span class="s1">&#39;comments&#39;</span><span class="p">]:</span>
+                <span class="n">reply_text</span> <span class="o">=</span> <span class="n">reply</span><span class="p">[</span><span class="s2">&quot;snippet&quot;</span><span class="p">][</span><span class="s2">&quot;textDisplay&quot;</span><span class="p">]</span>
+                <span class="n">comment_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">reply_text</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">comment_list</span>
 
 
-def get_comment_thread(video_id, page_token=None):
-    comment_thread = youtube_api.commentThreads().list(part=&quot;snippet, replies&quot;, maxResults=max_results_comments, videoId=video_id, textFormat=&quot;plainText&quot;, pageToken=page_token).execute()
-    return comment_thread
+<span class="k">def</span> <span class="nf">get_comment_thread</span><span class="p">(</span><span class="n">video_id</span><span class="p">,</span> <span class="n">page_token</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">comment_thread</span> <span class="o">=</span> <span class="n">youtube_api</span><span class="o">.</span><span class="n">commentThreads</span><span class="p">()</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">part</span><span class="o">=</span><span class="s2">&quot;snippet, replies&quot;</span><span class="p">,</span> <span class="n">maxResults</span><span class="o">=</span><span class="n">max_results_comments</span><span class="p">,</span> <span class="n">videoId</span><span class="o">=</span><span class="n">video_id</span><span class="p">,</span> <span class="n">textFormat</span><span class="o">=</span><span class="s2">&quot;plainText&quot;</span><span class="p">,</span> <span class="n">pageToken</span><span class="o">=</span><span class="n">page_token</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">comment_thread</span>
 
 
-def scrape_comments(video_ids: list):
-    progress_counter = 0
-    comment_data = []
-    for video_id in video_ids:
-        comment_thread = get_comment_thread(video_id)
-        if &quot;nextPageToken&quot; in comment_thread:
-            next_page_token = comment_thread[&quot;nextPageToken&quot;]
-        else:
-            next_page_token = None
+<span class="k">def</span> <span class="nf">scrape_comments</span><span class="p">(</span><span class="n">video_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+    <span class="n">progress_counter</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">comment_data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">video_id</span> <span class="ow">in</span> <span class="n">video_ids</span><span class="p">:</span>
+        <span class="n">comment_thread</span> <span class="o">=</span> <span class="n">get_comment_thread</span><span class="p">(</span><span class="n">video_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;nextPageToken&quot;</span> <span class="ow">in</span> <span class="n">comment_thread</span><span class="p">:</span>
+            <span class="n">next_page_token</span> <span class="o">=</span> <span class="n">comment_thread</span><span class="p">[</span><span class="s2">&quot;nextPageToken&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">next_page_token</span> <span class="o">=</span> <span class="kc">None</span>
 
-        comment_data.extend(load_comments(comment_thread))
+        <span class="n">comment_data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">load_comments</span><span class="p">(</span><span class="n">comment_thread</span><span class="p">))</span>
 
-        while next_page_token:
-            comment_thread = get_comment_thread(video_id, next_page_token)
-            if &quot;nextPageToken&quot; not in comment_thread:
-                break
-            else:
-                next_page_token = comment_thread[&quot;nextPageToken&quot;]
+        <span class="k">while</span> <span class="n">next_page_token</span><span class="p">:</span>
+            <span class="n">comment_thread</span> <span class="o">=</span> <span class="n">get_comment_thread</span><span class="p">(</span><span class="n">video_id</span><span class="p">,</span> <span class="n">next_page_token</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;nextPageToken&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">comment_thread</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">next_page_token</span> <span class="o">=</span> <span class="n">comment_thread</span><span class="p">[</span><span class="s2">&quot;nextPageToken&quot;</span><span class="p">]</span>
 
-            comment_data.extend(load_comments(comment_thread))
+            <span class="n">comment_data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">load_comments</span><span class="p">(</span><span class="n">comment_thread</span><span class="p">))</span>
 
-        if progress_counter%100 == 0:
-            print(f&quot;Progress: {progress_counter/len(video_ids)}&quot;)
-        progress_counter+=1
+        <span class="k">if</span> <span class="n">progress_counter</span><span class="o">%</span><span class="k">100</span> == 0:
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Progress: </span><span class="si">{</span><span class="n">progress_counter</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">video_ids</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">progress_counter</span><span class="o">+=</span><span class="mi">1</span>
 
-    print(&quot;Finished&quot;)
-    return comment_data
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Finished&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">comment_data</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>comment_data = scrape_comments(video_ids)
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">comment_data</span> <span class="o">=</span> <span class="n">scrape_comments</span><span class="p">(</span><span class="n">video_ids</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -528,8 +528,8 @@ Finished
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>df = pd.DataFrame(data=comment_data, columns=[&quot;Comments&quot;])
-df.to_csv(&quot;data/youtube_comments_500.csv&quot;)
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">comment_data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Comments&quot;</span><span class="p">])</span>
+<span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;data/youtube_comments_500.csv&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -539,9 +539,9 @@ df.to_csv(&quot;data/youtube_comments_500.csv&quot;)
 <p>To see if everything worked out, we can take a look at the data collected. We can see that everything worked and that we collected 406,242 comments.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>comments_df = pd.read_csv (&quot;data/youtube_comments_500.csv&quot;)
-comments_df = comments_df.drop(columns=comments_df.columns[0], axis=1) # Drop the index stored in the .csv file to improve readability.
-display(comments_df)
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">comments_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span> <span class="p">(</span><span class="s2">&quot;data/youtube_comments_500.csv&quot;</span><span class="p">)</span>
+<span class="n">comments_df</span> <span class="o">=</span> <span class="n">comments_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">comments_df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># Drop the index stored in the .csv file to improve readability.</span>
+<span class="n">display</span><span class="p">(</span><span class="n">comments_df</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -620,9 +620,9 @@ display(comments_df)
 <p>If we look at the length of the comments, we notice that most of them are less than 200 characters long. This is particularly important for the analysis with transformers, as these usually only support a limited text length.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>plot = comments_df.Comments.str.len().hist(legend=True, bins=600, range=[0,600])
-plot.set_xlabel(&quot;Comment length&quot;)
-plot.set_ylabel(&quot;Number of comments&quot;)
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">plot</span> <span class="o">=</span> <span class="n">comments_df</span><span class="o">.</span><span class="n">Comments</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">len</span><span class="p">()</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">600</span><span class="p">])</span>
+<span class="n">plot</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Comment length&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Number of comments&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

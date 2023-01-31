@@ -373,25 +373,25 @@ title="Print to PDF"
 <p>First, the libraries for the preprocessing of the dataset are imported. To remove stopwords the stopword list from the Natural Language Toolkit (NLTK) is used. In addition, the spacy library is used for lemmatization. Lemmatization is an important and often used pre-processing step for topic modelling, because it has been shown that lemmatization can lead to better results <span id="id2">[<a class="reference internal" href="bibliography.html#id8" title="Chandler May, Ryan Cotterell, and Benjamin Van Durme. An Analysis of Lemmatization on Topic Models of Morphologically Rich Language. May 2019. arXiv:1608.03995 [cs]. URL: http://arxiv.org/abs/1608.03995 (visited on 2023-01-27), doi:10.48550/arXiv.1608.03995.">May <em>et al.</em>, 2019</a>]</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>from IPython.core.display_functions import display
-import pandas as pd
-from cleantext import clean
-import pickle
-from pathlib import Path
-import string
-from tqdm import tqdm
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.core.display_functions</span> <span class="kn">import</span> <span class="n">display</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">cleantext</span> <span class="kn">import</span> <span class="n">clean</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
-import warnings
-warnings.filterwarnings(&#39;ignore&#39;) # Disable warnings to improve output formation
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span> <span class="c1"># Disable warnings to improve output formation</span>
 
-import nltk
-nltk.download(&quot;stopwords&quot;)
-from nltk.corpus import stopwords
+<span class="kn">import</span> <span class="nn">nltk</span>
+<span class="n">nltk</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s2">&quot;stopwords&quot;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">nltk.corpus</span> <span class="kn">import</span> <span class="n">stopwords</span>
 
-import spacy
-# The model has to be installed via the following command: $(env) python -m spacy download de_core_news_md
-# The docker image already contains the model
-spacy_model_german = spacy.load(&quot;de_core_news_md&quot;, disable=[&quot;parser&quot;, &quot;ner&quot;])
+<span class="kn">import</span> <span class="nn">spacy</span>
+<span class="c1"># The model has to be installed via the following command: $(env) python -m spacy download de_core_news_md</span>
+<span class="c1"># The docker image already contains the model</span>
+<span class="n">spacy_model_german</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;de_core_news_md&quot;</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;parser&quot;</span><span class="p">,</span> <span class="s2">&quot;ner&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -399,31 +399,31 @@ spacy_model_german = spacy.load(&quot;de_core_news_md&quot;, disable=[&quot;pars
 <p>For preprocessing the text, we first create a stopword list and a punctuation list. Then we define methods for lemmatizing the text and removing punctuation marks. Both methods expect the text as input, perform the corresponding processing and return the processed text. The method <code class="docutils literal notranslate"><span class="pre">tokenize_and_lemmatize_text</span></code> performs the complete preprocessing. First the linebreaks and the emojis are removed. To remove the emojis the <code class="docutils literal notranslate"><span class="pre">cleantext</span></code> library is used. Then the two methods to remove punctuation and to perform lemmatization are applied. Since spacy returns a double bar <code class="docutils literal notranslate"><span class="pre">--</span></code> as a token for punctuation marks or unknown characters, these tokens are removed to ensure that only meaningful tokens are included. Then the stopwords are removed. At the end empty tokens are removed because these tokens can occur, for example, if the comment consists only of emojis.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>stop_words = set(stopwords.words(&#39;german&#39;))
-regular_punctuation = list(string.punctuation)
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">stop_words</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s1">&#39;german&#39;</span><span class="p">))</span>
+<span class="n">regular_punctuation</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">punctuation</span><span class="p">)</span>
 
-def get_lemmatized_text(text: str):
-    lemmatized_text = []
-    document = spacy_model_german(text)
-    for word in document:
-        lemmatized_text.append(word.lemma_)
-    return lemmatized_text
+<span class="k">def</span> <span class="nf">get_lemmatized_text</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">lemmatized_text</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">document</span> <span class="o">=</span> <span class="n">spacy_model_german</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">document</span><span class="p">:</span>
+        <span class="n">lemmatized_text</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">word</span><span class="o">.</span><span class="n">lemma_</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">lemmatized_text</span>
 
-def remove_punctuation(text):
-    for punc in regular_punctuation:
-        if punc in text:
-            text = text.replace(punc, &#39; &#39;)
-    return text.strip()
+<span class="k">def</span> <span class="nf">remove_punctuation</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">punc</span> <span class="ow">in</span> <span class="n">regular_punctuation</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">punc</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">punc</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 
-def tokenize_and_lemmatize_text(text: str):
-    text = clean(text, no_emoji=True, lang=&quot;de&quot;, no_urls=True)
-    text = remove_punctuation(text)
-    tokens = get_lemmatized_text(text)
-    tokens = [token for token in tokens if token != &quot;--&quot;]
-    tokens = [token for token in tokens if token not in stop_words]
-    tokens = [token for token in tokens if not token.isspace()] # remove spaces
-    tokens = [token for token in tokens if len(token) &gt; 1] # remove single characters
-    return tokens
+<span class="k">def</span> <span class="nf">tokenize_and_lemmatize_text</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">clean</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">no_emoji</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s2">&quot;de&quot;</span><span class="p">,</span> <span class="n">no_urls</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">remove_punctuation</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">tokens</span> <span class="o">=</span> <span class="n">get_lemmatized_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">tokens</span> <span class="o">=</span> <span class="p">[</span><span class="n">token</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">tokens</span> <span class="k">if</span> <span class="n">token</span> <span class="o">!=</span> <span class="s2">&quot;--&quot;</span><span class="p">]</span>
+    <span class="n">tokens</span> <span class="o">=</span> <span class="p">[</span><span class="n">token</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">tokens</span> <span class="k">if</span> <span class="n">token</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stop_words</span><span class="p">]</span>
+    <span class="n">tokens</span> <span class="o">=</span> <span class="p">[</span><span class="n">token</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">tokens</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">token</span><span class="o">.</span><span class="n">isspace</span><span class="p">()]</span> <span class="c1"># remove spaces</span>
+    <span class="n">tokens</span> <span class="o">=</span> <span class="p">[</span><span class="n">token</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">tokens</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span> <span class="c1"># remove single characters</span>
+    <span class="k">return</span> <span class="n">tokens</span>
 </pre></div>
 </div>
 </div>
@@ -431,13 +431,13 @@ def tokenize_and_lemmatize_text(text: str):
 <p>To preprocess all comments, they are first loaded from the csv file and then it is ensured that all comments are in string format. This step is necessary because otherwise the error occurs later that the comment would not be a string. This problem is probably caused by the fact that special characters are interpreted incorrectly when the comments are saved or read in. At the end we get a list that contains for each comment a list of tokens, as we can see in the output.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>comments = pd.read_csv(&quot;data/youtube_comments_500.csv&quot;)
-comments[&quot;Comments&quot;] = comments[&quot;Comments&quot;].astype(str)
-preprocessed_comments = []
-for index, row in tqdm(comments.iterrows()):
-    preprocessed_text: list = tokenize_and_lemmatize_text(row[&quot;Comments&quot;])
-    if len(preprocessed_text) &gt; 1:
-        preprocessed_comments.append(preprocessed_text)
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">comments</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;data/youtube_comments_500.csv&quot;</span><span class="p">)</span>
+<span class="n">comments</span><span class="p">[</span><span class="s2">&quot;Comments&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">comments</span><span class="p">[</span><span class="s2">&quot;Comments&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+<span class="n">preprocessed_comments</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">comments</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()):</span>
+    <span class="n">preprocessed_text</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">tokenize_and_lemmatize_text</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;Comments&quot;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">preprocessed_text</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">preprocessed_comments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">preprocessed_text</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -449,7 +449,7 @@ for index, row in tqdm(comments.iterrows()):
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>preprocessed_comments[0:2]
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">preprocessed_comments</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -480,18 +480,18 @@ for index, row in tqdm(comments.iterrows()):
 <p>The preprocessing is quite time-consuming and takes a few minutes, which is why the processed comments are saved as a pickle file. Saving the list as a pickle file makes it possible to save the list directly and load it again. Saving the comments here as a csv makes little sense, as the list of tokens for each comment has a different length.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>file = Path(&quot;data/youtube_comments_500_preprocessed.pkl&quot;)
-if not file.exists():
-    with open(&quot;data/youtube_comments_500_preprocessed.pkl&quot;, &quot;wb&quot;) as fw:
-        pickle.dump(preprocessed_comments, fw)
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;data/youtube_comments_500_preprocessed.pkl&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;data/youtube_comments_500_preprocessed.pkl&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fw</span><span class="p">:</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">preprocessed_comments</span><span class="p">,</span> <span class="n">fw</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>with open(&quot;data/youtube_comments_500_preprocessed.pkl&quot;, &quot;rb&quot;) as fr:
-    preprocessed_comments = pickle.load(fr)
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;data/youtube_comments_500_preprocessed.pkl&quot;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fr</span><span class="p">:</span>
+    <span class="n">preprocessed_comments</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fr</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -502,26 +502,26 @@ if not file.exists():
 <p>To compare which option performed better, two metrics are used.The perplexity measures how well the model can fit the actual word representation. The coherence measures how semantically coherent two topics are. However, the best model achieved by these metrics is not always the most interpretable model from a human perspective <span id="id4">[<a class="reference internal" href="bibliography.html#id2" title="Wouter van Atteveldt. Computational analysis of communication: a practical introduction to the analysis of texts, networks, and images with code examples in Python and R. Wiley Blackwell, Hoboken, USA Sussex, UK, 2022. ISBN 978-1-119-68023-9.">Atteveldt, 2022</a>]</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>import gensim
-import gensim.corpora as corpora
-from gensim.models import CoherenceModel
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gensim</span>
+<span class="kn">import</span> <span class="nn">gensim.corpora</span> <span class="k">as</span> <span class="nn">corpora</span>
+<span class="kn">from</span> <span class="nn">gensim.models</span> <span class="kn">import</span> <span class="n">CoherenceModel</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>dictionary = corpora.Dictionary(preprocessed_comments)
-dictionary.filter_extremes(no_below=20, no_above=0.8)
-corpus = [dictionary.doc2bow(text) for text in preprocessed_comments]
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">dictionary</span> <span class="o">=</span> <span class="n">corpora</span><span class="o">.</span><span class="n">Dictionary</span><span class="p">(</span><span class="n">preprocessed_comments</span><span class="p">)</span>
+<span class="n">dictionary</span><span class="o">.</span><span class="n">filter_extremes</span><span class="p">(</span><span class="n">no_below</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">no_above</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="n">corpus</span> <span class="o">=</span> <span class="p">[</span><span class="n">dictionary</span><span class="o">.</span><span class="n">doc2bow</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">preprocessed_comments</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>lda_model = gensim.models.ldamodel.LdaModel(corpus, num_topics = 20, id2word=dictionary, passes=15, alpha=&quot;auto&quot;, eta=&quot;auto&quot;)
-lda_model.save(&#39;lda_models/lda_model_20.gensim&#39;)
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">lda_model</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">ldamodel</span><span class="o">.</span><span class="n">LdaModel</span><span class="p">(</span><span class="n">corpus</span><span class="p">,</span> <span class="n">num_topics</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">id2word</span><span class="o">=</span><span class="n">dictionary</span><span class="p">,</span> <span class="n">passes</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="n">eta</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">)</span>
+<span class="n">lda_model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;lda_models/lda_model_20.gensim&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -529,27 +529,27 @@ lda_model.save(&#39;lda_models/lda_model_20.gensim&#39;)
 <p>The score of both evaluation metrics will decrease when adding more topics <span id="id5">[<a class="reference internal" href="bibliography.html#id2" title="Wouter van Atteveldt. Computational analysis of communication: a practical introduction to the analysis of texts, networks, and images with code examples in Python and R. Wiley Blackwell, Hoboken, USA Sussex, UK, 2022. ISBN 978-1-119-68023-9.">Atteveldt, 2022</a>]</span>. This behavior can also be seen in the models trained here. In theory, one looks for the inflection point at which the values of the two metrics fall at a much slower rate <span id="id6">[<a class="reference internal" href="bibliography.html#id2" title="Wouter van Atteveldt. Computational analysis of communication: a practical introduction to the analysis of texts, networks, and images with code examples in Python and R. Wiley Blackwell, Hoboken, USA Sussex, UK, 2022. ISBN 978-1-119-68023-9.">Atteveldt, 2022</a>]</span>. However, since only a few models were trained here, such an approach is difficult to carry out, especially since both metrics continue to decrease (at a similar rate).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>lda_model_6 = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_6.gensim&quot;)
-lda_model_10 = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_10.gensim&quot;)
-lda_model_20 = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_20.gensim&quot;)
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">lda_model_6</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">ldamodel</span><span class="o">.</span><span class="n">LdaModel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;lda_models/lda_model_6.gensim&quot;</span><span class="p">)</span>
+<span class="n">lda_model_10</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">ldamodel</span><span class="o">.</span><span class="n">LdaModel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;lda_models/lda_model_10.gensim&quot;</span><span class="p">)</span>
+<span class="n">lda_model_20</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">ldamodel</span><span class="o">.</span><span class="n">LdaModel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;lda_models/lda_model_20.gensim&quot;</span><span class="p">)</span>
 
-# Compute Perplexity
-print(&#39;LDA_6 Perplexity: &#39;, lda_model_6.log_perplexity(corpus))
-print(&#39;LDA_10 Perplexity: &#39;, lda_model_10.log_perplexity(corpus))
-print(&#39;LDA_20 Perplexity: &#39;, lda_model_20.log_perplexity(corpus))
+<span class="c1"># Compute Perplexity</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;LDA_6 Perplexity: &#39;</span><span class="p">,</span> <span class="n">lda_model_6</span><span class="o">.</span><span class="n">log_perplexity</span><span class="p">(</span><span class="n">corpus</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;LDA_10 Perplexity: &#39;</span><span class="p">,</span> <span class="n">lda_model_10</span><span class="o">.</span><span class="n">log_perplexity</span><span class="p">(</span><span class="n">corpus</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;LDA_20 Perplexity: &#39;</span><span class="p">,</span> <span class="n">lda_model_20</span><span class="o">.</span><span class="n">log_perplexity</span><span class="p">(</span><span class="n">corpus</span><span class="p">))</span>
 
-# Compute Coherence Score
-coherence_model_lda_6 = CoherenceModel(model=lda_model_6, texts=preprocessed_comments, dictionary=dictionary, coherence=&#39;c_v&#39;)
-coherence_lda_6 = coherence_model_lda_6.get_coherence()
-print(&#39;LDA_6 Coherence Score: &#39;, coherence_lda_6)
+<span class="c1"># Compute Coherence Score</span>
+<span class="n">coherence_model_lda_6</span> <span class="o">=</span> <span class="n">CoherenceModel</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">lda_model_6</span><span class="p">,</span> <span class="n">texts</span><span class="o">=</span><span class="n">preprocessed_comments</span><span class="p">,</span> <span class="n">dictionary</span><span class="o">=</span><span class="n">dictionary</span><span class="p">,</span> <span class="n">coherence</span><span class="o">=</span><span class="s1">&#39;c_v&#39;</span><span class="p">)</span>
+<span class="n">coherence_lda_6</span> <span class="o">=</span> <span class="n">coherence_model_lda_6</span><span class="o">.</span><span class="n">get_coherence</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;LDA_6 Coherence Score: &#39;</span><span class="p">,</span> <span class="n">coherence_lda_6</span><span class="p">)</span>
 
-coherence_model_lda_10 = CoherenceModel(model=lda_model_10, texts=preprocessed_comments, dictionary=dictionary, coherence=&#39;c_v&#39;)
-coherence_lda_10 = coherence_model_lda_10.get_coherence()
-print(&#39;LDA_10 Coherence Score: &#39;, coherence_lda_10)
+<span class="n">coherence_model_lda_10</span> <span class="o">=</span> <span class="n">CoherenceModel</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">lda_model_10</span><span class="p">,</span> <span class="n">texts</span><span class="o">=</span><span class="n">preprocessed_comments</span><span class="p">,</span> <span class="n">dictionary</span><span class="o">=</span><span class="n">dictionary</span><span class="p">,</span> <span class="n">coherence</span><span class="o">=</span><span class="s1">&#39;c_v&#39;</span><span class="p">)</span>
+<span class="n">coherence_lda_10</span> <span class="o">=</span> <span class="n">coherence_model_lda_10</span><span class="o">.</span><span class="n">get_coherence</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;LDA_10 Coherence Score: &#39;</span><span class="p">,</span> <span class="n">coherence_lda_10</span><span class="p">)</span>
 
-coherence_model_lda_20 = CoherenceModel(model=lda_model_20, texts=preprocessed_comments, dictionary=dictionary, coherence=&#39;c_v&#39;)
-coherence_lda_20 = coherence_model_lda_20.get_coherence()
-print(&#39;LDA_20 Coherence Score: &#39;, coherence_lda_20)
+<span class="n">coherence_model_lda_20</span> <span class="o">=</span> <span class="n">CoherenceModel</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">lda_model_20</span><span class="p">,</span> <span class="n">texts</span><span class="o">=</span><span class="n">preprocessed_comments</span><span class="p">,</span> <span class="n">dictionary</span><span class="o">=</span><span class="n">dictionary</span><span class="p">,</span> <span class="n">coherence</span><span class="o">=</span><span class="s1">&#39;c_v&#39;</span><span class="p">)</span>
+<span class="n">coherence_lda_20</span> <span class="o">=</span> <span class="n">coherence_model_lda_20</span><span class="o">.</span><span class="n">get_coherence</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;LDA_20 Coherence Score: &#39;</span><span class="p">,</span> <span class="n">coherence_lda_20</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -567,8 +567,8 @@ LDA_20 Coherence Score:  0.4254128399081809
 <p>If we look at the topics that the different models have found, we can identify some clear topics, but there are also some other topics that make little sense. Generally, the topics in the 6-topic model are too general. It is difficult to find clear topics there. In the models with 10 and 20 topics, on the other hand, it is easy to find some clear topics. However, it is difficult to say which of the two models is better.</p>
 <div class="cell tag_hide-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>lda_model = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_6.gensim&quot;)
-display(pd.DataFrame({f&quot;Topic {n}&quot;:[word for (word,word_weight) in words] for (n, words) in lda_model.show_topics(formatted=False, num_words=15)}))
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">lda_model</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">ldamodel</span><span class="o">.</span><span class="n">LdaModel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;lda_models/lda_model_6.gensim&quot;</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="sa">f</span><span class="s2">&quot;Topic </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:[</span><span class="n">word</span> <span class="k">for</span> <span class="p">(</span><span class="n">word</span><span class="p">,</span><span class="n">word_weight</span><span class="p">)</span> <span class="ow">in</span> <span class="n">words</span><span class="p">]</span> <span class="k">for</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">words</span><span class="p">)</span> <span class="ow">in</span> <span class="n">lda_model</span><span class="o">.</span><span class="n">show_topics</span><span class="p">(</span><span class="n">formatted</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">num_words</span><span class="o">=</span><span class="mi">15</span><span class="p">)}))</span>
 </pre></div>
 </div>
 </div>
@@ -741,8 +741,8 @@ display(pd.DataFrame({f&quot;Topic {n}&quot;:[word for (word,word_weight) in wor
 </div>
 <div class="cell tag_hide-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>lda_model = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_10.gensim&quot;)
-display(pd.DataFrame({f&quot;Topic {n}&quot;:[word for (word,word_weight) in words] for (n, words) in lda_model.show_topics(formatted=False, num_topics=10, num_words=15)}))
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">lda_model</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">ldamodel</span><span class="o">.</span><span class="n">LdaModel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;lda_models/lda_model_10.gensim&quot;</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="sa">f</span><span class="s2">&quot;Topic </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:[</span><span class="n">word</span> <span class="k">for</span> <span class="p">(</span><span class="n">word</span><span class="p">,</span><span class="n">word_weight</span><span class="p">)</span> <span class="ow">in</span> <span class="n">words</span><span class="p">]</span> <span class="k">for</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">words</span><span class="p">)</span> <span class="ow">in</span> <span class="n">lda_model</span><span class="o">.</span><span class="n">show_topics</span><span class="p">(</span><span class="n">formatted</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">num_topics</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">num_words</span><span class="o">=</span><span class="mi">15</span><span class="p">)}))</span>
 </pre></div>
 </div>
 </div>
@@ -979,8 +979,8 @@ display(pd.DataFrame({f&quot;Topic {n}&quot;:[word for (word,word_weight) in wor
 </div>
 <div class="cell tag_hide-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>lda_model = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_20.gensim&quot;)
-display(pd.DataFrame({f&quot;Topic {n}&quot;:[word for (word,word_weight) in words] for (n, words) in lda_model.show_topics(formatted=False, num_topics=20, num_words=15)}))
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">lda_model</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">ldamodel</span><span class="o">.</span><span class="n">LdaModel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;lda_models/lda_model_20.gensim&quot;</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="sa">f</span><span class="s2">&quot;Topic </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:[</span><span class="n">word</span> <span class="k">for</span> <span class="p">(</span><span class="n">word</span><span class="p">,</span><span class="n">word_weight</span><span class="p">)</span> <span class="ow">in</span> <span class="n">words</span><span class="p">]</span> <span class="k">for</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">words</span><span class="p">)</span> <span class="ow">in</span> <span class="n">lda_model</span><span class="o">.</span><span class="n">show_topics</span><span class="p">(</span><span class="n">formatted</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">num_topics</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">num_words</span><span class="o">=</span><span class="mi">15</span><span class="p">)}))</span>
 </pre></div>
 </div>
 </div>
@@ -1385,32 +1385,32 @@ display(pd.DataFrame({f&quot;Topic {n}&quot;:[word for (word,word_weight) in wor
 </ul>
 <div class="cell tag_hide-input docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>from matplotlib import pyplot as plt
-from wordcloud import WordCloud
-import matplotlib.colors as mcolors
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">wordcloud</span> <span class="kn">import</span> <span class="n">WordCloud</span>
+<span class="kn">import</span> <span class="nn">matplotlib.colors</span> <span class="k">as</span> <span class="nn">mcolors</span>
 
-cols = [color for name, color in mcolors.TABLEAU_COLORS.items()]
+<span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">color</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="n">mcolors</span><span class="o">.</span><span class="n">TABLEAU_COLORS</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
 
-cloud = WordCloud(background_color=&#39;white&#39;, width=2500, height=1800, max_words=10, colormap=&#39;tab10&#39;, color_func=lambda *args, **kwargs: cols[i], prefer_horizontal=1.0)
+<span class="n">cloud</span> <span class="o">=</span> <span class="n">WordCloud</span><span class="p">(</span><span class="n">background_color</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">2500</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">1800</span><span class="p">,</span> <span class="n">max_words</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">colormap</span><span class="o">=</span><span class="s1">&#39;tab10&#39;</span><span class="p">,</span> <span class="n">color_func</span><span class="o">=</span><span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">cols</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">prefer_horizontal</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
 
-lda_model = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_10.gensim&quot;)
-topics = lda_model.show_topics(formatted=False)
+<span class="n">lda_model</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">ldamodel</span><span class="o">.</span><span class="n">LdaModel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;lda_models/lda_model_10.gensim&quot;</span><span class="p">)</span>
+<span class="n">topics</span> <span class="o">=</span> <span class="n">lda_model</span><span class="o">.</span><span class="n">show_topics</span><span class="p">(</span><span class="n">formatted</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-fig, axes = plt.subplots(5, 2, figsize=(10,10), sharex=True, sharey=True)
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-for i, ax in enumerate(axes.flatten()):
-    fig.add_subplot(ax)
-    topic_words = dict(topics[i][1])
-    cloud.generate_from_frequencies(topic_words, max_font_size=300)
-    plt.gca().imshow(cloud)
-    plt.gca().set_title(&#39;Topic &#39; + str(i), fontdict=dict(size=16))
-    plt.gca().axis(&#39;off&#39;)
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">axes</span><span class="o">.</span><span class="n">flatten</span><span class="p">()):</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+    <span class="n">topic_words</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">topics</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">cloud</span><span class="o">.</span><span class="n">generate_from_frequencies</span><span class="p">(</span><span class="n">topic_words</span><span class="p">,</span> <span class="n">max_font_size</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">cloud</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Topic &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">fontdict</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">16</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
 
 
-plt.subplots_adjust(wspace=0, hspace=0)
-plt.margins(x=0, y=0)
-plt.tight_layout()
-plt.show()
+<span class="n">plt</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">wspace</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">hspace</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">margins</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>

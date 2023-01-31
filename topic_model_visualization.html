@@ -427,28 +427,28 @@ title="Print to PDF"
   <section class="tex2jax_ignore mathjax_ignore" id="topic-modeling-visualization">
 <h1>Topic modeling visualization<a class="headerlink" href="#topic-modeling-visualization" title="Permalink to this headline">#</a></h1>
 <p>The pyLDAvis library allows interactive exploration of the topics found with the LDA model. Unfortunately, the HTML output of this library partially breaks the alignment of the jupyter book page.  For this reason, these graphics have been separated into a separate section. The code needed for the outputs is collapsed by default because the formatting of the cells is not completely correct.</p>
-<p>A very interesting aspect of the evaluation, which is possible with this library, is to see how the themes overlap. In the ideal case, one would logically want to have topics that are unique and do not overlap with others. If we examine the themes with regard to this aspect, we notice that the 6-topic model has 2 overlaps. Theme 1 and 4 overlap partially and theme 2 and 5 overlap to a large extent. Considering that there are only 6 themes in total, this relatively large proportion of overlaps does not speak for the quality of the model. The model with 10 themes, on the other hand, has only two smaller overlaps and therefore seems to be better. In the model with 20 topics, there is a lot of overlap, which also speaks in favour of this model. The model with 20 topics does not seem to be better, as there are also a lot of overlaps in this model. From these observations can be concluded that the 10-topic model is probably the best.</p>
+<p>A very interesting aspect of the evaluation, which is possible with this library, is to see how the topics overlap. In the ideal case, one would logically want to have topics that are unique and do not overlap with others. If we examine the topics with regard to this aspect, we notice that the 6-topic model has 2 overlaps. Topic 1 and 4 overlap partially and topic 2 and 5 overlap to a large extent. Considering that there are only 6 topics in total, this relatively large proportion of overlaps does not speak for the quality of the model. The model with 10 topics, on the other hand, has only two smaller overlaps and therefore seems to be better. The model with 20 topics does not seem to be better, as there are also a lot of overlaps in this model. From these observations can be concluded that the 10-topic model is probably the best.</p>
 <p>If we take a closer look at the model with 10 topics, it is noticeable that a large proportion of the comments are on topics 1 and 10. Topic 10 is very vague and cannot be described in detail. Topic 1, however, could be domestic policy. This topic therefore seems to play a major role in the comments, which is not surprising.</p>
 <div class="cell tag_hide-input docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.core.display_functions</span> <span class="kn">import</span> <span class="n">display</span>
-<span class="kn">import</span> <span class="nn">pyLDAvis.gensim_models</span>
-<span class="kn">import</span> <span class="nn">gensim</span>
-<span class="kn">import</span> <span class="nn">gensim.corpora</span> <span class="k">as</span> <span class="nn">corpora</span>
-<span class="kn">import</span> <span class="nn">pickle</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from IPython.core.display_functions import display
+import pyLDAvis.gensim_models
+import gensim
+import gensim.corpora as corpora
+import pickle
+import warnings
+warnings.filterwarnings(&#39;ignore&#39;)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell tag_hide-input docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;data/youtube_comments_500_preprocessed.pkl&quot;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fr</span><span class="p">:</span>
-    <span class="n">preprocessed_comments</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fr</span><span class="p">)</span>
-<span class="n">dictionary</span> <span class="o">=</span> <span class="n">corpora</span><span class="o">.</span><span class="n">Dictionary</span><span class="p">(</span><span class="n">preprocessed_comments</span><span class="p">)</span>
-<span class="n">dictionary</span><span class="o">.</span><span class="n">filter_extremes</span><span class="p">(</span><span class="n">no_below</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">no_above</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
-<span class="n">corpus</span> <span class="o">=</span> <span class="p">[</span><span class="n">dictionary</span><span class="o">.</span><span class="n">doc2bow</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">preprocessed_comments</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>with open(&quot;data/youtube_comments_500_preprocessed.pkl&quot;, &quot;rb&quot;) as fr:
+    preprocessed_comments = pickle.load(fr)
+dictionary = corpora.Dictionary(preprocessed_comments)
+dictionary.filter_extremes(no_below=20, no_above=0.8)
+corpus = [dictionary.doc2bow(text) for text in preprocessed_comments]
 </pre></div>
 </div>
 </div>
@@ -457,9 +457,9 @@ title="Print to PDF"
 <h2>LDA model with 6 topics<a class="headerlink" href="#lda-model-with-6-topics" title="Permalink to this headline">#</a></h2>
 <div class="cell tag_hide-input docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lda_model</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">ldamodel</span><span class="o">.</span><span class="n">LdaModel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;lda_models/lda_model_6.gensim&quot;</span><span class="p">)</span>
-<span class="n">lda_display</span> <span class="o">=</span> <span class="n">pyLDAvis</span><span class="o">.</span><span class="n">gensim_models</span><span class="o">.</span><span class="n">prepare</span><span class="p">(</span><span class="n">lda_model</span><span class="p">,</span> <span class="n">corpus</span><span class="p">,</span> <span class="n">dictionary</span><span class="p">,</span> <span class="n">sort_topics</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">display</span><span class="p">(</span><span class="n">pyLDAvis</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">lda_display</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>lda_model = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_6.gensim&quot;)
+lda_display = pyLDAvis.gensim_models.prepare(lda_model, corpus, dictionary, sort_topics=False)
+display(pyLDAvis.display(lda_display))
 </pre></div>
 </div>
 </div>
@@ -511,9 +511,9 @@ if(typeof(LDAvis) !== "undefined"){
 <h2>LDA model with 10 topics<a class="headerlink" href="#lda-model-with-10-topics" title="Permalink to this headline">#</a></h2>
 <div class="cell tag_hide-input docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lda_model</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">ldamodel</span><span class="o">.</span><span class="n">LdaModel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;lda_models/lda_model_10.gensim&quot;</span><span class="p">)</span>
-<span class="n">lda_display</span> <span class="o">=</span> <span class="n">pyLDAvis</span><span class="o">.</span><span class="n">gensim_models</span><span class="o">.</span><span class="n">prepare</span><span class="p">(</span><span class="n">lda_model</span><span class="p">,</span> <span class="n">corpus</span><span class="p">,</span> <span class="n">dictionary</span><span class="p">,</span> <span class="n">sort_topics</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">pyLDAvis</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">lda_display</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>lda_model = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_10.gensim&quot;)
+lda_display = pyLDAvis.gensim_models.prepare(lda_model, corpus, dictionary, sort_topics=False)
+pyLDAvis.display(lda_display)
 </pre></div>
 </div>
 </div>
@@ -565,9 +565,9 @@ if(typeof(LDAvis) !== "undefined"){
 <h2>LDA model with 20 topics<a class="headerlink" href="#lda-model-with-20-topics" title="Permalink to this headline">#</a></h2>
 <div class="cell tag_hide-input docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lda_model</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">ldamodel</span><span class="o">.</span><span class="n">LdaModel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;lda_models/lda_model_20.gensim&quot;</span><span class="p">)</span>
-<span class="n">lda_display</span> <span class="o">=</span> <span class="n">pyLDAvis</span><span class="o">.</span><span class="n">gensim_models</span><span class="o">.</span><span class="n">prepare</span><span class="p">(</span><span class="n">lda_model</span><span class="p">,</span> <span class="n">corpus</span><span class="p">,</span> <span class="n">dictionary</span><span class="p">,</span> <span class="n">sort_topics</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">pyLDAvis</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">lda_display</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>lda_model = gensim.models.ldamodel.LdaModel.load(&quot;lda_models/lda_model_20.gensim&quot;)
+lda_display = pyLDAvis.gensim_models.prepare(lda_model, corpus, dictionary, sort_topics=False)
+pyLDAvis.display(lda_display)
 </pre></div>
 </div>
 </div>

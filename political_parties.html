@@ -373,32 +373,32 @@ title="Print to PDF"
 <p>The model is based on an pretrained ELECTRA model for German language tasks <span id="id2">[<a class="reference internal" href="bibliography.html#id12" title="Maximilian Witte, Jasper Schwenzow, Mark Heitmann, and Matthias Assenmacher. GermanPolitical-Gelectra-base. 2022. URL: https://huggingface.co/UHH-CI/GermanPolitical-Gelectra-base.">Witte <em>et al.</em>, 2022</a>]</span>. Since the pre-processing for this transformer is the same as for the sentiment analysis, it will not be explained further.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.core.display_functions</span> <span class="kn">import</span> <span class="n">display</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
-<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">AutoConfig</span><span class="p">,</span> <span class="n">AutoTokenizer</span><span class="p">,</span> <span class="n">AutoModelForSequenceClassification</span>
-<span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">cleantext</span> <span class="kn">import</span> <span class="n">clean</span>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>from IPython.core.display_functions import display
+import pandas as pd
+from tqdm import tqdm
+from transformers import AutoConfig, AutoTokenizer, AutoModelForSequenceClassification
+import torch
+from cleantext import clean
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">comments_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;data/youtube_comments_500.csv&quot;</span><span class="p">)</span>
-<span class="n">comments_df</span><span class="p">[</span><span class="s2">&quot;Comments&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">comments_df</span><span class="p">[</span><span class="s2">&quot;Comments&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>comments_df = pd.read_csv(&quot;data/youtube_comments_500.csv&quot;)
+comments_df[&quot;Comments&quot;] = comments_df[&quot;Comments&quot;].astype(str)
 
-<span class="k">def</span> <span class="nf">clean_text</span><span class="p">(</span><span class="n">text</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
-    <span class="n">text</span> <span class="o">=</span> <span class="n">clean</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">no_emoji</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s2">&quot;de&quot;</span><span class="p">)</span>
-    <span class="n">new_text</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">token</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">token</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">):</span>
-            <span class="n">new_text</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
-    <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">new_text</span><span class="p">)</span>
+def clean_text(text:str):
+    text = clean(text, no_emoji=True, lang=&quot;de&quot;)
+    new_text = []
+    for token in text.split(&quot; &quot;):
+        if not token.startswith(&#39;@&#39;) and not token.startswith(&#39;http&#39;):
+            new_text.append(token)
+    return &quot; &quot;.join(new_text)
 
-<span class="n">comments_df</span><span class="p">[</span><span class="s2">&quot;Comments&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">comments_df</span><span class="p">[</span><span class="s2">&quot;Comments&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">text</span><span class="p">:</span> <span class="n">clean_text</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
-<span class="n">comments_df</span> <span class="o">=</span><span class="n">comments_df</span><span class="p">[</span><span class="n">comments_df</span><span class="o">.</span><span class="n">Comments</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
-<span class="n">display</span><span class="p">(</span><span class="n">comments_df</span><span class="p">)</span>
+comments_df[&quot;Comments&quot;] = comments_df[&quot;Comments&quot;].apply(lambda text: clean_text(text))
+comments_df =comments_df[comments_df.Comments != &quot;&quot;]
+display(comments_df)
 </pre></div>
 </div>
 </div>
@@ -486,47 +486,47 @@ title="Print to PDF"
 <p>401282 rows × 2 columns</p>
 </div></div></div>
 </div>
-<p>The analysis with this model works somewhat differently than with the sentiment analysis. The model works in such a way that the party must be specified at the beginning of the input and then the statement follows. The model then returns the party’s agreement with the statement in the form of two values. One value represents how much the party agrees and the other represents how much the party disagrees with the statement. Currently the model supports the 6 major parties in Germany: CDU/CSU, SPD, FDP, Grüne, Die Linke and AFD. Since we have about 400,000 comments, this means that the model must perform 2.4 million inferences to find the party that most agrees with the statement for each comment.</p>
-<p>For the nalaysis, the input for each party is created in the inner for loop and then passed on to the model. The is is checked whether the approval value is higher than the previous maximum value. If this is the case, the current party with the highest approval rating is updated. At the end, for each comment the party with the highest approval and the corresponding confidence value for the approval are added. Then the dataframe is saved. Due to the large number of inferences, this analysis takes a particularly long time and required about 60 hours on the hardware used.</p>
+<p>The analysis with this model works somewhat differently than with the sentiment model. The model works in such a way that the party must be specified at the beginning of the input and then the statement follows. The model then returns the party’s agreement with the statement in the form of two values. One value represents how much the party agrees and the other represents how much the party disagrees with the statement. Currently the model supports the 6 major parties in Germany: CDU/CSU, SPD, FDP, Grüne, Die Linke and AFD. Since we have about 400,000 comments, this means that the model must perform 2.4 million inferences to find the party that most agrees with the statement for each comment.</p>
+<p>For the analysis, the input for each party is created in the inner for loop and then passed on to the model. Then it is checked whether the approval value is higher than the previous maximum value. If this is the case, the current party with the highest approval rating is updated. At the end, for each comment the party with the highest approval and the corresponding confidence value for the approval are added. Then the dataframe is saved. Due to the large number of inferences, this analysis takes a particularly long time and required about 60 hours on the hardware used.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">model_name</span> <span class="o">=</span> <span class="s2">&quot;UHH-CI/GermanPolitical-Gelectra-base&quot;</span>
-<span class="n">sentiment_tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
-<span class="n">sentiment_model_config</span> <span class="o">=</span> <span class="n">AutoConfig</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
-<span class="n">sentiment_model</span> <span class="o">=</span> <span class="n">AutoModelForSequenceClassification</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">from_tf</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>model_name = &quot;UHH-CI/GermanPolitical-Gelectra-base&quot;
+sentiment_tokenizer = AutoTokenizer.from_pretrained(model_name)
+sentiment_model_config = AutoConfig.from_pretrained(model_name)
+sentiment_model = AutoModelForSequenceClassification.from_pretrained(model_name, from_tf=True)
 
-<span class="n">label_list</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">score_list</span> <span class="o">=</span> <span class="p">[]</span>
+label_list = []
+score_list = []
 
-<span class="n">political_parties</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;cdu/csu&quot;</span><span class="p">,</span><span class="s2">&quot;spd&quot;</span><span class="p">,</span><span class="s2">&quot;fdp&quot;</span><span class="p">,</span><span class="s2">&quot;grüne&quot;</span><span class="p">,</span><span class="s2">&quot;die linke&quot;</span><span class="p">,</span><span class="s2">&quot;afd&quot;</span><span class="p">]</span>
+political_parties = [&quot;cdu/csu&quot;,&quot;spd&quot;,&quot;fdp&quot;,&quot;grüne&quot;,&quot;die linke&quot;,&quot;afd&quot;]
 
-<span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">comments_df</span><span class="o">.</span><span class="n">Comments</span><span class="o">.</span><span class="n">to_list</span><span class="p">()):</span>
-    <span class="n">top_party_name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-    <span class="n">top_party_score</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">party</span> <span class="ow">in</span> <span class="n">political_parties</span><span class="p">:</span>
-        <span class="n">input_text</span> <span class="o">=</span> <span class="n">party</span><span class="o">+</span><span class="s2">&quot;: &quot;</span><span class="o">+</span><span class="n">text</span>
-        <span class="n">tokenized_input</span> <span class="o">=</span> <span class="n">sentiment_tokenizer</span><span class="p">(</span><span class="n">input_text</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s1">&#39;pt&#39;</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">512</span><span class="p">)</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="n">sentiment_model</span><span class="p">(</span><span class="o">**</span><span class="n">tokenized_input</span><span class="p">)</span>
-        <span class="n">prediction</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">prediction</span> <span class="o">=</span> <span class="n">prediction</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">top_party_score</span> <span class="o">&lt;</span> <span class="n">prediction</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="c1"># label[0] indicates the value for the consent</span>
-            <span class="n">top_party_name</span> <span class="o">=</span> <span class="n">party</span>
-            <span class="n">top_party_score</span> <span class="o">=</span> <span class="n">prediction</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+for text in tqdm(comments_df.Comments.to_list()):
+    top_party_name = &quot;&quot;
+    top_party_score = 0
+    for party in political_parties:
+        input_text = party+&quot;: &quot;+text
+        tokenized_input = sentiment_tokenizer(input_text, padding=True, truncation=True, return_tensors=&#39;pt&#39;, max_length=512)
+        output = sentiment_model(**tokenized_input)
+        prediction = torch.nn.functional.softmax(output.logits, dim=-1)
+        prediction = prediction.detach().numpy()[0]
+        if top_party_score &lt; prediction[0]: # label[0] indicates the value for the consent
+            top_party_name = party
+            top_party_score = prediction[0]
 
-    <span class="n">label_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">top_party_name</span><span class="p">)</span>
-    <span class="n">score_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">top_party_score</span><span class="p">)</span>
+    label_list.append(top_party_name)
+    score_list.append(top_party_score)
 
-<span class="n">comments_df</span><span class="p">[</span><span class="s2">&quot;political_party&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">label_list</span>
-<span class="n">comments_df</span><span class="p">[</span><span class="s2">&quot;political_party_score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">score_list</span>
-<span class="n">comments_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;data/political_parties.csv&quot;</span><span class="p">)</span>
+comments_df[&quot;political_party&quot;] = label_list
+comments_df[&quot;political_party_score&quot;] = score_list
+comments_df.to_csv(&quot;data/political_parties.csv&quot;)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">comments_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;data/political_parties.csv&quot;</span><span class="p">)</span>
-<span class="n">display</span><span class="p">(</span><span class="n">comments_df</span><span class="p">[[</span><span class="s2">&quot;Comments&quot;</span><span class="p">,</span> <span class="s2">&quot;political_party&quot;</span><span class="p">,</span> <span class="s2">&quot;political_party_score&quot;</span><span class="p">]])</span>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>comments_df = pd.read_csv(&quot;data/political_parties.csv&quot;)
+display(comments_df[[&quot;Comments&quot;, &quot;political_party&quot;, &quot;political_party_score&quot;]])
 </pre></div>
 </div>
 </div>
@@ -626,12 +626,12 @@ title="Print to PDF"
 <p>401282 rows × 3 columns</p>
 </div></div></div>
 </div>
-<p>The results of this model are very interesting. Most comments are attributed to the “CDU”, which is hardly surprising since this is one of the two major parties in Germany. This is followed by the “AFD” with 24%, which is very interesting, as this party is actually much less widespread and usually ranks lower in the elections. In the third place is “Die Linke”, which is also interesting because this party is a very small party and this party, like the “AFD”, is one of the more extreme parties. If we look at the other parties it is hardly surprising that “Die Grünen” and the “FDP” are in the lower positions. It is more surprising, however, that the “SPD” is in the second last place with only 8%. The “SPD” is the other major party in Germany besides the “CDU” and part of the current government, which is why one would expect much more approval here. In general, it can be said that with the CDU and the AFD in the first two places, conservative views clearly dominate, especially since they together account for 59%. The fact that “Die Linke” follows in third place also suggests that extremist opinions and views are also strongly represented, while the moderate centre is underrepresented.</p>
+<p>The results of this model are very interesting. Most comments are attributed to the “CDU”, which is hardly surprising since this is one of the two major parties in Germany. This is followed by the “AFD” with 24%, which is very interesting, as this party is actually much less widespread and usually ranks lower in the elections. In the third place is “Die Linke”, which is also interesting because this party is a very small party and is, like the “AFD”, one of the more extreme parties. If we look at the other parties it is hardly surprising that “Die Grünen” and the “FDP” are in the lower positions. It is more surprising, however, that the “SPD” is in the second last place with only 8%. The “SPD” is the other major party in Germany besides the “CDU” and part of the current government, which is why one would expect much more approval here. In general, it can be said that with the “CDU” and the “AFD” in the first two places, conservative views clearly dominate, especially since they together account for 59%. The fact that “Die Linke” follows in third place also suggests that extremist opinions and views are also strongly represented, while the moderate centre is underrepresented.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">ax</span> <span class="o">=</span> <span class="n">comments_df</span><span class="p">[</span><span class="s2">&quot;political_party&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;barh&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Political parties&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">bar_label</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">containers</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%.2f</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.5</span><span class="p">)</span>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>ax = comments_df[&quot;political_party&quot;].value_counts(normalize=True).sort_values().plot(kind=&quot;barh&quot;, title=&quot;Political parties&quot;)
+ax.bar_label(ax.containers[0], fmt=&quot;%.2f&quot;)
+ax.set_xlim(0,0.5)
 </pre></div>
 </div>
 </div>

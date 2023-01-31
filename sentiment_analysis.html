@@ -369,17 +369,17 @@ title="Print to PDF"
                 
   <section class="tex2jax_ignore mathjax_ignore" id="sentiment-analysis">
 <h1>Sentiment analysis<a class="headerlink" href="#sentiment-analysis" title="Permalink to this headline">#</a></h1>
-<p>The third methods used to answer the research questions are transformers for text classification. Transformers are a relatively new technology in the NLP field and enable analyses that were not so easily possible before <span id="id1">[<a class="reference internal" href="bibliography.html#id2" title="Wouter van Atteveldt. Computational analysis of communication: a practical introduction to the analysis of texts, networks, and images with code examples in Python and R. Wiley Blackwell, Hoboken, USA Sussex, UK, 2022. ISBN 978-1-119-68023-9.">Atteveldt, 2022</a>]</span>. At the same time, they can perform analyses such as sentiment analysis much better and more precisely than it would be possible with a dictionary-based approach, for example <span id="id2">[<a class="reference internal" href="bibliography.html#id11" title="Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. Attention is all you need. 2017. URL: https://arxiv.org/abs/1706.03762, doi:10.48550/ARXIV.1706.03762.">Vaswani <em>et al.</em>, 2017</a>]</span>. The key component of transformers is the self-attention mechanism, which allows the model to weight different parts of a sequence dynamically, rather than relying on a fixed window size as in traditional RNNs or CNNs <span id="id3">[<a class="reference internal" href="bibliography.html#id11" title="Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. Attention is all you need. 2017. URL: https://arxiv.org/abs/1706.03762, doi:10.48550/ARXIV.1706.03762.">Vaswani <em>et al.</em>, 2017</a>]</span>. We are going to use a transfoer to analyse the sentiment of the comments.</p>
+<p>The third methods used to answer the research questions are transformers for text classification. Transformers are a relatively new technology in the NLP field and enable analyses that were not so easily possible before <span id="id1">[<a class="reference internal" href="bibliography.html#id2" title="Wouter van Atteveldt. Computational analysis of communication: a practical introduction to the analysis of texts, networks, and images with code examples in Python and R. Wiley Blackwell, Hoboken, USA Sussex, UK, 2022. ISBN 978-1-119-68023-9.">Atteveldt, 2022</a>]</span>. At the same time, they can perform analyses such as sentiment analysis much better and more precisely than it would be possible with a dictionary-based approach, for example <span id="id2">[<a class="reference internal" href="bibliography.html#id11" title="Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. Attention is all you need. 2017. URL: https://arxiv.org/abs/1706.03762, doi:10.48550/ARXIV.1706.03762.">Vaswani <em>et al.</em>, 2017</a>]</span>. The key component of transformers is the self-attention mechanism, which allows the model to weight different parts of a sequence dynamically, rather than relying on a fixed window size as in traditional RNNs or CNNs <span id="id3">[<a class="reference internal" href="bibliography.html#id11" title="Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. Attention is all you need. 2017. URL: https://arxiv.org/abs/1706.03762, doi:10.48550/ARXIV.1706.03762.">Vaswani <em>et al.</em>, 2017</a>]</span>. We are going to use a transformer to analyse the sentiment of the comments.</p>
 <p>For this project the Hugging Face library is used, which provides pretrained state of th art models for many different application areas. Will we use a BERT based model that was trained on 1.8 million German-language samples <span id="id4">[<a class="reference internal" href="bibliography.html#id10" title="Oliver Guhr, Anne-Kathrin Schumann, Frank Bahrmann, and Hans Joachim Böhme. Training a broad-coverage german sentiment classification model for dialog systems. In Proceedings of The 12th Language Resources and Evaluation Conference, 1620–1625. Marseille, France, May 2020. European Language Resources Association. URL: https://www.aclweb.org/anthology/2020.lrec-1.202.">Guhr <em>et al.</em>, 2020</a>]</span> to perform sentiment analysis. The model has three labels for the sentiment: positive, neutral and negative.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.core.display_functions</span> <span class="kn">import</span> <span class="n">display</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
-<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">AutoConfig</span><span class="p">,</span> <span class="n">AutoTokenizer</span><span class="p">,</span> <span class="n">AutoModelForSequenceClassification</span>
-<span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">cleantext</span> <span class="kn">import</span> <span class="n">clean</span>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>from IPython.core.display_functions import display
+import pandas as pd
+from tqdm import tqdm
+from transformers import AutoConfig, AutoTokenizer, AutoModelForSequenceClassification
+import torch
+import numpy as np
+from cleantext import clean
 </pre></div>
 </div>
 </div>
@@ -392,20 +392,20 @@ title="Print to PDF"
 <p>One advantage of transformers is that they usually require little preprocessing. After loading the comments, the emojis are removed from the comments first. In addition, all URLs and mentions are removed, as it is very unlikely that the model can do anything with this information. At the end, as in previous analyses, empty comments are removed.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">comments_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;data/youtube_comments_500.csv&quot;</span><span class="p">)</span>
-<span class="n">comments_df</span><span class="p">[</span><span class="s2">&quot;Comments&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">comments_df</span><span class="p">[</span><span class="s2">&quot;Comments&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>comments_df = pd.read_csv(&quot;data/youtube_comments_500.csv&quot;)
+comments_df[&quot;Comments&quot;] = comments_df[&quot;Comments&quot;].astype(str)
 
-<span class="k">def</span> <span class="nf">clean_text</span><span class="p">(</span><span class="n">text</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
-    <span class="n">text</span> <span class="o">=</span> <span class="n">clean</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">no_emoji</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s2">&quot;de&quot;</span><span class="p">)</span>
-    <span class="n">new_text</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">token</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">token</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">):</span>
-            <span class="n">new_text</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
-    <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">new_text</span><span class="p">)</span>
+def clean_text(text:str):
+    text = clean(text, no_emoji=True, lang=&quot;de&quot;)
+    new_text = []
+    for token in text.split(&quot; &quot;):
+        if not token.startswith(&#39;@&#39;) and not token.startswith(&#39;http&#39;):
+            new_text.append(token)
+    return &quot; &quot;.join(new_text)
 
-<span class="n">comments_df</span><span class="p">[</span><span class="s2">&quot;Comments&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">comments_df</span><span class="p">[</span><span class="s2">&quot;Comments&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">text</span><span class="p">:</span> <span class="n">clean_text</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
-<span class="n">comments_df</span> <span class="o">=</span><span class="n">comments_df</span><span class="p">[</span><span class="n">comments_df</span><span class="o">.</span><span class="n">Comments</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
-<span class="n">display</span><span class="p">(</span><span class="n">comments_df</span><span class="p">)</span>
+comments_df[&quot;Comments&quot;] = comments_df[&quot;Comments&quot;].apply(lambda text: clean_text(text))
+comments_df =comments_df[comments_df.Comments != &quot;&quot;]
+display(comments_df)
 </pre></div>
 </div>
 </div>
@@ -496,33 +496,33 @@ title="Print to PDF"
 <p>To start the sentiment analysis, the pretrained model is loaded together with the corrsponding tokenizer and model configuration. Then each comment is processed sequentially. First the input is tokenized and then passed to the model. The output of the model contains logits and is therefore converted into probabilities using the softmax function. Then the output is converted from a tensor into a numpy array in order to extract the label with with highest proability in the next step. To get the label with the highest proability the output list is first sorted. The numpy function argsort is used to sort the list and to get the index (and not the sorted values). Then the order of the sorting is reversed (<code class="docutils literal notranslate"><span class="pre">[::-1]</span></code>) and the first element is selected so that the index of the label with the highest probability is obtained. The corresponding confidence value is also stored. At the end all results are added to the dataframe and saved. When looking at the first lines of the dataframe, it can be seen that everything has worked.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">model_name</span> <span class="o">=</span> <span class="s2">&quot;oliverguhr/german-sentiment-bert&quot;</span>
-<span class="n">sentiment_tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
-<span class="n">sentiment_model_config</span> <span class="o">=</span> <span class="n">AutoConfig</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
-<span class="n">sentiment_model</span> <span class="o">=</span> <span class="n">AutoModelForSequenceClassification</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>model_name = &quot;oliverguhr/german-sentiment-bert&quot;
+sentiment_tokenizer = AutoTokenizer.from_pretrained(model_name)
+sentiment_model_config = AutoConfig.from_pretrained(model_name)
+sentiment_model = AutoModelForSequenceClassification.from_pretrained(model_name)
 
-<span class="n">label_list</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">score_list</span> <span class="o">=</span> <span class="p">[]</span>
+label_list = []
+score_list = []
 
-<span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">comments_df</span><span class="o">.</span><span class="n">Comments</span><span class="o">.</span><span class="n">to_list</span><span class="p">()):</span>
-    <span class="n">tokenized_input</span> <span class="o">=</span> <span class="n">sentiment_tokenizer</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s1">&#39;pt&#39;</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">512</span><span class="p">)</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">sentiment_model</span><span class="p">(</span><span class="o">**</span><span class="n">tokenized_input</span><span class="p">)</span>
-    <span class="n">predictions</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">predictions</span> <span class="o">=</span> <span class="n">predictions</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">label_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sentiment_model_config</span><span class="o">.</span><span class="n">id2label</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">predictions</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]])</span>
-    <span class="n">score_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">predictions</span><span class="p">))</span>
+for text in tqdm(comments_df.Comments.to_list()):
+    tokenized_input = sentiment_tokenizer(text, padding=True, truncation=True, return_tensors=&#39;pt&#39;, max_length=512)
+    output = sentiment_model(**tokenized_input)
+    predictions = torch.nn.functional.softmax(output.logits, dim=-1)
+    predictions = predictions.detach().numpy()[0]
+    label_list.append(sentiment_model_config.id2label[np.argsort(predictions)[::-1][0]])
+    score_list.append(max(predictions))
 
-<span class="n">comments_df</span><span class="p">[</span><span class="s2">&quot;sentiment&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">label_list</span>
-<span class="n">comments_df</span><span class="p">[</span><span class="s2">&quot;sentiment_score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">score_list</span>
-<span class="n">comments_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;data/sentiments.csv&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+comments_df[&quot;sentiment&quot;] = label_list
+comments_df[&quot;sentiment_score&quot;] = score_list
+comments_df.to_csv(&quot;data/sentiments.csv&quot;, index=False)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">comments</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;data/sentiments.csv&quot;</span><span class="p">)</span>
-<span class="n">comments</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>comments = pd.read_csv(&quot;data/sentiments.csv&quot;)
+comments.head(10)
 </pre></div>
 </div>
 </div>
@@ -629,9 +629,9 @@ title="Print to PDF"
 <p>The results can now be visualised with the help of a bar chart. It can be seen that most comments are negative (49%), followed by neutral comments (42%). With 8%, only very few comments are positive. It can be concluded from this that the overall sentiment in the comments section is clearly negative.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">ax</span> <span class="o">=</span> <span class="n">comments</span><span class="p">[</span><span class="s2">&quot;sentiment&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;barh&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Sentiment model&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">bar_label</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">containers</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%.2f</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.65</span><span class="p">)</span>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>ax = comments[&quot;sentiment&quot;].value_counts(normalize=True).sort_values().plot(kind=&quot;barh&quot;, title=&quot;Sentiment model&quot;)
+ax.bar_label(ax.containers[0], fmt=&quot;%.2f&quot;)
+ax.set_xlim(0,0.65)
 </pre></div>
 </div>
 </div>

@@ -374,18 +374,18 @@ title="Print to PDF"
 <p>First, we load the dictionary and as we can see, it contains 14,105 terms as stated in the paper.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.core.display_functions</span> <span class="kn">import</span> <span class="n">display</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">cleantext</span> <span class="kn">import</span> <span class="n">clean</span>
-<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>from IPython.core.display_functions import display
+import pandas as pd
+from cleantext import clean
+from tqdm import tqdm
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">rpx_dict</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;dictionary_analysis/rpc_lex.csv&quot;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;;&quot;</span><span class="p">)</span>
-<span class="n">display</span><span class="p">(</span><span class="n">rpx_dict</span><span class="p">[[</span><span class="s2">&quot;term&quot;</span><span class="p">,</span> <span class="s1">&#39;category_en&#39;</span><span class="p">]])</span>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>rpx_dict = pd.read_csv(&quot;dictionary_analysis/rpc_lex.csv&quot;, delimiter=&quot;;&quot;)
+display(rpx_dict[[&quot;term&quot;, &#39;category_en&#39;]])
 </pre></div>
 </div>
 </div>
@@ -476,23 +476,23 @@ title="Print to PDF"
 <p>Then we define the method for the dictionary analysis. The comment is passed to the method and first it is split into a list of words. After that it iterates over each term in the dictionary. First it checks if the term already occurs in the identified terms and if so the iteration is skipped. This check is necessary to skip terms that are part of several categories and therefore already identified. Since the dictionary contains not only single words, but also phrases with several words, we need to take these into account. If the dictionary term is a phrase, it is checked whether the phrase occurs in the text or not, and if the dictionary term is a single word, it is checked whether the word occurs in the list of words created at the beginning.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_dictionary_analysis_term_occurrence</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="n">term_occurrence</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">identified_terms</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">text_tokens</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">))</span>
-    <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">rpx_dict</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">to_list</span><span class="p">():</span>
-        <span class="k">if</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">identified_terms</span><span class="p">:</span>
-            <span class="k">continue</span> <span class="c1"># Skip terms that have already been identified but occur in multiple categories</span>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>def get_dictionary_analysis_term_occurrence(text: str):
+    term_occurrence = 0
+    identified_terms = []
+    text_tokens = set(text.split(&quot; &quot;))
+    for term in rpx_dict.term.to_list():
+        if term in identified_terms:
+            continue # Skip terms that have already been identified but occur in multiple categories
 
-        <span class="k">if</span> <span class="s2">&quot; &quot;</span> <span class="ow">in</span> <span class="n">term</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span> <span class="c1"># Dictionary term consists of several words</span>
-                <span class="n">term_occurrence</span><span class="o">+=</span><span class="mi">1</span>
-                <span class="n">identified_terms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">term</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">text_tokens</span><span class="p">:</span> <span class="c1"># Dictionary term is a single word</span>
-                <span class="n">term_occurrence</span><span class="o">+=</span><span class="mi">1</span>
-                <span class="n">identified_terms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">term</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">term_occurrence</span><span class="p">,</span> <span class="n">identified_terms</span>
+        if &quot; &quot; in term:
+            if term in text: # Dictionary term consists of several words
+                term_occurrence+=1
+                identified_terms.append(term)
+        else:
+            if term in text_tokens: # Dictionary term is a single word
+                term_occurrence+=1
+                identified_terms.append(term)
+    return term_occurrence, identified_terms
 </pre></div>
 </div>
 </div>
@@ -500,19 +500,19 @@ title="Print to PDF"
 <p>Before the dictionary analysis can be performed, a bit of preprocessing is required. As before, we load the comments and make sure they are all in string format. Then a function is defined which removes emojis, links and mentions. This method is then applied to all comments. In the end all empty comments are removed, which are basically all comments that only contain emojis.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">comments_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;data/youtube_comments_500.csv&quot;</span><span class="p">)</span>
-<span class="n">comments_df</span><span class="p">[</span><span class="s2">&quot;Comments&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">comments_df</span><span class="p">[</span><span class="s2">&quot;Comments&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>comments_df = pd.read_csv(&quot;data/youtube_comments_500.csv&quot;)
+comments_df[&quot;Comments&quot;] = comments_df[&quot;Comments&quot;].astype(str)
 
-<span class="k">def</span> <span class="nf">clean_text</span><span class="p">(</span><span class="n">text</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
-    <span class="n">text</span> <span class="o">=</span> <span class="n">clean</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">no_emoji</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s2">&quot;de&quot;</span><span class="p">)</span>
-    <span class="n">new_text</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">token</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">token</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">):</span>
-            <span class="n">new_text</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
-    <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">new_text</span><span class="p">)</span>
+def clean_text(text:str):
+    text = clean(text, no_emoji=True, lang=&quot;de&quot;)
+    new_text = []
+    for token in text.split(&quot; &quot;):
+        if not token.startswith(&#39;@&#39;) and not token.startswith(&#39;http&#39;):
+            new_text.append(token)
+    return &quot; &quot;.join(new_text)
 
-<span class="n">comments_df</span><span class="p">[</span><span class="s2">&quot;Comments&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">comments_df</span><span class="p">[</span><span class="s2">&quot;Comments&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">text</span><span class="p">:</span> <span class="n">clean_text</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
-<span class="n">comments_df</span> <span class="o">=</span> <span class="n">comments_df</span><span class="p">[</span><span class="n">comments_df</span><span class="o">.</span><span class="n">Comments</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+comments_df[&quot;Comments&quot;] = comments_df[&quot;Comments&quot;].apply(lambda text: clean_text(text))
+comments_df = comments_df[comments_df.Comments != &quot;&quot;]
 </pre></div>
 </div>
 </div>
@@ -520,29 +520,24 @@ title="Print to PDF"
 <p>Iterating over all comments to apply the dictionary analysis takes several minutes. In the end, two columns are added to the dataframe. One contains the number of dictionary terms found and the other a list of the terms found. We can see that 345,620 comments contain at least one term from the dictionary, which corresponds to 85% of all comments.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">dict_term_occurrence_list</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">dict_identified_terms_list</span> <span class="o">=</span> <span class="p">[]</span>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>dict_term_occurrence_list = []
+dict_identified_terms_list = []
 
-<span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">comments_df</span><span class="o">.</span><span class="n">Comments</span><span class="o">.</span><span class="n">to_list</span><span class="p">()):</span>
-    <span class="n">occurrence_counter</span><span class="p">,</span> <span class="n">identified_terms_list</span> <span class="o">=</span> <span class="n">get_dictionary_analysis_term_occurrence</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-    <span class="n">dict_term_occurrence_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">occurrence_counter</span><span class="p">)</span>
-    <span class="n">dict_identified_terms_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">identified_terms_list</span><span class="p">)</span>
+for text in tqdm(comments_df.Comments.to_list()):
+    occurrence_counter, identified_terms_list = get_dictionary_analysis_term_occurrence(text)
+    dict_term_occurrence_list.append(occurrence_counter)
+    dict_identified_terms_list.append(identified_terms_list)
 
-<span class="n">comments_df</span><span class="p">[</span><span class="s2">&quot;dict_term_occurrence&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dict_term_occurrence_list</span>
-<span class="n">comments_df</span><span class="p">[</span><span class="s2">&quot;dict_identified_terms_list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dict_identified_terms_list</span>
-<span class="n">comments_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;data/dictionary_analysis.csv&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 401282/401282 [07:10&lt;00:00, 932.33it/s] 
+comments_df[&quot;dict_term_occurrence&quot;] = dict_term_occurrence_list
+comments_df[&quot;dict_identified_terms_list&quot;] = dict_identified_terms_list
+comments_df.to_csv(&quot;data/dictionary_analysis.csv&quot;, index=False)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">comments_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">comments_df</span><span class="p">[</span><span class="s1">&#39;dict_term_occurrence&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">])</span>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>display(comments_df.loc[comments_df[&#39;dict_term_occurrence&#39;] &gt; 0])
 </pre></div>
 </div>
 </div>
@@ -657,11 +652,11 @@ title="Print to PDF"
 <p>If we look at a histogram of the distribution of the number of hits, we can see that many comments contain only a few words from the dictionary.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">hist</span> <span class="o">=</span> <span class="n">comments_df</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s2">&quot;dict_term_occurrence&quot;</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">50</span><span class="p">])</span>
-<span class="n">hist</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Number of dictionary hits&quot;</span><span class="p">)</span>
-<span class="n">hist</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Number of comments&quot;</span><span class="p">)</span>
-<span class="n">hist</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Distribution of the number of hits&quot;</span><span class="p">)</span>
-<span class="n">hist</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s2">&quot;Dictionary term occurrence&quot;</span><span class="p">])</span>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>hist = comments_df.plot.hist(column=&quot;dict_term_occurrence&quot;, legend=False, bins=50, range=[0,50])
+hist.set_xlabel(&quot;Number of dictionary hits&quot;)
+hist.set_ylabel(&quot;Number of comments&quot;)
+hist.set_title(&quot;Distribution of the number of hits&quot;)
+hist.legend([&quot;Dictionary term occurrence&quot;])
 </pre></div>
 </div>
 </div>
@@ -675,7 +670,7 @@ title="Print to PDF"
 <p>Since many comments contain only a few terms from the dictionary, it might be interesting to see how the comment style changes if one only select comments that contain several terms from the dictionary. The number of comments containing more than four terms from the dictionary is already much smaller. Four or more terms contain only 133,700 comments, which corresponds to 33% of all comments.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">comments_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">comments_df</span><span class="p">[</span><span class="s1">&#39;dict_term_occurrence&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">])</span>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>display(comments_df.loc[comments_df[&#39;dict_term_occurrence&#39;] &gt; 4])
 </pre></div>
 </div>
 </div>
@@ -798,11 +793,11 @@ title="Print to PDF"
 </ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">comments_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">comments_df</span><span class="p">[</span><span class="s1">&#39;dict_term_occurrence&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">10</span><span class="p">)[</span>
-    <span class="p">[</span><span class="s2">&quot;Comments&quot;</span><span class="p">,</span> <span class="s2">&quot;dict_identified_terms_list&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sample </span><span class="si">{</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">values</span><span class="p">[</span><span class="s1">&#39;dict_identified_terms_list&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;Comments&quot;</span><span class="p">])</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">150</span><span class="p">)</span>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>for index, values in comments_df.loc[comments_df[&#39;dict_term_occurrence&#39;] &gt; 0].sample(10)[
+    [&quot;Comments&quot;, &quot;dict_identified_terms_list&quot;]].iterrows():
+    print(f&quot;Sample {index + 1}: {values[&#39;dict_identified_terms_list&#39;]}\n&quot;)
+    print(values[&quot;Comments&quot;])
+    print(&quot;-&quot; * 150)
 </pre></div>
 </div>
 </div>
@@ -861,10 +856,10 @@ für wie viele sekunden? anarchie ist selten stabil und viele mächtige können 
 </ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">comments_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">comments_df</span><span class="p">[</span><span class="s1">&#39;dict_term_occurrence&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">10</span><span class="p">)[[</span><span class="s2">&quot;Comments&quot;</span><span class="p">,</span> <span class="s2">&quot;dict_identified_terms_list&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sample </span><span class="si">{</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">values</span><span class="p">[</span><span class="s1">&#39;dict_identified_terms_list&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;Comments&quot;</span><span class="p">])</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">150</span><span class="p">)</span>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>for index, values in comments_df.loc[comments_df[&#39;dict_term_occurrence&#39;] &gt; 4].sample(10)[[&quot;Comments&quot;, &quot;dict_identified_terms_list&quot;]].iterrows():
+    print(f&quot;Sample {index+1}: {values[&#39;dict_identified_terms_list&#39;]}\n&quot;)
+    print(values[&quot;Comments&quot;])
+    print(&quot;-&quot;*150)
 </pre></div>
 </div>
 </div>
@@ -934,7 +929,7 @@ grüße aus dem hohen norden .
 </div>
 </div>
 </div>
-<p>With at least 4 comments, the following samples can be assigned to the lateral thinking movement:</p>
+<p>With at least 10 comments, the following samples can be assigned to the lateral thinking movement:</p>
 <ul class="simple">
 <li><p>Smaple 88531</p></li>
 <li><p>Sample 158036</p></li>
@@ -945,10 +940,10 @@ grüße aus dem hohen norden .
 </ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">comments_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">comments_df</span><span class="p">[</span><span class="s1">&#39;dict_term_occurrence&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">10</span><span class="p">)[[</span><span class="s2">&quot;Comments&quot;</span><span class="p">,</span> <span class="s2">&quot;dict_identified_terms_list&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sample </span><span class="si">{</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">values</span><span class="p">[</span><span class="s1">&#39;dict_identified_terms_list&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;Comments&quot;</span><span class="p">])</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">150</span><span class="p">)</span>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span>for index, values in comments_df.loc[comments_df[&#39;dict_term_occurrence&#39;] &gt; 10].sample(10)[[&quot;Comments&quot;, &quot;dict_identified_terms_list&quot;]].iterrows():
+    print(f&quot;Sample {index+1}: {values[&#39;dict_identified_terms_list&#39;]}\n&quot;)
+    print(values[&quot;Comments&quot;])
+    print(&quot;-&quot;*150)
 </pre></div>
 </div>
 </div>

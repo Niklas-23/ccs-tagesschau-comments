@@ -18,16 +18,15 @@ jobs:
         python-version: 3.9
 
       # Build docker image
-    #- name: Build docker image
-      #run: |
-        #docker build .
+    - name: Build docker image
+      run: |
+        docker build .
 
     # Install dependencies
     - name: Install dependencies
       run: |
         pip install --upgrade pip
         pip install -r requirements.txt
-        pip install ipython
 
     # Build the book
     - name: Build the book
